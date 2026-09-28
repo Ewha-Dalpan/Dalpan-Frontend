@@ -9,11 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
-      deployments: write
-      id-token: write
-      issues: write
-      pull-requests: write
 
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -32,10 +27,4 @@ jobs:
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy
-        id: deploy
-        run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
-          echo "preview_url=$url" >> $GITHUB_OUTPUT
-
-      - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v2
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
