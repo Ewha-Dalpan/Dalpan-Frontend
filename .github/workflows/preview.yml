@@ -9,8 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write   # PR에 댓글 달 권한
+      pages: write
+      deployments: write
+      id-token: write
       issues: write
+      pull-requests: write
 
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
