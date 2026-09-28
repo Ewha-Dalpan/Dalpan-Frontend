@@ -2,7 +2,7 @@ name: Vercel Preview
 
 on:
   pull_request:
-    branches: ['main']   # 팀이 develop 브랜치로 PR을 받으면 'develop'으로 바꾸세요
+    branches: ['dev', 'main'] 
 
 jobs:
   vercel-preview:
