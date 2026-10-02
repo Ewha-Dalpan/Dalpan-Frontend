@@ -1,3 +1,173 @@
-
-
 @import "tailwindcss";
+
+@theme {
+  --font-pretendard: "Pretendard";
+
+  /* BG */
+  --color-bg: #222335;
+
+  /* Keycolor */
+  --color-keycolor-100: #4c2023;
+  --color-keycolor-70: #826365;
+  --color-keycolor-40: #b7a6a7;
+  --color-keycolor-20: #dbd2d3;
+  --color-keycolor-5: #f6f4f4;
+
+  /* Grayscale */
+  --color-white-100: #ffffff;
+  --color-gray-100: #0b0c15;
+  --color-gray-90: #131320;
+  --color-gray-80: #2a2b36;
+  --color-gray-70: #42424d;
+  --color-gray-60: #717279;
+  --color-gray-50: #898990;
+  --color-gray-40: #a0a1a6;
+  --color-gray-30: #b8b8bc;
+  --color-gray-20: #d0d0d2;
+  --color-gray-10: #e7e7e9;
+  --color-gray-5: #f3f3f4;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-pretendard);
+  }
+}
+
+@layer utilities {
+  /* 피그마 텍스트 스타일 공통 속성 */
+  .text-h1-bold,
+  .text-h2-semibold,
+  .text-h2-medium,
+  .text-h3-semibold,
+  .text-h3-medium,
+  .text-h3-regular,
+  .text-h4-semibold,
+  .text-h4-medium,
+  .text-b1-semibold,
+  .text-b1-medium,
+  .text-b1-regular,
+  .text-b2-semibold,
+  .text-b2-medium,
+  .text-b2-regular,
+  .text-b3-semibold,
+  .text-b3-medium,
+  .text-b3-regular,
+  .text-l1-medium,
+  .text-l1-regular,
+  .text-l2-medium,
+  .text-l2-regular {
+    font-family: var(--font-pretendard);
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: -0.03em;
+  }
+
+  /* Headline */
+  .text-h1-bold {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .text-h2-semibold {
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .text-h2-medium {
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  .text-h3-semibold {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .text-h3-medium {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .text-h3-regular {
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .text-h4-semibold {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .text-h4-medium {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  /* Body */
+  .text-b1-semibold {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .text-b1-medium {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .text-b1-regular {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .text-b2-semibold {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .text-b2-medium {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .text-b2-regular {
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  .text-b3-semibold {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .text-b3-medium {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .text-b3-regular {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  /* Label */
+  .text-l1-medium {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .text-l1-regular {
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .text-l2-medium {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .text-l2-regular {
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
