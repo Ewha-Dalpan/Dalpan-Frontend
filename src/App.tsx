@@ -5,6 +5,7 @@ import HomePage from './pages/home/HomePage'
 import UploadPage from './pages/judgment/UploadPage'
 import ConfirmPage from './pages/judgment/ConfirmPage'
 import JuryPage from './pages/jury/JuryPage'
+import JuryExplorePage from './pages/jury/JuryExplorePage'
 import MyPage from './pages/my/MyPage'
 import LoginPage from './pages/onboarding/LoginPage'
 import { paths } from './routes/paths'
@@ -16,6 +17,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path={paths.home} element={<HomePage />} />
           <Route path={paths.jury} element={<JuryPage />} />
+          <Route path={paths.juryExplore} element={<JuryExplorePage />} />
           <Route path={paths.my} element={<MyPage />} />
         </Route>
         <Route element={<JudgmentLayout />}>

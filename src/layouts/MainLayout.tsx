@@ -14,11 +14,16 @@ const destinations: Record<GNBDestination, string> = {
 function MainLayout() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const activeTab: GNBTab = pathname === paths.jury ? 'jury' : pathname === paths.my ? 'my' : 'home'
+  const isJuryExplore = pathname === paths.juryExplore
+  const activeTab: GNBTab = pathname === paths.jury || isJuryExplore ? 'jury' : pathname === paths.my ? 'my' : 'home'
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[393px] bg-bg text-white-100">
-      <Header depth={1} title={activeTab === 'home' ? 'dalpan' : activeTab} />
+      {isJuryExplore ? (
+        <Header depth={2} title="사건 탐색" onBack={() => navigate(paths.jury)} />
+      ) : (
+        <Header depth={1} title={activeTab === 'home' ? 'dalpan' : activeTab} />
+      )}
       <main className={activeTab === 'home' ? undefined : 'pb-[93px]'}>
         <Outlet />
       </main>
