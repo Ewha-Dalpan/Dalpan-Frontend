@@ -1,6 +1,7 @@
 // AI 재판 - 대화 캡처 업로드 페이지 (2.1.1)
 
 import { useState } from 'react'
+import Button from '../../components/Button'
 import PhotoUploadBox from '../../components/PhotoUploadBox'
 import type { Photo } from '../../components/PhotoUploadBox'
 import Textarea from '../../components/Textarea'
@@ -19,6 +20,9 @@ function UploadPage() {
       <div className="mt-2.75">
         <PhotoUploadBox photos={photos} onChange={setPhotos} min={1} max={6} />
       </div>
+      <Button variant="white" fullWidth disabled={photos.length === 0} className="mt-6">
+        이 대화 읽어보기
+      </Button>
     </div>
   )
 }
