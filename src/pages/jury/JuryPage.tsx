@@ -28,7 +28,6 @@ function CaseBubble({
 }: CaseBubbleProps) {
   return (
     <li className={`absolute ${className}`}>
-      {/* 그림자가 포함된 원본 말풍선 */}
       <img
         src={bubble}
         alt=""
