@@ -19,7 +19,7 @@ function MainLayout() {
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[393px] bg-bg text-white-100">
       <Header depth={1} title={activeTab === 'home' ? 'dalpan' : activeTab} />
-      <main className="pb-[93px]">
+      <main className={activeTab === 'home' ? undefined : 'pb-[93px]'}>
         <Outlet />
       </main>
       {/* 하단 네비게이션 */}
