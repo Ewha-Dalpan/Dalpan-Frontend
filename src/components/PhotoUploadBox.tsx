@@ -1,7 +1,7 @@
 // 공통 사진 첨부 컴포넌트 (다중 첨부 + 개별 삭제)
 
-import { useId } from 'react'
-import type { ChangeEvent } from 'react'
+import { useId, useRef } from 'react'
+import type { ChangeEvent, MouseEvent, PointerEvent } from 'react'
 import cameraIcon from '../assets/upload/camera.svg'
 import deleteIcon from '../assets/upload/photo-delete.svg'
 import Button from './Button'
@@ -25,6 +25,42 @@ function PhotoUploadBox({ photos, onChange, min = 1, max = 6, label = '이미지
   const hintId = useId()
   const isFull = photos.length >= max
   const showHint = photos.length < min
+  const drag = useRef<{ x: number; scrollLeft: number; moved: boolean } | null>(null)
+  const wasDragged = useRef(false)
+
+  // 터치는 기본 스와이프, 마우스는 드래그로 가로 이동!!
+  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return
+    drag.current = { x: event.clientX, scrollLeft: event.currentTarget.scrollLeft, moved: false }
+  }
+
+  const moveDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (!drag.current) return
+    const dx = event.clientX - drag.current.x
+    // 살짝 움직인 건 클릭으로 처리 (삭제·첨부 버튼 클릭 유지)
+    if (!drag.current.moved) {
+      if (Math.abs(dx) < 5) return
+      drag.current.moved = true
+      event.currentTarget.setPointerCapture(event.pointerId)
+    }
+    event.currentTarget.scrollLeft = drag.current.scrollLeft - dx
+  }
+
+  const endDrag = (event: PointerEvent<HTMLDivElement>) => {
+    wasDragged.current = drag.current?.moved ?? false
+    drag.current = null
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  // 드래그 직후 발생하는 클릭은 무시
+  const blockClickAfterDrag = (event: MouseEvent<HTMLDivElement>) => {
+    if (!wasDragged.current) return
+    wasDragged.current = false
+    event.preventDefault()
+    event.stopPropagation()
+  }
 
   const handleSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(event.target.files ?? [])
@@ -46,7 +82,15 @@ function PhotoUploadBox({ photos, onChange, min = 1, max = 6, label = '이미지
   return (
     <div>
       <p id={labelId} className="text-b2-medium text-black">{label}</p>
-      <div className="mt-1.25 flex overflow-x-auto scrollbar-none">
+      <div
+        onPointerDown={startDrag}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onClickCapture={blockClickAfterDrag}
+        onDragStart={(event) => event.preventDefault()}
+        className="mt-1.25 flex select-none overflow-x-auto overscroll-x-contain scrollbar-none"
+      >
         {/* 첨부 버튼 */}
         <div className="shrink-0 pt-1.75 pr-2.25">
           <label
