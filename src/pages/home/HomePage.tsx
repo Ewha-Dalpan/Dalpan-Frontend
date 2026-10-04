@@ -99,9 +99,9 @@ function HomePage() {
           </p>
         </div>
         <Button
-          type="button"
+          variant="primary"
           onClick={() => navigate(paths.upload)}
-          className="text-b2-semibold absolute inset-x-0 top-[117px] ml-[16px] mr-[15px] cursor-pointer rounded-[8px] bg-keycolor-100 px-[10px] py-[8px] text-white-100"
+          className="absolute inset-x-0 top-[117px] ml-[16px] mr-[15px]"
         >
           대화 캡처로 바로 판결받기
         </Button>
