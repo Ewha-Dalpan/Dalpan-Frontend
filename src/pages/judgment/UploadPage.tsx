@@ -53,11 +53,12 @@ function UploadPage() {
           aria-hidden="true"
           className="block size-full object-cover"
         />
-        {/* TODO: 결제하기 화면이 생기면 이동 경로 변경 + API 연동 시 관계·사진 함께 넘기기 */}
+        {/* TODO: 결제하기 화면이 생기면 결제로 이동 + API 연동 시 관계·사진 함께 넘기기 */}
+        {/* 지금은 결제 없이 바로 사건접수 로딩 화면으로 */}
         <Button
           variant="white"
           disabled={!canSubmit}
-          onClick={() => navigate(paths.confirm)}
+          onClick={() => navigate(paths.received)}
           className="absolute inset-x-6 bottom-10"
         >
           사건 접수하기

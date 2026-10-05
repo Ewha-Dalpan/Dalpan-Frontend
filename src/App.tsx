@@ -4,6 +4,7 @@ import JudgmentLayout from './layouts/JudgmentLayout'
 import HomePage from './pages/home/HomePage'
 import UploadPage from './pages/judgment/UploadPage'
 import ConfirmPage from './pages/judgment/ConfirmPage'
+import CaseReceivedPage from './pages/judgment/CaseReceivedPage'
 import JuryPage from './pages/jury/JuryPage'
 import JuryExplorePage from './pages/jury/JuryExplorePage'
 import MyPage from './pages/my/MyPage'
@@ -30,6 +31,8 @@ function App() {
           <Route path={paths.upload} element={<UploadPage />} />
           <Route path={paths.confirm} element={<ConfirmPage />} />
         </Route>
+        {/* 사건접수 로딩은 헤더 없는 전체 화면이라 레이아웃 밖에 둠 */}
+        <Route path={paths.received} element={<CaseReceivedPage />} />
         <Route path={paths.login} element={<LoginPage />} />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
