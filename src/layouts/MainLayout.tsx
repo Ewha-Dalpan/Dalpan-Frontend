@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import GNB from '../components/GNB'
 import type { GNBDestination, GNBTab } from '../components/GNB'
 import Header from '../components/Header'
@@ -15,20 +15,25 @@ function MainLayout() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const isJuryExplore = pathname === paths.juryExplore
-  const activeTab: GNBTab = pathname === paths.jury || isJuryExplore ? 'jury' : pathname === paths.my ? 'my' : 'home'
+  const isMyCases = pathname === paths.myCases
+  const isMyJuryActivity = pathname === paths.myJuryActivity
+  const isMyCaseDetail = Boolean(matchPath(paths.myCaseDetailPattern, pathname))
+  const isMyDetail = isMyCases || isMyCaseDetail || isMyJuryActivity
+  const isDetail = isJuryExplore || isMyDetail
+  const activeTab: GNBTab = pathname === paths.jury || isJuryExplore ? 'jury' : pathname === paths.my || isMyDetail ? 'my' : 'home'
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[393px] bg-bg text-white-100">
-      {isJuryExplore ? (
-        <Header depth={2} title="배심원석" onBack={() => navigate(paths.jury)} />
+      {isDetail ? (
+        <Header depth={2} title={isMyJuryActivity ? '배심 활동' : isMyDetail ? '내 사건' : '배심원석'} onBack={() => navigate(isMyCaseDetail ? paths.myCases : isMyDetail ? paths.my : paths.jury)} />
       ) : (
         <Header depth={1} title={activeTab === 'home' ? 'dalpan' : activeTab} />
       )}
-      <main className={isJuryExplore ? 'pb-[24px]' : activeTab === 'home' ? undefined : 'pb-[93px]'}>
+      <main className={isMyCaseDetail ? undefined : isDetail ? 'pb-[24px]' : activeTab === 'home' ? undefined : 'pb-[93px]'}>
         <Outlet />
       </main>
       {/* 하단 네비게이션 */}
-      {!isJuryExplore && <div className="pointer-events-none fixed inset-x-0 bottom-[44.564453125px] mx-auto w-full max-w-[393px]">
+      {!isDetail && <div className="pointer-events-none fixed inset-x-0 bottom-[44.564453125px] mx-auto w-full max-w-[393px]">
         <div className="pointer-events-auto relative left-[calc(50%+0.41064453125px)] w-fit -translate-x-1/2">
           <GNB activeTab={activeTab} onNavigate={(destination) => {
             const target = destinations[destination]

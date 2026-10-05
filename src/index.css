@@ -1,4 +1,23 @@
 @import "tailwindcss";
+@source "./";
+
+@keyframes case-preview-reveal {
+  from {
+    transform: translateY(54px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes verdict-reveal {
+  from {
+    transform: translateY(calc(100% + 24px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
 
 @theme {
   --font-pretendard: "Pretendard";

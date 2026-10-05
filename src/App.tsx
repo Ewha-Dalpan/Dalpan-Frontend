@@ -7,6 +7,9 @@ import ConfirmPage from './pages/judgment/ConfirmPage'
 import JuryPage from './pages/jury/JuryPage'
 import JuryExplorePage from './pages/jury/JuryExplorePage'
 import MyPage from './pages/my/MyPage'
+import MyJuryActivityPage from './pages/my/MyJuryActivityPage'
+import MyCasesPage from './pages/my/MyCasesPage'
+import MyCaseDetailPage from './pages/my/MyCaseDetailPage'
 import LoginPage from './pages/onboarding/LoginPage'
 import { paths } from './routes/paths'
 
@@ -19,6 +22,9 @@ function App() {
           <Route path={paths.jury} element={<JuryPage />} />
           <Route path={paths.juryExplore} element={<JuryExplorePage />} />
           <Route path={paths.my} element={<MyPage />} />
+          <Route path={paths.myJuryActivity} element={<MyJuryActivityPage />} />
+          <Route path={paths.myCases} element={<MyCasesPage />} />
+          <Route path={paths.myCaseDetailPattern} element={<MyCaseDetailPage />} />
         </Route>
         <Route element={<JudgmentLayout />}>
           <Route path={paths.upload} element={<UploadPage />} />
