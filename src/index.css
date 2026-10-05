@@ -1,4 +1,23 @@
 @import "tailwindcss";
+@source "./";
+
+@keyframes case-preview-reveal {
+  from {
+    transform: translateY(54px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes verdict-reveal {
+  from {
+    transform: translateY(calc(100% + 24px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
 
 @theme {
   --font-pretendard: "Pretendard";
@@ -6,6 +25,7 @@
   /* BG */
   --color-bg: #222335;
   --color-bg-light: #fff9f2;
+  --color-sub: #57586a;
 
   /* Keycolor */
   --color-keycolor-100: #4c2023;
