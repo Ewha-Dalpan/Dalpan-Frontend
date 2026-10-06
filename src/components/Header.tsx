@@ -12,7 +12,8 @@ type HeaderTheme = "dark" | "light";
 
 type HeaderProps =
   | { depth: 1; title: MainTitle; onBack?: never; theme?: never }
-  | { depth: 2; title: string; onBack: () => void; theme?: HeaderTheme };
+  // onBack을 안 넘기면 뒤로가기 버튼 없이 제목만 표시
+  | { depth: 2; title: string; onBack?: () => void; theme?: HeaderTheme };
 
 const mainTitles = {
   dalpan: { src: titleDalpan, alt: "달판", position: "pl-[28px] pt-[16px]" },
@@ -35,22 +36,24 @@ function Header(props: HeaderProps) {
 
   return (
     <header className={`relative h-[51px] w-full shrink-0 ${isLight ? "bg-bg-light" : "bg-bg"}`}>
-      <Button
-        type="button"
-        aria-label="뒤로가기"
-        onClick={props.onBack}
-        className="absolute left-[19px] top-[14px] size-[24px] cursor-pointer"
-      >
-        {isLight ? (
-          <img src={arrowBackDark} alt="" className="block max-w-none" />
-        ) : (
-          <img
-            src={arrowBack}
-            alt=""
-            className="absolute left-[8.25066px] top-[6.25066px] block max-w-none"
-          />
-        )}
-      </Button>
+      {props.onBack && (
+        <Button
+          type="button"
+          aria-label="뒤로가기"
+          onClick={props.onBack}
+          className="absolute left-[19px] top-[14px] size-[24px] cursor-pointer"
+        >
+          {isLight ? (
+            <img src={arrowBackDark} alt="" className="block max-w-none" />
+          ) : (
+            <img
+              src={arrowBack}
+              alt=""
+              className="absolute left-[8.25066px] top-[6.25066px] block max-w-none"
+            />
+          )}
+        </Button>
+      )}
       <h1 className={`text-b2-regular absolute left-1/2 top-[15px] h-[23px] -translate-x-1/2 whitespace-nowrap ${isLight ? "text-black" : "text-white-100"}`}>
         {props.title}
       </h1>
