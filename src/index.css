@@ -19,6 +19,94 @@
   }
 }
 
+/* 사건접수 로딩: 토끼가 달 뒤에서 통 튀어 올라옴 */
+@keyframes rabbit-rise {
+  from {
+    translate: 0 200px;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+/* 사건접수 로딩: 귀 쫑긋쫑긋 (두 번 움직이고 잠깐 쉼) */
+@keyframes ear-wiggle-left {
+  0%, 40%, 100% {
+    rotate: 0deg;
+  }
+  10% {
+    rotate: -12deg;
+  }
+  25% {
+    rotate: -6deg;
+  }
+}
+
+@keyframes ear-wiggle-right {
+  0%, 40%, 100% {
+    rotate: 0deg;
+  }
+  10% {
+    rotate: 12deg;
+  }
+  25% {
+    rotate: 6deg;
+  }
+}
+
+/* 사건접수 로딩: 달 표면이 천천히 회전 */
+@keyframes moon-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* 사건접수 로딩: 별 반짝반짝 */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    scale: 0.6;
+  }
+  50% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* 사건접수 로딩: 글자가 아래에서 살짝 떠오름 */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* 모달: 아래에서 위로 부드럽게 올라옴 */
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    translate: 0 40px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* 모달 뒷배경: 서서히 어두워짐 */
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @theme {
   --font-pretendard: "Pretendard";
 

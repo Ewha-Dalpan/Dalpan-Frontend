@@ -8,6 +8,7 @@ export const paths = {
   myCaseDetail: (caseId: number | string) => `/my/cases/${caseId}`,
   myCaseDetailPattern: "/my/cases/:caseId",
   upload: "/judgment/upload",
+  received: "/judgment/received",
   confirm: "/judgment/confirm",
   login: "/login",
 } as const;

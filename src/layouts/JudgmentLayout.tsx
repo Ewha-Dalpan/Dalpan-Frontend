@@ -8,9 +8,13 @@ function JudgmentLayout() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  // 상황확인은 이미 사건이 접수된 뒤라 뒤로가기 버튼 없음
+  const showBack = pathname !== paths.confirm
+
   return (
     <div className="mx-auto min-h-dvh w-full max-w-98.25 bg-bg-light text-gray-90">
-      <Header depth={2} theme="light" title="AI 재판" onBack={() => navigate(pathname === paths.confirm ? paths.upload : paths.home)} />
+      {/* 업로드는 뒤로가기 시 홈으로 */}
+      <Header depth={2} theme="light" title="AI 재판" onBack={showBack ? () => navigate(paths.home) : undefined} />
       <main><Outlet /></main>
     </div>
   )
