@@ -3,9 +3,11 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import payRabbit from '../../assets/judgment/pay-rabbit.svg'
 import uploadRabbits from '../../assets/judgment/upload-rabbits.mp4'
 import Button from '../../components/Button'
 import ChipSelect from '../../components/ChipSelect'
+import Modal from '../../components/Modal'
 import PhotoUploadBox from '../../components/PhotoUploadBox'
 import type { Photo } from '../../components/PhotoUploadBox'
 import { paths } from '../../routes/paths'
@@ -17,13 +19,27 @@ const MAX_PHOTOS = 6
 // 상대와의 관계 선택지
 const RELATIONS = ['연애', '친구', '가족', '학교∙팀플', '기타'] as const
 
+// TODO: API 연동 시 사용자의 무료 이용권 보유 여부로 교체 (회원가입 시 1회 지급)
+const HAS_FREE_TICKET = true
+
 function UploadPage() {
   const navigate = useNavigate()
   const [relation, setRelation] = useState<string>(RELATIONS[0]) // 상대와의 관계
   const [photos, setPhotos] = useState<Photo[]>([]) // 대화 캡처
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false) // 무료 이용권 모달
 
   // 최소 장수를 채워야 CTA 활성화
   const canSubmit = photos.length >= MIN_PHOTOS
+
+  // 사건 접수하기: 무료 이용권이 있으면 모달, 없으면 결제로
+  const handleSubmit = () => {
+    if (HAS_FREE_TICKET) {
+      setIsTicketModalOpen(true)
+      return
+    }
+    // TODO: 결제하기 화면이 생기면 결제로 이동 (지금은 바로 사건접수 로딩~)
+    navigate(paths.received)
+  }
 
   return (
     // 헤더를 뺀 화면 높이를 채워서 토끼 영상이 항상 맨 아래에 붙게 함
@@ -53,17 +69,29 @@ function UploadPage() {
           aria-hidden="true"
           className="block size-full object-cover"
         />
-        {/* TODO: 결제하기 화면이 생기면 결제로 이동 + API 연동 시 관계·사진 함께 넘기기 */}
-        {/* 지금은 결제 없이 바로 사건접수 로딩 화면으로 */}
-        <Button
-          variant="white"
-          disabled={!canSubmit}
-          onClick={() => navigate(paths.received)}
-          className="absolute inset-x-6 bottom-10"
-        >
+        {/* TODO: API 연동 시 관계·사진 함께 넘기기 */}
+        <Button variant="white" disabled={!canSubmit} onClick={handleSubmit} className="absolute inset-x-6 bottom-10">
           사건 접수하기
         </Button>
       </div>
+
+      {/* 무료 이용권 사용 확인 모달~ */}
+      <Modal
+        open={isTicketModalOpen}
+        illustration={
+          <img src={payRabbit} alt="" width={205} height={185} className="mx-auto -mb-2.5 block" />
+        }
+        title="무료 이용권을 사용하겠습니까?"
+        description={
+          <>
+            첫 회원 가입 이후 제공되는 무료 이용권
+            <br />
+            1회를 사용해 결제합니다.
+          </>
+        }
+        onCancel={() => setIsTicketModalOpen(false)}
+        onConfirm={() => navigate(paths.received)}
+      />
     </div>
   )
 }
