@@ -1,12 +1,12 @@
 import { useRef } from "react";
 import type { PointerEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import aiJudge from "../../assets/home/ai-judge.svg";
 import ground from "../../assets/home/ground.svg";
 import participants from "../../assets/home/participants.svg";
 import rabbits from "../../assets/home/rabbits.png";
 import Button from "../../components/Button";
-import { paths } from "../../routes/paths";
+import type { MainLayoutContext } from "../../layouts/MainLayout";
 
 // API 연결 전 가아짜 데이터
 const featuredCases = [
@@ -37,7 +37,7 @@ const featuredCases = [
 ];
 
 function HomePage() {
-  const navigate = useNavigate();
+  const { startJudgment } = useOutletContext<MainLayoutContext>();
   const dragStart = useRef<{ x: number; scrollLeft: number } | null>(null);
 
   // 터치는 기본 스와이프, 마우스는 드래그로 이동!!
@@ -100,7 +100,7 @@ function HomePage() {
         </div>
         <Button
           variant="primary"
-          onClick={() => navigate(paths.upload)}
+          onClick={startJudgment}
           className="absolute inset-x-0 top-[117px] ml-[16px] mr-[15px]"
         >
           대화 캡처로 바로 판결받기
