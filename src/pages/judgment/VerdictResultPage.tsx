@@ -93,12 +93,11 @@ function VerdictResultPage() {
           </Button>
         </section>
 
-        {/* TODO: 배심원에게도 물어보기 화면이 생기면 연결 */}
         <div className="mx-6 mt-4.25 flex gap-1.75">
           <Button variant="white" onClick={openShare} className="w-21.75 shrink-0 border border-keycolor-100">
             공유
           </Button>
-          <Button variant="primary" className="h-10 flex-1">
+          <Button variant="primary" onClick={() => navigate(paths.juryRequest)} className="h-10 flex-1">
             배심원에게도 물어보기
           </Button>
         </div>

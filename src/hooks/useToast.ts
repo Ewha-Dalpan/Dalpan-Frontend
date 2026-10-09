@@ -4,12 +4,12 @@
 
 import { useCallback, useState } from 'react'
 
-export type ToastState = { id: number; message: string } | null
+// id: 바뀔 때마다 토스트가 새로 뜸
+export type ToastState = { id: number | string; message: string } | null
 
 export const useToast = () => {
   const [toast, setToast] = useState<ToastState>(null)
 
-  // 같은 문구를 연달아 띄워도 다시 나타나도록 매번 새 id 부여
   const showToast = useCallback((message: string) => setToast({ id: Date.now(), message }), [])
   const hideToast = useCallback(() => setToast(null), [])
 

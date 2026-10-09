@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import GNB from '../components/GNB'
 import type { GNBTab } from '../components/GNB'
 import Header from '../components/Header'
 import PendingCaseModals from '../components/modal/PendingCaseModals'
+import Toast from '../components/Toast'
 import { paths } from '../routes/paths'
 import { useCaseStore } from '../store/useCaseStore'
 
@@ -19,7 +20,8 @@ const destinations: Record<GNBTab, string> = {
 }
 
 function MainLayout() {
-  const { pathname } = useLocation()
+  const location = useLocation()
+  const { pathname } = location
   const navigate = useNavigate()
   const hasPendingCase = useCaseStore((state) => state.pendingCase !== null)
   const [isPendingCaseModalOpen, setIsPendingCaseModalOpen] = useState(false)
@@ -30,6 +32,12 @@ function MainLayout() {
   const isMyDetail = isMyCases || isMyCaseDetail || isMyJuryActivity
   const isDetail = isJuryExplore || isMyDetail
   const activeTab: GNBTab = pathname === paths.jury || isJuryExplore ? 'jury' : pathname === paths.my || isMyDetail ? 'my' : 'home'
+
+  // 다른 화면에서 이동하며 넘겨준 토스트 
+  const toastMessage = (location.state as { toast?: string } | null)?.toast
+  const toast = useMemo(() => (toastMessage ? { id: location.key, message: toastMessage } : null), [toastMessage, location.key])
+  // 토스트가 사라지면 넘겨받은 state도 지워서, 새로고침/뒤로가기 때 다시 뜨지 않게 함
+  const hideToast = useCallback(() => navigate(pathname, { replace: true, state: null }), [navigate, pathname])
 
   // AI 재판 시작 (홈 CTA, GNB 망치): 확인 중인 사건이 있으면 이어서 할지 먼저 물어봄
   const startJudgment = () => {
@@ -58,6 +66,7 @@ function MainLayout() {
         </div>
       </div>}
       <PendingCaseModals open={isPendingCaseModalOpen} onClose={() => setIsPendingCaseModalOpen(false)} />
+      <Toast toast={toast} onHide={hideToast} />
     </div>
   )
 }

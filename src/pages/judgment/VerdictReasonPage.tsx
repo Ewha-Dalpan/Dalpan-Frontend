@@ -2,14 +2,13 @@
 // 판결문 전체 화면 / 마이 > 내 사건 상세 두 페이지에서 동일하게 사용!!
 
 import { useId, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import chevronDown from '../../assets/verdict/chevron-down.svg'
 import dot from '../../assets/verdict/dot.svg'
 import referenceLink from '../../assets/verdict/reference-link.svg'
 import sageLogo from '../../assets/verdict/sage-logo.png'
 import Button from '../../components/Button'
 import Header from '../../components/Header'
-import { paths } from '../../routes/paths'
+import { useGoBack } from '../../hooks/useGoBack'
 
 type Reference = {
   summary: string // 참고한 연구 내용 요약
@@ -115,14 +114,7 @@ function ReasonCard({ reason }: { reason: Reason }) {
 }
 
 function VerdictReasonPage() {
-  const navigate = useNavigate()
-
-  // 들어온 화면으로 돌아가기
-  const goBack = () => {
-    const hasPrevious = ((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0
-    if (hasPrevious) navigate(-1)
-    else navigate(paths.home)
-  }
+  const goBack = useGoBack() // 들어온 화면으로 돌아가기
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-98.25 bg-bg-light pb-10">

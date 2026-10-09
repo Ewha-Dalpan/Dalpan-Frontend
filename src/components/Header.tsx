@@ -8,8 +8,11 @@ import Button from "./Button";
 
 type MainTitle = "dalpan" | "jury" | "my";
 
-// 헤더 색상 두 개!!: dark(기본, 남색 배경) / light(크림색 배경)
-type HeaderTheme = "dark" | "light";
+// 헤더 색상: dark(기본, 남색 배경) / light(크림색 배경) / white(흰 배경)
+// light·white는 글자와 뒤로가기 아이콘이 어두운 색
+type HeaderTheme = "dark" | "light" | "white";
+
+const themeBackgrounds = { dark: "bg-bg", light: "bg-bg-light", white: "bg-white-100" } satisfies Record<HeaderTheme, string>;
 
 type HeaderProps =
   | { depth: 1; title: MainTitle; onBack?: never; onClose?: never; theme?: never }
@@ -34,10 +37,11 @@ function Header(props: HeaderProps) {
     );
   }
 
-  const isLight = props.theme === "light";
+  const theme = props.theme ?? "dark";
+  const isLight = theme !== "dark";
 
   return (
-    <header className={`relative h-[51px] w-full shrink-0 ${isLight ? "bg-bg-light" : "bg-bg"}`}>
+    <header className={`relative h-[51px] w-full shrink-0 ${themeBackgrounds[theme]}`}>
       {props.onBack && (
         <Button
           type="button"

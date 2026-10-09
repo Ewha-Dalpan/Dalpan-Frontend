@@ -16,5 +16,6 @@ export const paths = {
   verdict: "/judgment/verdict",
   verdictResult: "/judgment/verdict/result",
   verdictReason: "/judgment/verdict/reason",
+  juryRequest: "/judgment/verdict/jury",
   login: "/login",
 } as const;
