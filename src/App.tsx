@@ -6,6 +6,8 @@ import UploadPage from './pages/judgment/UploadPage'
 import ConfirmPage from './pages/judgment/ConfirmPage'
 import CaseReceivedPage from './pages/judgment/CaseReceivedPage'
 import JudgingPage from './pages/judgment/JudgingPage'
+import VerdictPage from './pages/judgment/VerdictPage'
+import VerdictResultPage from './pages/judgment/VerdictResultPage'
 import JuryPage from './pages/jury/JuryPage'
 import JuryExplorePage from './pages/jury/JuryExplorePage'
 import MyPage from './pages/my/MyPage'
@@ -32,9 +34,11 @@ function App() {
           <Route path={paths.upload} element={<UploadPage />} />
           <Route path={paths.confirm} element={<ConfirmPage />} />
         </Route>
-        {/* 사건접수 로딩은 헤더 없는 전체 화면, AI 판결 로딩은 남색 배경이라 크림색 레이아웃 밖에 둠 */}
+        {/* 사건접수 로딩은 헤더 없는 전체 화면, AI 판결 로딩·판결문은 남색 배경이라 크림색 레이아웃 밖에 둠 */}
         <Route path={paths.received} element={<CaseReceivedPage />} />
         <Route path={paths.judging} element={<JudgingPage />} />
+        <Route path={paths.verdict} element={<VerdictPage />} />
+        <Route path={paths.verdictResult} element={<VerdictResultPage />} />
         <Route path={paths.login} element={<LoginPage />} />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>

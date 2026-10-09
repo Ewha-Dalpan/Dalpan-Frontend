@@ -11,5 +11,7 @@ export const paths = {
   received: "/judgment/received",
   confirm: "/judgment/confirm",
   judging: "/judgment/judging",
+  verdict: "/judgment/verdict",
+  verdictResult: "/judgment/verdict/result",
   login: "/login",
 } as const;

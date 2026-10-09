@@ -38,8 +38,8 @@ function JudgingPage() {
       }
       // 판결이 끝났으니 '확인 중인 사건'에서 지움
       clearPendingCase()
-      // TODO: 판결 결과 화면이 생기면 그쪽으로 이동 (뒤로가기로 로딩에 다시 안 오게!)
-      navigate(paths.home, { replace: true })
+      // 판결문 도착 화면으로 (뒤로가기로 로딩에 다시 안 오게!)
+      navigate(paths.verdict, { replace: true })
     }, STEP_MS)
     return () => clearTimeout(timer)
   }, [step, isLeaveModalOpen, clearPendingCase, navigate])
