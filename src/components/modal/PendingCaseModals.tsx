@@ -4,9 +4,9 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { paths } from '../routes/paths'
-import { useCaseStore } from '../store/useCaseStore'
-import type { CaseStage } from '../store/useCaseStore'
+import { paths } from '../../routes/paths'
+import { useCaseStore } from '../../store/useCaseStore'
+import type { CaseStage } from '../../store/useCaseStore'
 import Modal from './Modal'
 
 // 예: 9월 17일 오후 9:12

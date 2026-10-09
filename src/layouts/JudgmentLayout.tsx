@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import Modal from '../components/Modal'
+import Modal from '../components/modal/Modal'
 import { paths } from '../routes/paths'
 
 function JudgmentLayout() {

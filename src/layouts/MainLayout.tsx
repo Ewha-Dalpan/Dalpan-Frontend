@@ -3,7 +3,7 @@ import { matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import GNB from '../components/GNB'
 import type { GNBTab } from '../components/GNB'
 import Header from '../components/Header'
-import PendingCaseModals from '../components/PendingCaseModals'
+import PendingCaseModals from '../components/modal/PendingCaseModals'
 import { paths } from '../routes/paths'
 import { useCaseStore } from '../store/useCaseStore'
 

@@ -151,6 +151,16 @@
   }
 }
 
+/* 공유하기 시트: 화면 아래에서 끝까지 올라옴 */
+@keyframes sheet-slide-up {
+  from {
+    translate: 0 100%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
 /* 모달 뒷배경: 서서히 어두워짐 */
 @keyframes backdrop-fade-in {
   from {

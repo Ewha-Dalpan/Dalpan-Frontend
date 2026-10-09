@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import loadingRabbit from '../../assets/judgment/loading.mp4'
 import Header from '../../components/Header'
-import Modal from '../../components/Modal'
+import Modal from '../../components/modal/Modal'
 import { paths } from '../../routes/paths'
 import { useCaseStore } from '../../store/useCaseStore'
 
