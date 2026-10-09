@@ -85,6 +85,60 @@
   }
 }
 
+/* 판결문 도착 연출 (3초): 아래에서 화면 가운데로 올라옴 → 머무름(도장) → 제자리로 이동 */
+/* --intro-y: 가운데에 머무를 때 제자리에서 떨어진 거리 (요소마다 style로 지정) */
+@keyframes verdict-intro {
+  0% {
+    translate: 0 calc(var(--intro-y) + 100dvh);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  20% {
+    translate: 0 var(--intro-y);
+  }
+  65% {
+    translate: 0 var(--intro-y);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+/* 판결문 도착 연출: 도장이 크게 떠 있다가 쾅 찍힘 */
+@keyframes stamp-press {
+  from {
+    opacity: 0;
+    scale: 2.4;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* 판결문 도착 연출: 도장이 찍힐 때 봉투가 살짝 눌림 */
+@keyframes stamp-thud {
+  0%, 100% {
+    scale: 1;
+  }
+  40% {
+    scale: 0.97;
+  }
+}
+
+/* 판결문 도착 연출: "판결문이 도착했습니다." 나타났다가 사라짐 */
+@keyframes arrival-text {
+  0% {
+    opacity: 0;
+  }
+  15%, 60% {
+    opacity: 1;
+  }
+  75%, 100% {
+    opacity: 0;
+  }
+}
+
 /* 모달: 아래에서 위로 부드럽게 올라옴 */
 @keyframes modal-slide-up {
   from {
@@ -93,6 +147,16 @@
   }
   to {
     opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* 공유하기 시트: 화면 아래에서 끝까지 올라옴 */
+@keyframes sheet-slide-up {
+  from {
+    translate: 0 100%;
+  }
+  to {
     translate: 0 0;
   }
 }

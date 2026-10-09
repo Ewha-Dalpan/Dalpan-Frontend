@@ -2,9 +2,12 @@
 // 헤더는 JudgmentLayout에서!
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import swapIcon from '../../assets/judgment/swap.svg'
 import Button from '../../components/Button'
 import InlineEditField from '../../components/InlineEditField'
+import { paths } from '../../routes/paths'
+import { useCaseStore } from '../../store/useCaseStore'
 
 // TODO: API 연동 전 가짜 데이터
 const mockAnalysis = {
@@ -13,6 +16,8 @@ const mockAnalysis = {
 }
 
 function ConfirmPage() {
+  const navigate = useNavigate()
+  const startJudging = useCaseStore((state) => state.startJudging)
   const [isSwapped, setIsSwapped] = useState(false) // 화자 좌우 반전 여부
   const [situation, setSituation] = useState(mockAnalysis.situation) // 상황 (수정 가능!!)
 
@@ -63,9 +68,19 @@ function ConfirmPage() {
         <InlineEditField label="이번 갈등 핵심은" value={mockAnalysis.coreIssue} editable={false} />
       </div>
 
-      {/* TODO: AI 재판 로딩 화면이 생기면 이동 연결!! 수정한 내용 API로 보내기 */}
+      {/* 판결받기 → AI 판결 로딩 (사건 단계도 판결 로딩으로 바꿔서, 나갔다 오면 로딩부터 이어서 함) */}
+      {/* TODO: API 연동 시 수정한 내용 보내기 */}
       <div className="mt-auto pt-6">
-        <Button variant="primary" fullWidth disabled={!canSubmit} className="h-10">
+        <Button
+          variant="primary"
+          fullWidth
+          disabled={!canSubmit}
+          onClick={() => {
+            startJudging()
+            navigate(paths.judging, { replace: true })
+          }}
+          className="h-10"
+        >
           이대로 판결받기
         </Button>
       </div>

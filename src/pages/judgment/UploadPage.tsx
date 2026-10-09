@@ -3,14 +3,14 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import payRabbit from '../../assets/judgment/pay-rabbit.svg'
 import uploadRabbits from '../../assets/judgment/upload-rabbits.mp4'
 import Button from '../../components/Button'
 import ChipSelect from '../../components/ChipSelect'
-import Modal from '../../components/Modal'
+import Modal from '../../components/modal/Modal'
 import PhotoUploadBox from '../../components/PhotoUploadBox'
 import type { Photo } from '../../components/PhotoUploadBox'
 import { paths } from '../../routes/paths'
+import { useCaseStore } from '../../store/useCaseStore'
 
 // 첨부 가능한 사진 장수
 const MIN_PHOTOS = 1
@@ -19,25 +19,27 @@ const MAX_PHOTOS = 6
 // 상대와의 관계 선택지
 const RELATIONS = ['연애', '친구', '가족', '학교∙팀플', '기타'] as const
 
-// TODO: API 연동 시 사용자의 무료 이용권 보유 여부로 교체 (회원가입 시 1회 지급)
+// TODO: API 연동 시 사용자의 무료 이용권 보유 여부·보유 톨로 교체 (무료 이용권은 회원가입 시 1회 지급)
 const HAS_FREE_TICKET = true
+const TOLL_COUNT = 5
+
+// 사건 1건 접수에 드는 톨
+const TOLL_PER_CASE = 1
 
 function UploadPage() {
   const navigate = useNavigate()
   const [relation, setRelation] = useState<string>(RELATIONS[0]) // 상대와의 관계
   const [photos, setPhotos] = useState<Photo[]>([]) // 대화 캡처
-  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false) // 무료 이용권 모달
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false) // 사건 접수 확인 모달
+  const receiveCase = useCaseStore((state) => state.receiveCase)
 
   // 최소 장수를 채워야 CTA 활성화
   const canSubmit = photos.length >= MIN_PHOTOS
 
-  // 사건 접수하기: 무료 이용권이 있으면 모달, 없으면 결제로
-  const handleSubmit = () => {
-    if (HAS_FREE_TICKET) {
-      setIsTicketModalOpen(true)
-      return
-    }
-    // TODO: 결제하기 화면이 생기면 결제로 이동 (지금은 바로 사건접수 로딩~)
+  // 모달에서 사건 접수하기 → 사건접수 로딩
+  // TODO: 결제하기 화면이 생기면 무료 이용권이 없고 톨이 부족할 때(TOLL_COUNT < TOLL_PER_CASE) 결제로 이동
+  const handleConfirmSubmit = () => {
+    receiveCase()
     navigate(paths.received)
   }
 
@@ -70,27 +72,36 @@ function UploadPage() {
           className="block size-full object-cover"
         />
         {/* TODO: API 연동 시 관계·사진 함께 넘기기 */}
-        <Button variant="white" disabled={!canSubmit} onClick={handleSubmit} className="absolute inset-x-6 bottom-10">
+        <Button variant="white" disabled={!canSubmit} onClick={() => setIsSubmitModalOpen(true)} className="absolute inset-x-6 bottom-10">
           사건 접수하기
         </Button>
       </div>
 
-      {/* 무료 이용권 사용 확인 모달~ */}
+      {/* 사건 접수 확인 모달: 무료 이용권이 있으면 이용권 문구, 없으면 톨 차감 문구 */}
+      {/* 취소 → 이 화면에 그대로 */}
       <Modal
-        open={isTicketModalOpen}
-        illustration={
-          <img src={payRabbit} alt="" width={205} height={185} className="mx-auto -mb-2.5 block" />
-        }
-        title="무료 이용권을 사용하겠습니까?"
+        open={isSubmitModalOpen}
+        title={HAS_FREE_TICKET ? '무료 이용권을 사용하겠습니까?' : `${TOLL_PER_CASE}톨을 사용해 사건을 접수할까요?`}
         description={
-          <>
-            첫 회원 가입 이후 제공되는 무료 이용권
-            <br />
-            1회를 사용해 결제합니다.
-          </>
+          HAS_FREE_TICKET ? (
+            <>
+              첫 회원 가입 이후 제공되는 무료 이용권
+              <br />
+              1회를 사용해 결제합니다.
+            </>
+          ) : (
+            <>
+              접수하면 {TOLL_PER_CASE}톨이 차감돼요.
+              <br />
+              <span className="text-keycolor-100">현재 보유: {TOLL_COUNT}톨</span>
+            </>
+          )
         }
-        onCancel={() => setIsTicketModalOpen(false)}
-        onConfirm={() => navigate(paths.received)}
+        cancelText="취소"
+        confirmText="사건 접수하기"
+        wideConfirm
+        onCancel={() => setIsSubmitModalOpen(false)}
+        onConfirm={handleConfirmSubmit}
       />
     </div>
   )

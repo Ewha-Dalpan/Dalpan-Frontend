@@ -1,12 +1,12 @@
 import { useRef } from "react";
 import type { PointerEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import aiJudge from "../../assets/home/ai-judge.svg";
 import ground from "../../assets/home/ground.svg";
 import participants from "../../assets/home/participants.svg";
-import rabbits from "../../assets/home/rabbits.png";
+import rabbitHome from "../../assets/home/rabbit-home.mp4";
 import Button from "../../components/Button";
-import { paths } from "../../routes/paths";
+import type { MainLayoutContext } from "../../layouts/MainLayout";
 
 // API 연결 전 가아짜 데이터
 const featuredCases = [
@@ -37,7 +37,7 @@ const featuredCases = [
 ];
 
 function HomePage() {
-  const navigate = useNavigate();
+  const { startJudgment } = useOutletContext<MainLayoutContext>();
   const dragStart = useRef<{ x: number; scrollLeft: number } | null>(null);
 
   // 터치는 기본 스와이프, 마우스는 드래그로 이동!!
@@ -72,10 +72,18 @@ function HomePage() {
         alt=""
         className="pointer-events-none absolute left-[calc(50%+0.5px)] top-[466px] -z-10 block max-w-none -translate-x-1/2"
       />
-      <img
-        src={rabbits}
-        alt=""
-        className="pointer-events-none absolute left-[calc(50%-190.5px)] top-[406px] -z-10 h-[210px] w-[375px] max-w-none object-cover"
+      {/* 움직이는 토끼 */}
+      <video
+        src={rabbitHome}
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden="true"
+        width={756}
+        height={390}
+        // 일부 기기에서 영상 아래에 검은 선이 생겨서 2px씩 잘라냈어요!!
+        className="pointer-events-none absolute inset-x-0 top-[408px] -z-10 block h-auto w-full [clip-path:inset(0_2px_2px_0)]"
       />
 
       <section
@@ -100,7 +108,7 @@ function HomePage() {
         </div>
         <Button
           variant="primary"
-          onClick={() => navigate(paths.upload)}
+          onClick={startJudgment}
           className="absolute inset-x-0 top-[117px] ml-[16px] mr-[15px]"
         >
           대화 캡처로 바로 판결받기
