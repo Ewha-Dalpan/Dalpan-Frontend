@@ -1,11 +1,12 @@
 // 확인 중인 사건이 있을 때 AI 재판을 새로 시작하려 하면 뜨는 모달 2개
-// 1차: 확인 중인 사건이 있어요 (새로 시작하기 → 2차 / 이어서 하기 → 상황확인)
-// 2차: 새로 시작하면 현재 사건을 이어갈 수 없어요 (계속 확인하기 → 상황확인 / 새로 시작하기 → 업로드)
+// 1차: 확인 중인 사건이 있어요 (새로 시작하기 → 2차 / 이어서 하기 → 나갔던 화면(상황확인 or 판결 로딩))
+// 2차: 새로 시작하면 현재 사건을 이어갈 수 없어요 (계속 확인하기 → 나갔던 화면 / 새로 시작하기 → 업로드)
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { paths } from '../routes/paths'
 import { useCaseStore } from '../store/useCaseStore'
+import type { CaseStage } from '../store/useCaseStore'
 import Modal from './Modal'
 
 // 예: 9월 17일 오후 9:12
@@ -15,6 +16,12 @@ const receivedAtFormat = new Intl.DateTimeFormat('ko-KR', {
   hour: 'numeric',
   minute: '2-digit',
 })
+
+// 단계별로 이어갈 화면과 문구
+const resumeByStage: Record<CaseStage, { path: string; text: string }> = {
+  confirm: { path: paths.confirm, text: '상황 확인을 이어서 진행할까요?' },
+  judging: { path: paths.judging, text: '판결을 이어서 확인할까요?' },
+}
 
 type PendingCaseModalsProps = {
   open: boolean
@@ -26,6 +33,7 @@ function PendingCaseModals({ open, onClose }: PendingCaseModalsProps) {
   const pendingCase = useCaseStore((state) => state.pendingCase)
   const clearPendingCase = useCaseStore((state) => state.clearPendingCase)
   const [isRestartStep, setIsRestartStep] = useState(false) // 2차 모달 단계인지
+  const resume = resumeByStage[pendingCase?.stage ?? 'confirm']
 
   const close = () => {
     setIsRestartStep(false)
@@ -51,14 +59,14 @@ function PendingCaseModals({ open, onClose }: PendingCaseModalsProps) {
             )}
             에 접수한 사건의
             <br />
-            상황 확인을 이어서 진행할까요?
+            {resume.text}
           </>
         }
         cancelText="새로 시작하기"
         confirmText="이어서 하기"
         onCancel={() => setIsRestartStep(true)}
         onDismiss={close}
-        onConfirm={() => goTo(paths.confirm)}
+        onConfirm={() => goTo(resume.path)}
       />
       <Modal
         open={open && isRestartStep}
@@ -72,7 +80,7 @@ function PendingCaseModals({ open, onClose }: PendingCaseModalsProps) {
         }
         cancelText="계속 확인하기"
         confirmText="새로 시작하기"
-        onCancel={() => goTo(paths.confirm)}
+        onCancel={() => goTo(resume.path)}
         onDismiss={close}
         onConfirm={() => {
           clearPendingCase()

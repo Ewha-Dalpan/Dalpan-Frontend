@@ -10,5 +10,6 @@ export const paths = {
   upload: "/judgment/upload",
   received: "/judgment/received",
   confirm: "/judgment/confirm",
+  judging: "/judgment/judging",
   login: "/login",
 } as const;
