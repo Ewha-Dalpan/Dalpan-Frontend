@@ -77,8 +77,7 @@ function VerdictResultPage() {
         <div className="mt-2.25 h-[min(521px,132.57cqw)]">
           <div className="origin-top-left scale-[min(1,calc(100cqw/393px))]">
             <div ref={captureRef} className="bg-white-100 py-6">
-              {/* TODO: '왜 이렇게 판단했을까?' 화면이 생기면 onWhyClick 연결 */}
-              <VerdictSummary size="full" {...summary} />
+              <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason)} />
             </div>
           </div>
         </div>

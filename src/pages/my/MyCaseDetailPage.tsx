@@ -1,13 +1,14 @@
 // 마이 - 내 사건 상세 (판결문이 봉투에서 쓱 올라옴)
 // 판결 내용은 VerdictSummary, 봉투는 Envelope 공통 컴포넌트 사용
 
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { EnvelopeBack, EnvelopeFront } from '../../components/Envelope'
 import VerdictSummary from '../../components/VerdictSummary'
 import { paths } from '../../routes/paths'
 import { exampleMyCases } from './exampleMyCases'
 
 function MyCaseDetailPage() {
+  const navigate = useNavigate()
   const { caseId } = useParams()
   const item = exampleMyCases.find((entry) => String(entry.id) === caseId)
 
@@ -21,7 +22,7 @@ function MyCaseDetailPage() {
           <div className="absolute inset-y-0 left-6 w-86.25 rounded-lg bg-white-100" />
           <div className="absolute top-9 left-1/2 -translate-x-1/2">
             {/* TODO: API 연동 시 사건 번호·관계 교체 */}
-            <VerdictSummary size="card" caseNumber="月 제0241호" relation="연인" title={item.title} />
+            <VerdictSummary size="card" caseNumber="月 제0241호" relation="연인" title={item.title} onWhyClick={() => navigate(paths.myCaseReason(item.id))} />
           </div>
         </div>
       </div>
