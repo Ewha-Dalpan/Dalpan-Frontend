@@ -1,7 +1,7 @@
-// 온보딩 - 로그인 페이지
+import SplashPage from './SplashPage'
 
 function LoginPage() {
-  return <div>LoginPage</div>
+  return <SplashPage buttonLabel="카카오로 계속하기" />
 }
 
 export default LoginPage

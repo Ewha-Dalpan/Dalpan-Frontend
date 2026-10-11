@@ -10,4 +10,6 @@ export const paths = {
   upload: "/judgment/upload",
   confirm: "/judgment/confirm",
   login: "/login",
+  signup: "/signup",
+  splash: "/splash",
 } as const;
