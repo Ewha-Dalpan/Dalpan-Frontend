@@ -37,7 +37,7 @@ function PhotoUploadBox({ photos, onChange, min = 1, max = 6, label = '이미지
   const moveDrag = (event: PointerEvent<HTMLDivElement>) => {
     if (!drag.current) return
     const dx = event.clientX - drag.current.x
-    // 살짝 움직인 건 클릭으로 처리 (삭제·첨부 버튼 클릭 유지)
+    // 살짝 움직인 건 클릭으로 처리 (삭제/첨부 버튼 클릭 유지)
     if (!drag.current.moved) {
       if (Math.abs(dx) < 5) return
       drag.current.moved = true
@@ -81,7 +81,7 @@ function PhotoUploadBox({ photos, onChange, min = 1, max = 6, label = '이미지
 
   return (
     <div>
-      <p id={labelId} className="text-b2-medium text-black">{label}</p>
+      <p id={labelId} className="text-b2-regular text-gray-90">{label}</p>
       <div
         onPointerDown={startDrag}
         onPointerMove={moveDrag}
@@ -89,7 +89,7 @@ function PhotoUploadBox({ photos, onChange, min = 1, max = 6, label = '이미지
         onPointerCancel={endDrag}
         onClickCapture={blockClickAfterDrag}
         onDragStart={(event) => event.preventDefault()}
-        className="mt-1.25 flex select-none overflow-x-auto overscroll-x-contain scrollbar-none"
+        className="mt-1.75 flex select-none overflow-x-auto overscroll-x-contain scrollbar-none"
       >
         {/* 첨부 버튼 */}
         <div className="shrink-0 pt-1.75 pr-2.25">
@@ -135,7 +135,7 @@ function PhotoUploadBox({ photos, onChange, min = 1, max = 6, label = '이미지
         </ul>
       </div>
       {showHint && (
-        <p id={hintId} className="mt-2.25 text-center text-[10px] leading-normal text-gray-60">
+        <p id={hintId} className="text-l2-regular mt-1.75 text-gray-60">
           최소 {min}장 이상 첨부해야 합니다.
         </p>
       )}
