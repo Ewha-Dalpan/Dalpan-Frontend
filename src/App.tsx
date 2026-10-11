@@ -11,7 +11,6 @@ import MyJuryActivityPage from './pages/my/MyJuryActivityPage'
 import MyCasesPage from './pages/my/MyCasesPage'
 import MyCaseDetailPage from './pages/my/MyCaseDetailPage'
 import LoginPage from './pages/onboarding/LoginPage'
-import SplashPage from './pages/onboarding/SplashPage'
 import { paths } from './routes/paths'
 
 function App() {
@@ -33,7 +32,7 @@ function App() {
         </Route>
         <Route path={paths.login} element={<LoginPage />} />
         <Route path={paths.signup} element={<Navigate to={paths.login} replace />} />
-        <Route path={paths.splash} element={<SplashPage />} />
+        <Route path={paths.splash} element={<Navigate to={paths.login} replace />} />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
     </BrowserRouter>
