@@ -38,7 +38,8 @@ function Participation({ item }: { item: (typeof exampleJuryCases)[number] }) {
       <div className="absolute left-0 top-0 h-[804px] w-[393px] origin-top-left scale-[min(1,calc(100cqw/393px))]">
         <Header depth={2} title="배심원석" theme="white" onBack={goBack} />
         <main>
-          <div className="absolute inset-x-[24px] top-[56px] flex flex-col items-center gap-[4px]">
+          <div className="absolute inset-x-0 top-[56px] flex flex-col gap-[23px]">
+          <div className="mx-[24px] flex flex-col items-center gap-[4px]">
             <p className="text-l2-regular text-gray-30">2026. 9. 17</p>
             <div className="flex items-center justify-center gap-[2px]">
               <span className="text-l1-medium shrink-0 rounded-full bg-keycolor-5 px-[8px] py-[4px] text-keycolor-100">{item.category}</span>
@@ -46,7 +47,7 @@ function Participation({ item }: { item: (typeof exampleJuryCases)[number] }) {
             </div>
           </div>
           <ul tabIndex={0} aria-label="대화 캡처 (좌우로 넘겨보기)" {...scrollHandlers}
-            className="scrollbar-none absolute inset-x-0 top-[131px] flex gap-[3.515px] overflow-x-auto overscroll-x-contain touch-pan-x cursor-grab active:cursor-grabbing px-[24px] select-none focus-visible:outline-2 focus-visible:outline-keycolor-40"
+            className="scrollbar-none flex gap-[3.515px] overflow-x-auto overscroll-x-contain touch-pan-x cursor-grab active:cursor-grabbing px-[24px] select-none focus-visible:outline-2 focus-visible:outline-keycolor-40"
             onScroll={resetHint}>
             {[0, 1, 2].map((index) => (
               <li key={index} className="relative size-[201px] shrink-0 overflow-hidden rounded-[14.306px] bg-gray-10">
@@ -56,6 +57,7 @@ function Participation({ item }: { item: (typeof exampleJuryCases)[number] }) {
               </li>
             ))}
           </ul>
+          </div>
           <JuryBalance value={ratio} touched={touched} showHint={showHint} onChange={setRatio} onTouch={() => { setTouched(true); setShowHint(false) }} />
           <Button disabled={!touched} onClick={() => showToast('판결 제출 기능은 준비 중이에요.')}
             className="text-b2-semibold absolute left-[24px] top-[721px] z-30 flex h-[40px] w-[345px] items-center justify-center rounded-[8px] bg-keycolor-100 text-white-100 enabled:cursor-pointer disabled:bg-gray-10 disabled:text-gray-60">
