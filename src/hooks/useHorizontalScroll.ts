@@ -1,37 +1,48 @@
-// 가로 스크롤 목록을 터치, 마우스, 키보드로 모두 넘길 수 있게 하는 훅
-
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { DragEvent, KeyboardEvent, PointerEvent } from 'react'
 
 export const useHorizontalScroll = (step: number) => {
-  const drag = useRef<{ x: number; scrollLeft: number; moved: boolean } | null>(null)
+  const drag = useRef<{ x: number; scrollLeft: number; moved: boolean; scale: number } | null>(null)
 
-  // 마우스 왼쪽 버튼으로 누를 때만 끌기 시작 (터치는 브라우저 기본 스와이프 사용)
+  const frame = useRef<number | null>(null)
+  const pending = useRef<{ element: HTMLElement; left: number } | null>(null)
+
+  const flush = () => {
+    if (pending.current) pending.current.element.scrollLeft = pending.current.left
+    pending.current = null
+    frame.current = null
+  }
+
+  useEffect(() => () => {
+    if (frame.current !== null) cancelAnimationFrame(frame.current)
+  }, [])
+
   const onPointerDown = (event: PointerEvent<HTMLElement>) => {
-    if (event.pointerType !== 'mouse' || event.button !== 0) return
-    drag.current = { x: event.clientX, scrollLeft: event.currentTarget.scrollLeft, moved: false }
+    if (event.pointerType !== 'mouse' || !event.isPrimary || event.button !== 0) return
+    drag.current = { x: event.clientX, scrollLeft: event.currentTarget.scrollLeft, moved: false, scale: event.currentTarget.getBoundingClientRect().width / event.currentTarget.offsetWidth }
   }
 
   const onPointerMove = (event: PointerEvent<HTMLElement>) => {
     if (!drag.current) return
-    const dx = event.clientX - drag.current.x
-    // 살짝 움직인 건 클릭으로 처리
+    const dx = (event.clientX - drag.current.x) / drag.current.scale
     if (!drag.current.moved) {
       if (Math.abs(dx) < 5) return
       drag.current.moved = true
       event.currentTarget.setPointerCapture(event.pointerId)
     }
-    event.currentTarget.scrollLeft = drag.current.scrollLeft - dx
+    pending.current = { element: event.currentTarget, left: drag.current.scrollLeft - dx }
+    if (frame.current === null) frame.current = requestAnimationFrame(flush)
   }
 
   const endDrag = (event: PointerEvent<HTMLElement>) => {
+    if (frame.current !== null) cancelAnimationFrame(frame.current)
+    flush()
     drag.current = null
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
   }
 
-  // ← → 방향키로 한 칸씩 이동
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
     event.preventDefault()
@@ -44,8 +55,8 @@ export const useHorizontalScroll = (step: number) => {
     onPointerMove,
     onPointerUp: endDrag,
     onPointerCancel: endDrag,
+    onLostPointerCapture: endDrag,
     onKeyDown,
-    // 이미지를 끌 때 브라우저 기본 '이미지 드래그'가 끼어들지 않게 막음
     onDragStart: (event: DragEvent<HTMLElement>) => event.preventDefault(),
   }
 }

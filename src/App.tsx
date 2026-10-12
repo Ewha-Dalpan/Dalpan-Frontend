@@ -10,6 +10,8 @@ import VerdictPage from './pages/judgment/VerdictPage'
 import VerdictResultPage from './pages/judgment/VerdictResultPage'
 import VerdictReasonPage from './pages/judgment/VerdictReasonPage'
 import JuryRequestPage from './pages/judgment/JuryRequestPage'
+import JuryParticipationPage from './pages/jury/JuryParticipationPage'
+import JuryDetailPage from './pages/jury/JuryDetailPage'
 import JuryPage from './pages/jury/JuryPage'
 import JuryExplorePage from './pages/jury/JuryExplorePage'
 import MyPage from './pages/my/MyPage'
@@ -45,7 +47,11 @@ function App() {
         <Route path={paths.verdictReason} element={<VerdictReasonPage />} />
         <Route path={paths.myCaseReasonPattern} element={<VerdictReasonPage />} />
         <Route path={paths.juryRequest} element={<JuryRequestPage />} />
+        <Route path={paths.juryDetailPattern} element={<JuryDetailPage />} />
+        <Route path={paths.juryParticipatePattern} element={<JuryParticipationPage />} />
         <Route path={paths.login} element={<LoginPage />} />
+        <Route path={paths.signup} element={<Navigate to={paths.login} replace />} />
+        <Route path={paths.splash} element={<Navigate to={paths.login} replace />} />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
     </BrowserRouter>
