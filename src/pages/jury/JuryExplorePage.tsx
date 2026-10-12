@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { paths } from '../../routes/paths'
+import { exampleJuryCases } from './exampleJuryCases'
 import participants from '../../assets/jury/participants.svg'
 import comment from '../../assets/jury/explore/comment.svg'
 import JuryFilterDropdown from './JuryFilterDropdown'
@@ -6,18 +9,13 @@ import JuryFilterDropdown from './JuryFilterDropdown'
 const categories = ['전체', '연애', '친구', '가족', '직장·학교', '기타'] as const
 const sortOptions = ['최신순', '인기순'] as const
 
-const exampleCases = [
-  { id: 1, category: '연애', title: ['약속 당일 4시간 연락이 없었는데,', '제가 예민한 건가요?'], participants: 128, comments: 21, popularRank: 1, createdOrder: 1 },
-  { id: 2, category: '친구', title: ['제 생일은 넘어가고', '자기 생일 선물은 챙겨달라는 친구'], participants: 96, comments: 10, popularRank: 2, createdOrder: 2 },
-  { id: 3, category: '직장·학교', title: ['팀플 단톡방에서 제 의견만 계속', '무시돼요. 제가 예민한 걸까요?'], participants: 32, comments: 21, popularRank: 3, createdOrder: 3 },
-  { id: 4, category: '가족', title: ['부모님이 제 진로 얘기만 나오면', '비교하세요.'], participants: 71, comments: 7, popularRank: 4, createdOrder: 4 },
-]
+
 
 function JuryExplorePage() {
   const [category, setCategory] = useState('전체')
   const [sort, setSort] = useState('인기순')
   const [openFilter, setOpenFilter] = useState<'category' | 'sort' | null>(null)
-  const cases = exampleCases
+  const cases = exampleJuryCases
     .filter((item) => category === '전체' || item.category === category)
     .sort((a, b) => sort === '인기순' ? a.popularRank - b.popularRank : b.createdOrder - a.createdOrder)
 
@@ -32,7 +30,7 @@ function JuryExplorePage() {
       <ul aria-label="사건 목록" className="mt-[12px]">
         {cases.map((item) => (
           <li key={item.id} className="not-first:pt-[3px]">
-            <article className="flex items-center gap-[5px] px-[24px] py-[16px]">
+            <Link to={paths.juryParticipate(item.id)} className="flex items-center gap-[5px] px-[24px] py-[16px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
               <div className="flex min-w-0 flex-1 flex-col items-start gap-[4px]">
                 <span className="text-l1-medium rounded-[50px] bg-sub px-[8px] py-[4px]">{item.category}</span>
                 <div className="flex w-full flex-col gap-[7px] px-[2px]">
@@ -52,7 +50,7 @@ function JuryExplorePage() {
                 </div>
               </div>
               <div aria-hidden="true" className="size-[105px] shrink-0 rounded-[8px] bg-gray-5" />
-            </article>
+            </Link>
             <div className="mx-[10px] mt-[3px] h-px bg-sub" />
           </li>
         ))}
