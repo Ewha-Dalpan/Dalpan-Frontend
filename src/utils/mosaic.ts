@@ -36,7 +36,7 @@ const gridSize = (image: HTMLImageElement) => {
   return { width, height, block, cols: Math.ceil(width / block), rows: Math.ceil(height / block) }
 }
 
-// 편집 화면용: 사진의 격자 정보와 칸별 색
+// 편집 화면용 사진의 격자 정보와 칸별 색
 export const createMosaicGrid = async (src: string): Promise<MosaicGrid> => {
   const image = await loadImage(src)
   const size = gridSize(image)

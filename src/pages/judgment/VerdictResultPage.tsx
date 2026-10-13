@@ -9,6 +9,7 @@ import titleImage from '../../assets/verdict/title.svg'
 import Button from '../../components/Button'
 import ShareSheet from '../../components/modal/ShareSheet'
 import Toast from '../../components/Toast'
+import VerdictShareImage from '../../components/VerdictShareImage'
 import VerdictSummary from '../../components/VerdictSummary'
 import { useToast } from '../../hooks/useToast'
 import { paths } from '../../routes/paths'
@@ -23,6 +24,14 @@ const mockVerdict = {
   reply: '다음부터 늦어질 것 같으면 미리 한마디만 해줬으면 좋겠어. 약속이 어떻게 되는지 몰라서 좀 서운했어.',
 }
 
+// 공유 이미지에 들어가는 과실 근거와 비율 (TODO: API 연동 시 교체)
+const mockFault = {
+  myReasons: ['내 과실 근거'],
+  otherReasons: ['약속 전 연락 공백', '일정의 불확실성', '응답성 부족'],
+  myRatio: 10,
+  otherRatio: 90,
+}
+
 // TODO: 사건별 공유 주소가 생기면 교체 (지금은 서비스 첫 화면)
 const SHARE_URL = window.location.origin
 
@@ -30,7 +39,7 @@ function VerdictResultPage() {
   const navigate = useNavigate()
   const { toast, showToast, hideToast } = useToast()
   const [isShareOpen, setIsShareOpen] = useState(false) // 공유하기 모달
-  const captureRef = useRef<HTMLDivElement>(null) // 공유할 때 캡처하는 판결 요약 영역
+  const captureRef = useRef<HTMLDivElement>(null) // 저장할 때 캡처하는 판결문 이미지
   const shareImage = useRef<Promise<File | null> | null>(null) // 캡처 이미지 
   const { reply, ...summary } = mockVerdict
 
@@ -74,16 +83,14 @@ function VerdictResultPage() {
       </header>
 
       <main className="motion-safe:animate-[fade-up_500ms_ease-out_both]">
-        <div className="mt-2.25 h-[min(521px,132.57cqw)]">
+        <div className="mt-8.25 h-[min(473px,120.356cqw)]">
           <div className="origin-top-left scale-[min(1,calc(100cqw/393px))]">
-            <div ref={captureRef} className="bg-white-100 py-6">
-              <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason)} />
-            </div>
+            <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason)} />
           </div>
         </div>
 
         {/* 추천 답장 + 복사 */}
-        <section aria-label="추천 답장" className="mx-6 mt-5.25 flex items-start rounded-lg bg-gray-5 px-4 py-3">
+        <section aria-label="추천 답장" className="mx-6 mt-11.25 flex items-start rounded-lg bg-gray-5 px-4 py-3">
           <div className="flex-1">
             <p className="text-b3-medium text-gray-50">이렇게 보내보는 건 어때요?</p>
             <p className="text-b2-medium mt-0.5 text-gray-80">{reply}</p>
@@ -102,6 +109,11 @@ function VerdictResultPage() {
           </Button>
         </div>
       </main>
+
+      {/* 공유용 판결문 이미지 */}
+      <div aria-hidden="true" inert className="pointer-events-none fixed top-0 left-[-10000px]">
+        <VerdictShareImage ref={captureRef} {...summary} {...mockFault} />
+      </div>
 
       <ShareSheet open={isShareOpen} onClose={() => setIsShareOpen(false)} onSelect={handleShare} />
       <Toast toast={toast} onHide={hideToast} />

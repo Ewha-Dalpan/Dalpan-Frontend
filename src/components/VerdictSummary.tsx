@@ -10,9 +10,7 @@ import tail1 from '../assets/verdict/reason-tail-1.svg'
 import tail2 from '../assets/verdict/reason-tail-2.svg'
 import tail3 from '../assets/verdict/reason-tail-3.svg'
 import tailLeft from '../assets/verdict/reason-tail-left.svg'
-import beam from '../assets/verdict/scale-beam.svg'
-import leftPan from '../assets/verdict/scale-left.svg'
-import rightPan from '../assets/verdict/scale-right.svg'
+import VerdictScale from './VerdictScale'
 
 // card 크기 기준 너비, 높이와, 크기별 배율
 const BASE_WIDTH = 365.73
@@ -62,13 +60,7 @@ function VerdictSummary({ size, caseNumber, relation, title, onWhyClick }: Verdi
         {riceCakes.map(([x, y]) => (
           <img key={`${x}-${y}`} src={riceCake} alt="" className="absolute size-[47.462px] max-w-none object-cover" style={{ left: x, top: y }} />
         ))}
-        <div aria-hidden="true" className="absolute left-[40.83px] top-[118.19px] h-[232.659px] w-[274.538px] overflow-hidden">
-          <div className="absolute inset-[15.3%_18.37%_51.59%_20.57%] flex items-center justify-center">
-            <img src={beam} alt="" className="block max-w-none shrink-0 rotate-[8.85deg] skew-x-[0.55deg]" />
-          </div>
-          <img src={leftPan} alt="" className="absolute left-[6.62%] top-[13.23%] block max-w-none" />
-          <img src={rightPan} alt="" className="absolute left-[64.74%] top-[41.25%] block max-w-none" />
-        </div>
+        <VerdictScale className="absolute left-[40.83px] top-[118.19px]" />
 
         {/* 과실 비율 */}
         {ratios.map((ratio) => (
