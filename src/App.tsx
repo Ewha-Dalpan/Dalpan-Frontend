@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import JudgmentLayout from './layouts/JudgmentLayout'
+import ScrollToTop from './components/ScrollToTop'
 import HomePage from './pages/home/HomePage'
 import UploadPage from './pages/judgment/UploadPage'
 import ConfirmPage from './pages/judgment/ConfirmPage'
@@ -25,6 +26,8 @@ import { paths } from './routes/paths'
 function App() {
   return (
     <BrowserRouter>
+      {/* 페이지가 바뀌면 항상 맨 위에서 시작 */}
+      <ScrollToTop />
       <Routes>
         <Route element={<MainLayout />}>
           <Route path={paths.home} element={<HomePage />} />
