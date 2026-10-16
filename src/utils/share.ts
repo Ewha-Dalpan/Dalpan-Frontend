@@ -3,11 +3,12 @@
 // 웹에서 SNS로 보낼 수 있는 것!! (각 SNS 정책)
 // - 페이스북, X: 링크, 문구만 가능 (웹에서 이미지를 직접 붙일 수 없음)
 // - 인스타그램: 웹 공유 주소가 없어서, 휴대폰 공유 창(Web Share)으로 이미지를 넘겨야 함
-// - 카카오톡: 바로 보내려면 카카오 SDK + 앱 키가 필요 → 지금은 휴대폰 공유 창에서 카카오톡 선택 / PC는 링크 복사
+// - 카카오톡: 카카오 SDK로 바로 보내기 (앱 키 필요, utils/kakao.ts) → 키가 없으면 휴대폰 공유 창 / PC 링크 복사
 // - 휴대폰 공유 창(인스타그램, 카카오톡, 더보기): 이미지 + 링크를 함께 보낼 수 있음
 //   PC 등 지원 안 되는 곳에서는 이미지 저장 + 링크 복사로 대신함
 
 import { toBlob } from 'html-to-image'
+import { shareToKakao } from './kakao'
 
 export type ShareTarget = 'link' | 'instagram' | 'kakao' | 'facebook' | 'x' | 'save' | 'more'
 
@@ -151,8 +152,9 @@ export const shareTo = async (target: ShareTarget, content: ShareContent) => {
       window.open(`https://x.com/intent/post?text=${text}&url=${url}`, '_blank', 'noopener')
       return null
     case 'kakao':
-      // TODO: 카카오 개발자 앱 키가 생기면 카카오 SDK(Kakao.Share)로 바로 보내기 >> 이거 백엔드 분들한테 여쭤보기...
-      // 휴대폰: 공유 창에서 카카오톡 선택 / PC: 링크 복사
+      // 카카오 앱 키가 있으면 카카오톡으로 바로 보내기
+      if (shareToKakao(content)) return null
+      // 키가 없거나 실패하면 → 휴대폰: 공유 창에서 카카오톡 선택 / PC: 링크 복사
       if (isMobile()) return shareWithImage(content, '링크를 복사했습니다. 카카오톡에 붙여넣어 주세요.')
       return (await copyLink(content.url)) ? '링크를 복사했습니다. 카카오톡에 붙여넣어 주세요.' : '링크를 복사하지 못했습니다.'
     case 'save':

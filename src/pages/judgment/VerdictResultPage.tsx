@@ -13,6 +13,7 @@ import VerdictShareImage from '../../components/VerdictShareImage'
 import VerdictSummary from '../../components/VerdictSummary'
 import { useToast } from '../../hooks/useToast'
 import { paths } from '../../routes/paths'
+import { loadKakao } from '../../utils/kakao'
 import { captureImage, shareTo } from '../../utils/share'
 import type { ShareTarget } from '../../utils/share'
 
@@ -55,6 +56,7 @@ function VerdictResultPage() {
 
   // 공유하기 모달을 여는 동안 미리 캡처해 둠
   const openShare = () => {
+    void loadKakao() // 카카오톡 버튼을 누르기 전에 SDK를 미리 불러둠
     shareImage.current ??= captureImage(captureRef.current, '달판-판결문.png')
     setIsShareOpen(true)
   }
