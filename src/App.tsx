@@ -10,6 +10,7 @@ import VerdictPage from './pages/judgment/VerdictPage'
 import VerdictResultPage from './pages/judgment/VerdictResultPage'
 import VerdictReasonPage from './pages/judgment/VerdictReasonPage'
 import JuryRequestPage from './pages/judgment/JuryRequestPage'
+import SharedVerdictPage from './pages/judgment/SharedVerdictPage'
 import JuryParticipationPage from './pages/jury/JuryParticipationPage'
 import JuryDetailPage from './pages/jury/JuryDetailPage'
 import JuryPage from './pages/jury/JuryPage'
@@ -47,6 +48,10 @@ function App() {
         <Route path={paths.verdictReason} element={<VerdictReasonPage />} />
         <Route path={paths.myCaseReasonPattern} element={<VerdictReasonPage />} />
         <Route path={paths.juryRequest} element={<JuryRequestPage />} />
+        {/* 공유 받은 사람이 링크로 들어오는 판결문 (헤더·GNB 없는 단독 화면) */}
+        <Route path={paths.sharedVerdictPattern} element={<SharedVerdictPage />} />
+        {/* 공유 받은 사람도 판단 근거를 볼 수 있음 (같은 근거 페이지) */}
+        <Route path={paths.sharedVerdictReasonPattern} element={<VerdictReasonPage />} />
         <Route path={paths.juryDetailPattern} element={<JuryDetailPage />} />
         <Route path={paths.juryParticipatePattern} element={<JuryParticipationPage />} />
         <Route path={paths.login} element={<LoginPage />} />
