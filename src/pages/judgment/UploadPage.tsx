@@ -11,16 +11,13 @@ import PhotoUploadBox from '../../components/PhotoUploadBox'
 import type { Photo } from '../../components/PhotoUploadBox'
 import { paths } from '../../routes/paths'
 import { useCaseStore } from '../../store/useCaseStore'
+import { RELATIONS } from '../../types/case'
 
 // 첨부 가능한 사진 장수
 const MIN_PHOTOS = 1
 const MAX_PHOTOS = 6
 
-// 상대와의 관계 선택지
-const RELATIONS = ['연애', '친구', '가족', '학교∙팀플', '기타'] as const
-
-// TODO: API 연동 시 사용자의 무료 이용권 보유 여부·보유 톨로 교체 (무료 이용권은 회원가입 시 1회 지급)
-const HAS_FREE_TICKET = true
+// TODO: API 연동 시 보유 톨로 교체 (회원가입하면 1톨 자동 지급)
 const TOLL_COUNT = 5
 
 // 사건 1건 접수에 드는 톨
@@ -37,7 +34,7 @@ function UploadPage() {
   const canSubmit = photos.length >= MIN_PHOTOS
 
   // 모달에서 사건 접수하기 → 사건접수 로딩
-  // TODO: 결제하기 화면이 생기면 무료 이용권이 없고 톨이 부족할 때(TOLL_COUNT < TOLL_PER_CASE) 결제로 이동
+  // TODO: 결제하기 화면이 생기면 톨이 부족할 때(TOLL_COUNT < TOLL_PER_CASE) 결제로 이동
   const handleConfirmSubmit = () => {
     receiveCase()
     navigate(paths.received)
@@ -77,25 +74,17 @@ function UploadPage() {
         </Button>
       </div>
 
-      {/* 사건 접수 확인 모달: 무료 이용권이 있으면 이용권 문구, 없으면 톨 차감 문구 */}
+      {/* 사건 접수 확인 모달 (첫 가입 때 받은 1톨도 같은 방식으로 사용) */}
       {/* 취소 → 이 화면에 그대로 */}
       <Modal
         open={isSubmitModalOpen}
-        title={HAS_FREE_TICKET ? '무료 이용권을 사용하겠습니까?' : `${TOLL_PER_CASE}톨을 사용해 사건을 접수할까요?`}
+        title={`${TOLL_PER_CASE}톨을 사용해 사건을 접수할까요?`}
         description={
-          HAS_FREE_TICKET ? (
-            <>
-              첫 회원 가입 이후 제공되는 무료 이용권
-              <br />
-              1회를 사용해 결제합니다.
-            </>
-          ) : (
-            <>
-              접수하면 {TOLL_PER_CASE}톨이 차감돼요.
-              <br />
-              <span className="text-keycolor-100">현재 보유: {TOLL_COUNT}톨</span>
-            </>
-          )
+          <>
+            접수하면 {TOLL_PER_CASE}톨이 차감돼요.
+            <br />
+            <span className="text-keycolor-100">현재 보유: {TOLL_COUNT}톨</span>
+          </>
         }
         cancelText="취소"
         confirmText="사건 접수하기"

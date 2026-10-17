@@ -1,8 +1,10 @@
 // 배심원석(목록, 상세, 투표, 댓글, 신고) API 타입
 // TODO: 명세서 상세 페이지가 비어 있어서, 안쪽 구조를 모르는 필드는 unknown으로 둠 (확정되면 수정)
 
-// 배심원석 관계 필터 값 (사건 생성 값 '학교·팀플'과 달라서 백엔드와 통일 필요)
-export type JuryRelation = '연애' | '친구' | '가족' | '직장·학교' | '기타'
+import type { CaseRelation } from './case'
+
+// 배심원석 관계 필터 값 (사건 접수 관계 값과 같음)
+export type JuryRelation = CaseRelation
 
 export type JurySort = 'latest' | 'popular' // 최신순 / 배심원 많은 순
 
