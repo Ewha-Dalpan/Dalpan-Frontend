@@ -1,20 +1,23 @@
 // 공통 공유하기 모달 
 
 import { useEffect, useRef } from 'react'
+import downloadIcon from '../../assets/share/download.svg'
 import facebookIcon from '../../assets/share/facebook.svg'
 import instagramIcon from '../../assets/share/instagram.png'
 import linkIcon from '../../assets/share/link.svg'
-import messengerIcon from '../../assets/share/messenger.svg'
+import kakaoIcon from '../../assets/share/kakaotalk.png'
 import xIcon from '../../assets/share/x.png'
 import type { ShareTarget } from '../../utils/share'
 import Button from '../Button'
 
+// 순서대로 4개씩 줄바꿈
 const TARGETS: { id: ShareTarget; label: string; icon?: string; iconClassName?: string }[] = [
   { id: 'link', label: '링크 복사', icon: linkIcon },
   { id: 'instagram', label: '인스타그램', icon: instagramIcon, iconClassName: 'size-9' },
-  { id: 'messenger', label: '메신저', icon: messengerIcon },
+  { id: 'kakao', label: '카카오톡' }, 
   { id: 'facebook', label: '페이스북', icon: facebookIcon },
   { id: 'x', label: 'X', icon: xIcon, iconClassName: 'size-10' },
+  { id: 'save', label: '이미지 저장', icon: downloadIcon },
   { id: 'more', label: '더보기' },
 ]
 
@@ -55,7 +58,11 @@ function ShareSheet({ open, onClose, onSelect }: ShareSheetProps) {
           <li key={target.id} className="w-13.75">
             <Button onClick={() => onSelect(target.id)} className="flex w-full cursor-pointer flex-col items-center gap-0.5">
               <span className="flex size-13.75 items-center justify-center rounded-full bg-[#efefef]">
-                {target.icon ? (
+                {target.id === 'kakao' ? (
+                  <span className="relative h-7.25 w-6.75 overflow-hidden">
+                    <img src={kakaoIcon} alt="" className="absolute top-0 left-[-1.66%] h-full w-[285.46%] max-w-none" />
+                  </span>
+                ) : target.icon ? (
                   <img src={target.icon} alt="" className={`block max-w-none ${target.iconClassName ?? ''}`} />
                 ) : (
                   <span aria-hidden="true" className="text-[20px] leading-none font-bold tracking-[0.03em] text-black">

@@ -1,10 +1,12 @@
 // AI 재판 - 배심원에게도 물어보기 (배심원석 등록)
 
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import chatSample from '../../assets/jury-request/chat-sample.png'
+import editIcon from '../../assets/jury-request/edit.svg'
 import Button from '../../components/Button'
 import Header from '../../components/Header'
+import MosaicEditor from '../../components/modal/MosaicEditor'
 import { useGoBack } from '../../hooks/useGoBack'
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll'
 import { paths } from '../../routes/paths'
@@ -25,6 +27,17 @@ function JuryRequestPage() {
   const goBack = useGoBack()
   const scrollHandlers = useHorizontalScroll(CAPTURE_STEP)
   const previewTitleId = useId()
+  const [captures, setCaptures] = useState(mockCase.captures) // 대화 캡처
+  const [editingIndex, setEditingIndex] = useState<number | null>(null) // 모자이크 편집 중인 캡처 번호
+
+  // 편집 완료: 해당 캡처를 모자이크된 이미지로 교체 
+  const handleSaveEdit = (editedSrc: string) => {
+    if (editingIndex === null) return
+    const previous = captures[editingIndex]
+    if (previous.startsWith('blob:')) URL.revokeObjectURL(previous)
+    setCaptures(captures.map((src, index) => (index === editingIndex ? editedSrc : src)))
+    setEditingIndex(null)
+  }
 
   // 배심원석에 올리기 → 배심원석으로 
   // TODO: API 연동 시 배심원석 등록 요청 보내기
@@ -62,11 +75,15 @@ function JuryRequestPage() {
               {...scrollHandlers}
               className="scrollbar-none mt-5.5 flex cursor-grab gap-1 overflow-x-auto overscroll-x-contain px-7.75 select-none focus-visible:outline-2 focus-visible:outline-keycolor-40 active:cursor-grabbing"
             >
-              {mockCase.captures.map((src, index) => (
+              {captures.map((src, index) => (
                 <li key={index} className="relative size-60.5 shrink-0 overflow-hidden rounded-[17.224px] bg-gray-10">
                   <div className="absolute top-0 left-[-11.26px] h-[241.559px] w-[263.116px] overflow-hidden rounded-[37.519px]">
                     <img src={src} alt={`대화 캡처 ${index + 1}`} draggable={false} className="absolute top-[-225.28px] left-0 w-full max-w-none" />
                   </div>
+                  {/* 연필: 이름 같은 개인정보를 모자이크로 가리기 */}
+                  <Button aria-label={`대화 캡처 ${index + 1} 가리기`} onClick={() => setEditingIndex(index)} className="absolute right-2.75 bottom-3 cursor-pointer">
+                    <img src={editIcon} alt="" draggable={false} className="block max-w-none" />
+                  </Button>
                 </li>
               ))}
             </ul>
@@ -84,6 +101,11 @@ function JuryRequestPage() {
           </Button>
         </div>
       </main>
+
+      {/* 모자이크 편집 (연필을 누른 캡처만, key로 캡처가 바뀌면 편집 상태 새로 시작) */}
+      {editingIndex !== null && (
+        <MosaicEditor key={editingIndex} src={captures[editingIndex]} onCancel={() => setEditingIndex(null)} onSave={handleSaveEdit} />
+      )}
     </div>
   )
 }
