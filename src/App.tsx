@@ -33,21 +33,20 @@ function App() {
       {/* 페이지가 바뀌면 항상 맨 위에서 시작 */}
       <ScrollToTop />
       <Routes>
-        <Route element={<MainLayout />}>
-          <Route path={paths.home} element={<HomePage />} />
-          <Route path={paths.jury} element={<JuryPage />} />
-          <Route path={paths.juryExplore} element={<JuryExplorePage />} />
-          {/* 마이는 로그인한 사람만 */}
-          <Route element={<RequireAuth />}>
+        {/* 로그인한 사람만 볼 수 있는 화면 (로그인 안 했으면 로그인 화면부터) */}
+        <Route element={<RequireAuth />}>
+          <Route element={<MainLayout />}>
+            <Route path={paths.home} element={<HomePage />} />
+            <Route path={paths.jury} element={<JuryPage />} />
+            <Route path={paths.juryExplore} element={<JuryExplorePage />} />
             <Route path={paths.my} element={<MyPage />} />
             <Route path={paths.myJuryActivity} element={<MyJuryActivityPage />} />
             <Route path={paths.myCases} element={<MyCasesPage />} />
             <Route path={paths.myCaseDetailPattern} element={<MyCaseDetailPage />} />
           </Route>
-        </Route>
+          <Route path={paths.juryDetailPattern} element={<JuryDetailPage />} />
+          <Route path={paths.juryParticipatePattern} element={<JuryParticipationPage />} />
 
-        {/* AI 재판 · 판결문 · 내 사건 관련 화면은 로그인한 사람만 */}
-        <Route element={<RequireAuth />}>
           <Route element={<JudgmentLayout />}>
             <Route path={paths.upload} element={<UploadPage />} />
             <Route path={paths.confirm} element={<ConfirmPage />} />
@@ -69,8 +68,6 @@ function App() {
         <Route path={paths.sharedVerdictPattern} element={<SharedVerdictPage />} />
         {/* 공유 받은 사람도 판단 근거를 볼 수 있음 (같은 근거 페이지) */}
         <Route path={paths.sharedVerdictReasonPattern} element={<VerdictReasonPage />} />
-        <Route path={paths.juryDetailPattern} element={<JuryDetailPage />} />
-        <Route path={paths.juryParticipatePattern} element={<JuryParticipationPage />} />
 
         {/* 로그인 · 회원가입 */}
         <Route path={paths.login} element={<LoginPage />} />
