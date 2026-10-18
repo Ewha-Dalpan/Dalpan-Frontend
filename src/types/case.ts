@@ -2,9 +2,9 @@
 
 import type { VerdictRequest } from './verdict'
 
-// 사건 생성 시 보내는 관계 값
-// TODO: 배심원석 필터는 '직장·학교'라서 백엔드와 통일 필요
-export type CaseRelation = '연애' | '친구' | '가족' | '학교·팀플' | '기타'
+// 상대와의 관계 값 (사건 접수 · 배심원석 필터 공통, 가운뎃점은 '·')
+export const RELATIONS = ['연애', '친구', '가족', '직장·학교', '기타'] as const
+export type CaseRelation = (typeof RELATIONS)[number]
 
 // 사건 진행 상태: 작성 중 → 상황 확인 중 → 판결 대기 → 판결 중 → 판결 완료
 export type CaseStatus = 'WRITING' | 'CONFIRMING' | 'READY' | 'JUDGING' | 'JUDGED'

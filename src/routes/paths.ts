@@ -13,6 +13,7 @@ export const paths = {
   myCaseDetailPattern: "/my/cases/:caseId",
   myCaseReason: (caseId: number | string) => `/my/cases/${caseId}/reason`,
   myCaseReasonPattern: "/my/cases/:caseId/reason",
+  myAccount: "/my/account",
   upload: "/judgment/upload",
   received: "/judgment/received",
   confirm: "/judgment/confirm",
@@ -26,6 +27,7 @@ export const paths = {
   sharedVerdictReason: (shareId: number | string) => `/shared/${shareId}/reason`,
   sharedVerdictReasonPattern: "/shared/:shareId/reason",
   login: "/login",
+  kakaoCallback: "/oauth/kakao",
   signup: "/signup",
   splash: "/splash",
 } as const;
