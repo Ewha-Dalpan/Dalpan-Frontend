@@ -26,6 +26,14 @@ export const getApiErrorMessage = (error: unknown, fallback = DEFAULT_MESSAGE) =
   return fallback
 }
 
+// 백엔드가 보내는 에러 코드
+export const getApiErrorCode = (error: unknown) => {
+  if (!isAxiosError(error)) return null
+  const data: unknown = error.response?.data
+  if (data && typeof data === 'object' && 'code' in data && typeof data.code === 'string') return data.code
+  return null
+}
+
 // 특정 상태 코드인지 확인
 export const isApiStatus = (error: unknown, status: number) =>
   isAxiosError(error) && error.response?.status === status

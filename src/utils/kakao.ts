@@ -1,4 +1,6 @@
-// 카카오톡 공유 (카카오 JavaScript SDK)
+// 카카오톡 공유 / 카카오 로그인 (카카오 JavaScript SDK)
+
+import { paths } from '../routes/paths'
 
 const SDK_URL = 'https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js'
 const SDK_INTEGRITY = 'sha384-oroumrnFVE0xtgqyDZJARgERibXg2C28380uaUZz2kHDS5CR7tu20eGiOU6GkTpy'
@@ -9,6 +11,7 @@ type KakaoSdk = {
   init: (key: string) => void
   isInitialized: () => boolean
   Share: { sendDefault: (settings: object) => void }
+  Auth: { authorize: (settings: { redirectUri: string; state?: string }) => void }
 }
 
 declare global {
@@ -59,6 +62,22 @@ export const shareToKakao = ({ url, text }: { url: string; text: string }) => {
       link: { mobileWebUrl: url, webUrl: url },
       buttonTitle: '판결문 보기',
     })
+    return true
+  } catch {
+    return false
+  }
+}
+
+// 카카오 로그인 후 돌아올 주소
+export const KAKAO_REDIRECT_URI = `${window.location.origin}${paths.kakaoCallback}`
+
+// 카카오 로그인 화면으로 이동. returnTo: 로그인 후 돌아갈 화면 (state로 보냈다가 콜백에서 다시 받음)
+export const startKakaoLogin = async (returnTo?: string) => {
+  const kakao = await loadKakao()
+  if (!kakao) return false
+  try {
+    // state 값이 비어 있으면 SDK가 에러를 내서, 돌아갈 화면이 있을 때만 넣음
+    kakao.Auth.authorize({ redirectUri: KAKAO_REDIRECT_URI, ...(returnTo && { state: returnTo }) })
     return true
   } catch {
     return false

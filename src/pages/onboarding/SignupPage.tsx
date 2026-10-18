@@ -2,7 +2,15 @@
 // 세 항목 모두 동의해야 '동의하고 회원가입하기' 활성화
 
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { kakaoSignup } from '../../apis/accountApi'
+import type { LoginLocationState } from '../../components/RequireAuth'
+import Toast from '../../components/Toast'
+import { useToast } from '../../hooks/useToast'
+import { useAuthStore } from '../../store/useAuthStore'
+import { getApiErrorCode, getApiErrorMessage } from '../../utils/apiError'
+import type { SignupLocationState } from './KakaoCallbackPage'
 import logo from '../../assets/onboarding/signup/logo.svg'
 import checkAllOff from '../../assets/onboarding/signup/check-all-off.svg'
 import checkAllOn from '../../assets/onboarding/signup/check-all-on.svg'
@@ -40,8 +48,36 @@ function SignupPage() {
   const toggleAll = () => setAgreements(allAgreed ? NONE_AGREED : ALL_AGREED)
   const toggle = (key: AgreementKey) => setAgreements((prev) => ({ ...prev, [key]: !prev[key] }))
 
-  // TODO: API 연동 시 kakaoSignup(signup_token + 동의 항목) 호출 후 토큰 저장
-  const handleSignup = () => navigate(paths.home, { replace: true })
+  // 카카오 콜백에서 받은 가입 토큰 (10분 동안만 유효)
+  // 약관 상세를 열면 주소가 바뀌면서 state가 비어서, 처음 받은 값을 기억해 둠
+  const locationState = useLocation().state as SignupLocationState
+  const [signupToken] = useState(locationState?.signupToken)
+
+  const login = useAuthStore((state) => state.login)
+  const { toast, showToast, hideToast } = useToast()
+
+  const signup = useMutation({
+    mutationFn: kakaoSignup,
+    onSuccess: (data) => {
+      login({ access: data.access, refresh: data.refresh, nickname: data.user.nickname })
+      navigate(paths.home, { replace: true })
+    },
+    onError: (error) => {
+      // 가입 토큰이 만료되면 카카오 로그인부터 다시
+      if (getApiErrorCode(error) === 'SIGNUP_TOKEN_EXPIRED') {
+        navigate(paths.login, { replace: true, state: { message: getApiErrorMessage(error) } satisfies LoginLocationState })
+      } else {
+        showToast(getApiErrorMessage(error))
+      }
+    },
+  })
+
+  const handleSignup = () => {
+    if (signupToken) signup.mutate({ signup_token: signupToken, ...agreements })
+  }
+
+  // 카카오 로그인을 거치지 않고 주소로 바로 들어오면 로그인 화면으로
+  if (!signupToken) return <Navigate to={paths.login} replace />
 
   if (isTermsKey(openedTerms)) {
     return (
@@ -119,7 +155,7 @@ function SignupPage() {
         <div className="px-6 pt-3.25 pb-9">
           <button
             type="button"
-            disabled={!allAgreed}
+            disabled={!allAgreed || signup.isPending}
             onClick={handleSignup}
             className="text-b1-semibold h-12.5 w-full cursor-pointer rounded-lg bg-keycolor-100 text-white-100 transition-[scale,color,background-color] duration-200 ease-out enabled:hover:scale-[1.03] disabled:cursor-default disabled:bg-gray-70 disabled:text-gray-40 motion-reduce:transition-none"
           >
@@ -127,6 +163,7 @@ function SignupPage() {
           </button>
         </div>
       </div>
+      <Toast toast={toast} onHide={hideToast} />
     </main>
   )
 }

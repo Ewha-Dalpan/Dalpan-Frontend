@@ -1,19 +1,37 @@
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import Button from '../../components/Button'
+import Modal from '../../components/modal/Modal'
 import { useNavigate } from 'react-router-dom'
+import { getMe, logout } from '../../apis/accountApi'
+import { useSignOut } from '../../hooks/useSignOut'
 import { paths } from '../../routes/paths'
+import { useAuthStore } from '../../store/useAuthStore'
 import profileRabbit from '../../assets/my/profile-rabbit.png'
 import editIcon from '../../assets/my/edit.svg'
 import tolIcon from '../../assets/my/tol.svg'
 
+// TODO: 내 사건, 배심 활동 개수는 각 목록 API 연동 시 교체
 const profile = {
-  nickname: '눈치 빠른 달토끼 037',
   caseCount: 4,
   juryCount: 12,
-  tolBalance: 18,
 }
 
 function MyPage() {
   const navigate = useNavigate()
+  const signOut = useSignOut()
+  const refreshToken = useAuthStore((state) => state.refreshToken)
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+
+  // 내 정보 (닉네임 / 보유 톨)
+  const { data: me } = useQuery({ queryKey: ['me'], queryFn: getMe })
+
+  // 서버에서 refresh 토큰을 폐기하고 로그아웃 (서버 요청이 실패해도 이 기기에서는 로그아웃)
+  const handleLogout = async () => {
+    if (refreshToken) await logout(refreshToken).catch(() => {})
+    signOut()
+  }
+
   return (
     <div className="pt-[7px]">
       <section aria-label="내 프로필" className="ml-[23px] mr-[24px] overflow-hidden rounded-[20px] bg-white-100 text-gray-90">
@@ -22,7 +40,7 @@ function MyPage() {
             <img src={profileRabbit} alt="달토끼 프로필" className="absolute left-[-4.35px] top-[-10.15px] size-[68.15px] max-w-none object-cover" />
           </div>
           <div className="flex items-center gap-[4px]">
-            <h1 className="text-h3-medium">{profile.nickname}</h1>
+            <h1 className="text-h3-medium">{me?.nickname}</h1>
             <Button aria-label="닉네임 수정" aria-disabled="true" className="size-[16px] shrink-0">
               <img src={editIcon} alt="" className="block max-w-none" />
             </Button>
@@ -49,7 +67,7 @@ function MyPage() {
               <span className="relative size-[21px] overflow-hidden" aria-hidden="true">
                 <img src={tolIcon} alt="" className="absolute left-[4.691px] top-[0.431px] block max-w-none rotate-[19.17deg]" />
               </span>
-              <span>{profile.tolBalance}톨</span>
+              <span>{me ? `${me.coin_balance}톨` : ''}</span>
             </span>
           </div>
           {['톨 충전하기', '톨 이용 내역'].map((label) => (
@@ -61,11 +79,22 @@ function MyPage() {
       <section aria-labelledby="settings-heading" className="mt-[28px]">
         <h2 id="settings-heading" className="text-l1-regular ml-[24px]">계정 및 설정</h2>
         <div className="mt-[9.5px] flex flex-col gap-[2px] text-gray-90">
-          {['계정 관리', '로그아웃'].map((label) => (
-            <Button key={label} aria-disabled="true" className="text-b2-medium flex h-[46px] items-center bg-white-100 pl-[26px] pt-px text-left">{label}</Button>
-          ))}
+          <Button onClick={() => navigate(paths.myAccount)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">계정 관리</Button>
+          <Button onClick={() => setIsLogoutModalOpen(true)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">로그아웃</Button>
         </div>
       </section>
+
+      {/* 로그아웃 팝업 (4-4) */}
+      <Modal
+        open={isLogoutModalOpen}
+        title="로그아웃"
+        description="로그아웃하시겠습니까?"
+        cancelText="취소"
+        confirmText="로그아웃"
+        wideConfirm
+        onCancel={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+      />
     </div>
   )
 }
