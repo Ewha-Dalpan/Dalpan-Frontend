@@ -17,11 +17,7 @@ import { paths } from '../../routes/paths'
 import { loadKakao } from '../../utils/kakao'
 import { captureImage, shareTo } from '../../utils/share'
 import type { ShareTarget } from '../../utils/share'
-import { mockVerdict } from './mockVerdict'
-
-// 공유 링크: 받은 사람은 '판결문 공유 유입' 화면으로 들어옴
-// TODO: 공유 링크 API 연동 시 사건별 공유 주소로 교체 (이슈 5)
-const SHARE_URL = `${window.location.origin}${paths.sharedVerdict(mockVerdict.shareId)}`
+import { createShareLink } from '../../apis/verdictApi'
 
 function VerdictResultPage() {
   const navigate = useNavigate()
@@ -31,6 +27,7 @@ function VerdictResultPage() {
   const [isShareOpen, setIsShareOpen] = useState(false) // 공유하기 모달
   const captureRef = useRef<HTMLDivElement>(null) // 저장할 때 캡처하는 판결문 이미지
   const shareImage = useRef<Promise<File | null> | null>(null) // 캡처 이미지 
+  const shareUrl = useRef<Promise<string | null> | null>(null) // 공유 링크 (받은 사람은 '판결문 공유 유입' 화면으로 들어옴)
 
   // 잘못된 주소거나 판결을 불러오지 못하면 홈으로
   if (caseId === undefined) return <Navigate to={paths.home} replace />
@@ -43,7 +40,7 @@ function VerdictResultPage() {
     )
   }
 
-  const summary = toVerdictSummary(verdict) // 판결 요약 · 판결문 이미지에 들어가는 값
+  const summary = toVerdictSummary(verdict) // 판결 요약, 판결문 이미지에 들어가는 값
   const reply = verdict.recommended_reply // 추천 답장
 
   // 추천 답장 클립보드 복사
@@ -56,18 +53,30 @@ function VerdictResultPage() {
     }
   }
 
-  // 공유하기 모달을 여는 동안 미리 캡처해 둠
+  // 공유하기 모달을 여는 동안 공유 링크 · 캡처 이미지를 미리 만들어 둠
   const openShare = () => {
     void loadKakao() // 카카오톡 버튼을 누르기 전에 SDK를 미리 불러둠
     shareImage.current ??= captureImage(captureRef.current, '달판-판결문.png')
+    // 공유 링크 만들기 → 지금 사이트 주소 + /shared/{토큰} (로컬 · 배포 어디서든 그 사이트로 열리게)
+    shareUrl.current ??= createShareLink(caseId)
+      .then(({ token }) => `${window.location.origin}${paths.sharedVerdict(token)}`)
+      .catch(() => {
+        shareUrl.current = null // 실패하면 다음에 다시 만들 수 있게
+        return null
+      })
     setIsShareOpen(true)
   }
 
   // 모달을 먼저 닫고 공유
   const handleShare = async (target: ShareTarget) => {
     setIsShareOpen(false)
+    const url = await shareUrl.current
+    if (!url) {
+      showToast('공유 링크를 만들지 못했어요. 잠시 후 다시 시도해 주세요.')
+      return
+    }
     const message = await shareTo(target, {
-      url: SHARE_URL,
+      url,
       text: `달판 AI 판결문 | ${summary.title}`,
       image: shareImage.current,
     })

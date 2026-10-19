@@ -10,7 +10,7 @@ import sageLogo from '../../assets/verdict/sage-logo.png'
 import Button from '../../components/Button'
 import Header from '../../components/Header'
 import { useGoBack } from '../../hooks/useGoBack'
-import { formatCaseNumber, useCaseIdParam, useVerdict } from '../../hooks/useVerdict'
+import { formatCaseNumber, useCaseIdParam, useSharedVerdict, useVerdict } from '../../hooks/useVerdict'
 import { paths } from '../../routes/paths'
 import type { PublicFactor, VerdictSource } from '../../types/verdict'
 
@@ -58,25 +58,6 @@ const toReason = (factor: PublicFactor): Reason => {
         : null,
   }
 }
-
-// TODO: 공유 판결 API 연동 시(이슈 5) 공유 받은 판결의 판단 근거로 교체 (지금은 공유 화면도 예시 데이터)
-const mockShared = { caseNumber: '月 제0241호', relation: '연인' }
-const mockSharedReasons: Reason[] = [
-  {
-    id: 1,
-    title: '약속 전 연락 공백',
-    description: '회신이 예정된 상황에서 장시간 연락이 끊기며 상대에게 일정의 불확실성을 만든 점',
-    reference: {
-      summary:
-        '답장 지연은 지난 시간보다 기대한 응답 시간과의 차이로 받아들여지며, 일정 조율이나 갈등 상황에서는 더 부정적으로 받아들여진다는 연구가 있어요.',
-      source: 'Sage Journals',
-      logo: sageLogo,
-      title: '답장이 없나요? 기술 매개 연애 갈등에서의 응답 시간 기대 위반과 관계적 혼란',
-      credit: 'Huang & Yao, 2024',
-      url: 'https://journals.sagepub.com',
-    },
-  },
-]
 
 // 판단 요소 카드 (참고 자료는 접었다 펼 수 있음, 기본은 접힘)
 function ReasonCard({ reason }: { reason: Reason }) {
@@ -145,9 +126,11 @@ function VerdictReasonPage() {
   const { shareId } = useParams()
   const isMyCase = useMatch(paths.myCaseReasonPattern) !== null // 마이 > 내 사건 상세에서 들어옴
 
-  // 판결문 · 내 사건에서 들어오면 주소의 사건 ID로 판결 불러오기 (공유 받은 사람은 제외)
+  // 판결문 · 내 사건에서 들어오면 주소의 사건 ID로, 공유 받은 사람은 공유 토큰으로 판결 불러오기
   const caseId = useCaseIdParam()
-  const { data: verdict, isError } = useVerdict(shareId ? undefined : caseId)
+  const own = useVerdict(shareId ? undefined : caseId)
+  const shared = useSharedVerdict(shareId)
+  const { data: verdict, isError } = shareId ? shared : own
 
   // 링크로 바로 들어와 이전 화면이 없으면: 공유 판결문 / 내 사건 상세 / 판결문 전체로
   const fallback = shareId
@@ -159,19 +142,15 @@ function VerdictReasonPage() {
         : paths.verdictResult(caseId)
   const goBack = useGoBack(fallback) // 들어온 화면으로 돌아가기
 
-  if (!shareId) {
-    if (caseId === undefined) return <Navigate to={paths.home} replace />
-    if (isError) return <Navigate to={paths.home} replace state={{ toast: '판결문을 불러오지 못했어요.' }} />
-  }
+  // 공유 링크가 잘못됐으면 공유 판결문 화면(안내 문구)으로, 내 판결을 못 불러오면 홈으로
+  if (shareId && isError) return <Navigate to={paths.sharedVerdict(shareId)} replace />
+  if (!shareId && caseId === undefined) return <Navigate to={paths.home} replace />
+  if (!shareId && isError) return <Navigate to={paths.home} replace state={{ toast: '판결문을 불러오지 못했어요.' }} />
 
   // 판단 요소: 내 과실 근거 → 상대 과실 근거 순서
-  const reasons = shareId
-    ? mockSharedReasons
-    : verdict
-      ? [...verdict.self_factors, ...verdict.other_factors].map(toReason)
-      : null
-  const caseNumber = shareId ? mockShared.caseNumber : verdict ? formatCaseNumber(verdict.case_number) : ''
-  const relation = shareId ? mockShared.relation : (verdict?.relation ?? '')
+  const reasons = verdict ? [...verdict.self_factors, ...verdict.other_factors].map(toReason) : null
+  const caseNumber = verdict ? formatCaseNumber(verdict.case_number) : ''
+  const relation = verdict?.relation ?? ''
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-98.25 bg-bg-light pb-10">
