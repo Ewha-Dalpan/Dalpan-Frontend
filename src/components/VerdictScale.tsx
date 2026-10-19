@@ -4,7 +4,7 @@
 
 import type { CSSProperties } from 'react'
 import riceCake from '../assets/verdict/rice-cake.png'
-import { CAKE_SIZE, getScaleLayout } from '../utils/verdictScale'
+import { getScaleLayout } from '../utils/verdictScale'
 
 type VerdictScaleProps = {
   myRatio: number // 내 과실 비율 (0~100)
@@ -17,16 +17,16 @@ function VerdictScale({ myRatio, className = '', style }: VerdictScaleProps) {
 
   return (
     <div aria-hidden="true" className={`h-[232.659px] w-[274.538px] ${className}`} style={style}>
-      <img src={src} alt="" className={`absolute inset-0 block size-full max-w-none ${flipped ? '-scale-x-100' : ''}`} />
-      {cakes.map(([x, y], index) => (
+      {cakes.map(({ x, y, size }, index) => (
         <img
           key={index}
           src={riceCake}
           alt=""
           className="absolute block max-w-none object-cover"
-          style={{ left: x, top: y, width: CAKE_SIZE, height: CAKE_SIZE }}
+          style={{ left: x, top: y, width: size, height: size }}
         />
       ))}
+      <img src={src} alt="" className={`absolute inset-0 block size-full max-w-none ${flipped ? '-scale-x-100' : ''}`} />
     </div>
   )
 }

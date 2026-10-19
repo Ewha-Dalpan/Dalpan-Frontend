@@ -48,15 +48,18 @@ function SharedVerdictPage() {
       <main className="h-[min(798px,203.0534cqw)] motion-safe:animate-[fade-up_500ms_ease-out_both]">
         <div className="origin-top-left scale-[min(1,calc(100cqw/393px))]">
           <VerdictBoard variant="page" {...summary}>
-            <p className="text-b2-medium absolute top-138 left-1/2 w-71 -translate-x-1/2 text-center text-gray-70">{verdict.one_line}</p>
-            {/* 공유 받은 사람도 판단 근거를 볼 수 있음 → 뒤로가기 하면 이 화면으로 */}
-            <Button
-              onClick={() => navigate(paths.sharedVerdictReason(shareId))}
-              className="text-l1-medium absolute top-144.5 left-1/2 flex -translate-x-1/2 cursor-pointer items-center text-gray-50"
-            >
-              <span className="-mr-0.5">왜 이렇게 판단했을까?</span>
-              <img src={arrow} alt="" className="block max-w-none" />
-            </Button>
+            {/* 한 줄 결과 + '왜 이렇게 판단했을까?'*/}
+            <div className="absolute top-132 left-1/2 flex w-71 -translate-x-1/2 flex-col items-center">
+              <p className="text-b2-medium line-clamp-3 text-center break-keep text-gray-70">{verdict.one_line}</p>
+              {/* 공유 받은 사람도 판단 근거를 볼 수 있음 → 뒤로가기 하면 이 화면으로 */}
+              <Button
+                onClick={() => navigate(paths.sharedVerdictReason(shareId))}
+                className="text-l1-medium mt-1.5 flex cursor-pointer items-center text-gray-50"
+              >
+                <span className="-mr-0.5">왜 이렇게 판단했을까?</span>
+                <img src={arrow} alt="" className="block max-w-none" />
+              </Button>
+            </div>
 
             <Button variant="primary" onClick={startJudgment} className="absolute top-178.75 left-6 h-10 w-86.25">
               나도 판결받기

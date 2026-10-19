@@ -96,7 +96,7 @@ function VerdictResultPage() {
       </header>
 
       <main className="motion-safe:animate-[fade-up_500ms_ease-out_both]">
-        <div className="mt-8.25 h-[min(473px,120.356cqw)]">
+        <div className="mt-8.25">
           <div className="origin-top-left scale-[min(1,calc(100cqw/393px))]">
             <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason(caseId))} />
           </div>

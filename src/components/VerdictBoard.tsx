@@ -11,7 +11,7 @@ import titleImage from '../assets/verdict/title.svg'
 import { getScaleLayout } from '../utils/verdictScale'
 import VerdictScale from './VerdictScale'
 
-// myBadge · otherBadge: 과실 비율 배지가 접시 왼쪽 위에서 떨어진 거리 (접시를 따라 같이 움직임)
+// 과실 비율 배지가 접시 왼쪽 위에서 떨어진 거리 
 const LAYOUTS = {
   image: { height: 852, title: 76, caseNumber: 129, caseTitle: 152, reasons: 256, scale: 335, myBadge: [5.1, 123.6], otherBadge: [5.6, 120.5], logo: 697 },
   page: { height: 798, title: 22, caseNumber: 84, caseTitle: 107, reasons: 179, scale: 245, myBadge: [5.1, 113.3], otherBadge: [5.6, 114], logo: 643 },

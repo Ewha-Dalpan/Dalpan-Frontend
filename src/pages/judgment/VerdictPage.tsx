@@ -76,7 +76,8 @@ function VerdictPage() {
             <div className="absolute top-6.5 left-1/2 -translate-x-1/2">
               {verdict && <VerdictSummary size="preview" {...toVerdictSummary(verdict)} />}
             </div>
-            <div className="absolute top-3.75 left-4 h-75 w-62.5 bg-white-100/50 backdrop-blur-[9px]" />
+            {/* 용지 폭 전체를 흐리게  */}
+            <div className="absolute inset-x-0 top-3.75 h-75 bg-white-100/50 backdrop-blur-[9px]" />
           </div>
 
           {/* 봉투 앞면 + '재판완료' 도장 (1초 뒤 크게 떠 있다가 쾅, 그때 봉투가 살짝 눌림) */}

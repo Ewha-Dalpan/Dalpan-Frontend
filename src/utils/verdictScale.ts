@@ -11,7 +11,6 @@ export type Point = [number, number]
 const SOURCE_WIDTH = 604
 const DRAW = 274.538 / SOURCE_WIDTH
 const PAN_WIDTH = 177.82 // 접시(줄 포함) 너비
-export const CAKE_SIZE = 104.4 * DRAW // 떡 크기
 
 
 const VARIANTS: Record<2 | 4 | 6, { src: string; left: Point; right: Point }> = {
@@ -29,6 +28,7 @@ const CAKE_SLOTS: Point[][] = [
   [[10, 120], [74, 112], [28, 76], [80, 66]],
   [[8, 122], [70, 116], [26, 82], [84, 72], [48, 36]],
 ]
+const CAKE_SIZE = 104.4
 
 // 내 과실(%) → 떡 개수 (나 : 상대), 합은 항상 5
 // 0~9: 0:5 / 10~29: 1:4 / 30~49: 2:3 / 50~69: 3:2 / 70~89: 4:1 / 90~100: 5:0
@@ -51,9 +51,9 @@ export const getScaleLayout = (myRatio: number) => {
 
   // 접시 안에 떡 놓기 (뒤집힌 저울에서는 접시 안에서도 좌우 반대로, 떡 그림 자체는 안 뒤집음)
   const placeCakes = ([panX, panY]: Point, count: number) =>
-    CAKE_SLOTS[count].map(([x, y]): Point => {
-      const offsetX = flipped ? PAN_WIDTH * DRAW - x * DRAW - CAKE_SIZE : x * DRAW
-      return [panX + offsetX, panY + y * DRAW]
+    CAKE_SLOTS[count].map(([x, y]) => {
+      const offsetX = flipped ? (PAN_WIDTH - x - CAKE_SIZE) * DRAW : x * DRAW
+      return { x: panX + offsetX, y: panY + y * DRAW, size: CAKE_SIZE * DRAW }
     })
 
   return {
