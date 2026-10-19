@@ -4,6 +4,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { kakaoLogin } from '../../apis/accountApi'
+import loadingRabbit from '../../assets/judgment/loading.mp4'
 import type { LoginLocationState } from '../../components/RequireAuth'
 import { paths } from '../../routes/paths'
 import { useAuthStore } from '../../store/useAuthStore'
@@ -52,8 +53,20 @@ function KakaoCallbackPage() {
   }, [searchParams, navigate, login])
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-98.25 items-center justify-center bg-bg">
-      <p role="status" className="text-b2-medium text-white-100">
+    <main className="mx-auto flex min-h-dvh w-full max-w-98.25 flex-col items-center justify-center bg-bg pb-21 text-white-100">
+      {/* AI 판결 로딩과 같은 토끼 그림 */}
+      <video
+        src={loadingRabbit}
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden="true"
+        width={656}
+        height={390}
+        className="block h-auto w-63 [clip-path:inset(0_0_1px_0)]"
+      />
+      <p role="status" className="text-b2-medium mt-4.5">
         로그인하는 중이에요
       </p>
     </main>
