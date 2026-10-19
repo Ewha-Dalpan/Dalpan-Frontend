@@ -14,8 +14,10 @@ export type SpeakerSide = 'LEFT' | 'RIGHT'
 
 export type CaseImage = {
   id: number
-  image_key: string // 로그인이 필요한 이미지 조회 주소 (공개 주소 아님)
+  image_key: string // 원본 이미지 조회 전체 주소 (로그인 필요, 공개 주소 아님)
   sort_order: number // 0부터 시작
+  public_image_url: string // 배심원석 공개용(모자이크) 이미지 미리보기 주소 (로그인 필요)
+  has_public_image: boolean // 모자이크본 등록 여부 (false면 미리보기가 원본을 돌려줌)
 }
 
 export type CaseSituation = {
