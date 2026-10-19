@@ -1,32 +1,97 @@
 // AI 재판 - AI 상황확인 페이지 (2.1.2)
 // 헤더는 JudgmentLayout에서!
+// AI가 정리한 상황을 보여주고, 사용자가 상황 · 말풍선 방향을 고친 뒤 판결을 요청
 
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { getCase, requestJudgment, updateSituation } from '../../apis/caseApi'
 import swapIcon from '../../assets/judgment/swap.svg'
 import Button from '../../components/Button'
 import InlineEditField from '../../components/InlineEditField'
+import Toast from '../../components/Toast'
+import { useToast } from '../../hooks/useToast'
 import { paths } from '../../routes/paths'
 import { useCaseStore } from '../../store/useCaseStore'
-
-// TODO: API 연동 전 가짜 데이터
-const mockAnalysis = {
-  situation: '약속 당일 상대가 약 4시간 동안 연락하지 않았고, 내가 서운함을 표현하는 과정에서 갈등이 생겼어요.',
-  coreIssue: '연락이 늦어진 행동과 그에 대한 감정 표현 중 어느 쪽의 책임이 더 큰지예요.',
-}
+import type { Case, SpeakerSide } from '../../types/case'
+import { getApiErrorMessage } from '../../utils/apiError'
 
 function ConfirmPage() {
-  const navigate = useNavigate()
-  const startJudging = useCaseStore((state) => state.startJudging)
-  const [isSwapped, setIsSwapped] = useState(false) // 화자 좌우 반전 여부
-  const [situation, setSituation] = useState(mockAnalysis.situation) // 상황 (수정 가능!!)
+  const caseId = useCaseStore((state) => state.pendingCase?.caseId)
 
-  // 기본은 왼쪽=상대, 오른쪽=나 / ⇄ 누르면 반대로
+  // AI가 분석한 사건 (상황 요약 · 갈등 핵심 · 말풍선 방향)
+  const { data: caseDetail, isError } = useQuery({
+    queryKey: ['case', caseId],
+    queryFn: () => getCase(caseId!),
+    enabled: caseId !== undefined,
+  })
+
+  // 진행 중인 사건 없이 주소로 바로 들어오거나, 사건을 불러오지 못하면 홈으로
+  if (caseId === undefined) return <Navigate to={paths.home} replace />
+  if (isError) return <Navigate to={paths.home} replace state={{ toast: '사건 정보를 불러오지 못했어요.' }} />
+
+  if (!caseDetail) {
+    return (
+      <p role="status" className="text-b2-regular px-6 pt-10 text-center text-gray-70">
+        상황을 불러오는 중이에요
+      </p>
+    )
+  }
+
+  // 이미 판결 중인 사건이면 판결 로딩으로
+  if (caseDetail.status === 'JUDGING') return <Navigate to={paths.judging} replace />
+  // 아직 분석이 안 끝났으면(이어하기로 들어온 경우 등) 분석 대기 화면으로 돌아가서 기다림
+  if (caseDetail.situation?.analysis_status !== 'DONE') return <Navigate to={paths.received} replace />
+
+  // 불러온 값으로 입력칸 초기값을 채우려고 폼을 따로 분리
+  return <ConfirmForm caseDetail={caseDetail} />
+}
+
+function ConfirmForm({ caseDetail }: { caseDetail: Case }) {
+  const navigate = useNavigate()
+  const setRequestId = useCaseStore((state) => state.setRequestId)
+  const startJudging = useCaseStore((state) => state.startJudging)
+  const { toast, showToast, hideToast } = useToast()
+
+  const savedSummary = caseDetail.situation?.summary ?? ''
+  const savedSide: SpeakerSide = caseDetail.situation?.user_speaker_side ?? 'RIGHT'
+
+  // 기본은 오른쪽 말풍선 = 나 (user_speaker_side: RIGHT) / ⇄ 누르면 반대로
+  const [isSwapped, setIsSwapped] = useState(savedSide === 'LEFT') // 화자 좌우 반전 여부
+  const [situation, setSituation] = useState(savedSummary) // 상황 (수정 가능!!)
+
   const leftSpeaker = isSwapped ? '나' : '상대'
   const rightSpeaker = isSwapped ? '상대' : '나'
 
-  // 상황을 전부 지우면 버튼 비활성화!! 
+  // 상황을 전부 지우면 버튼 비활성화!!
   const canSubmit = situation.trim().length > 0
+
+  // 고친 내용이 있으면 먼저 저장 → 판결 요청 (같은 분석으로 판결받는 건 톨이 추가로 빠지지 않음)
+  const judgment = useMutation({
+    mutationFn: async () => {
+      const summary = situation.trim()
+      const side: SpeakerSide = isSwapped ? 'LEFT' : 'RIGHT'
+      if (summary !== savedSummary || side !== savedSide) {
+        await updateSituation(caseDetail.id, { summary, user_speaker_side: side })
+      }
+      return requestJudgment(caseDetail.id)
+    },
+    onSuccess: (request) => {
+      // 판결 진행 상태는 새 요청 ID로 조회 + 사건 단계도 판결 로딩으로 바꿔서, 나갔다 오면 로딩부터 이어서 함
+      setRequestId(request.id)
+      startJudging()
+      navigate(paths.judging, { replace: true })
+    },
+    onError: (error) => showToast(getApiErrorMessage(error)),
+  })
+
+  // 빠르게 두 번 눌러도 요청은 한 번만
+  const isSubmitting = useRef(false)
+  const handleSubmit = () => {
+    if (isSubmitting.current) return
+    isSubmitting.current = true
+    judgment.mutate(undefined, { onError: () => (isSubmitting.current = false) })
+  }
 
   return (
     // 헤더를 뺀 화면 높이를 채워서 CTA가 항상 맨 아래에 붙게 함
@@ -65,25 +130,22 @@ function ConfirmPage() {
         </section>
 
         <InlineEditField label="상황" value={situation} onChange={setSituation} />
-        <InlineEditField label="이번 갈등 핵심은" value={mockAnalysis.coreIssue} editable={false} />
+        <InlineEditField label="이번 갈등 핵심은" value={caseDetail.conflict_core ?? ''} editable={false} />
       </div>
 
-      {/* 판결받기 → AI 판결 로딩 (사건 단계도 판결 로딩으로 바꿔서, 나갔다 오면 로딩부터 이어서 함) */}
-      {/* TODO: API 연동 시 수정한 내용 보내기 */}
+      {/* 판결받기 → AI 판결 로딩 */}
       <div className="mt-auto pt-6">
         <Button
           variant="primary"
           fullWidth
-          disabled={!canSubmit}
-          onClick={() => {
-            startJudging()
-            navigate(paths.judging, { replace: true })
-          }}
+          disabled={!canSubmit || judgment.isPending}
+          onClick={handleSubmit}
           className="h-10"
         >
-          이대로 판결받기
+          {judgment.isPending ? '판결을 요청하는 중...' : '이대로 판결받기'}
         </Button>
       </div>
+      <Toast toast={toast} onHide={hideToast} />
     </div>
   )
 }
