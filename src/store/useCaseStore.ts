@@ -8,35 +8,41 @@ import { persist } from 'zustand/middleware'
 export type CaseStage = 'confirm' | 'judging'
 
 interface PendingCase {
+  caseId: number // 서버 사건 ID
+  requestId: number // 분석 · 판결 진행 상태를 조회할 요청 ID
   receivedAt: number // 사건 접수 시각 (ms)
   stage: CaseStage
 }
 
 interface CaseState {
   pendingCase: PendingCase | null
-  receiveCase: () => void
+  receiveCase: (ids: { caseId: number; requestId: number }) => void
+  setRequestId: (requestId: number) => void // 다시 접수/판결 요청으로 새 요청이 생겼을 때
   startJudging: () => void
   clearPendingCase: () => void
 }
 
-// TODO: API 연동 시 서버의 진행 중 사건으로 교체
+// TODO: 이어하기 모달까지 연동되면 서버의 진행 중 사건(unfinished)으로 교체
 export const useCaseStore = create<CaseState>()(
   persist(
     (set) => ({
       pendingCase: null,
-      receiveCase: () => set({ pendingCase: { receivedAt: Date.now(), stage: 'confirm' } }),
+      receiveCase: ({ caseId, requestId }) =>
+        set({ pendingCase: { caseId, requestId, receivedAt: Date.now(), stage: 'confirm' } }),
+      setRequestId: (requestId) =>
+        set((state) => (state.pendingCase ? { pendingCase: { ...state.pendingCase, requestId } } : state)),
       startJudging: () =>
         set((state) => (state.pendingCase ? { pendingCase: { ...state.pendingCase, stage: 'judging' } } : state)),
       clearPendingCase: () => set({ pendingCase: null }),
     }),
     {
       name: 'dalpan-pending-case',
-      // version 0에는 stage가 없어서 상황확인 중으로 채움
-      version: 1,
+      // version 2부터 서버 사건 ID를 저장함
+      // 이전 버전에 저장된 사건은 서버 ID가 없어서 이어할 수 없으므로 지움
+      version: 2,
       migrate: (persisted, version) => {
-        const state = persisted as { pendingCase: Omit<PendingCase, 'stage'> | null }
-        if (version === 0 && state.pendingCase) return { pendingCase: { ...state.pendingCase, stage: 'confirm' } }
-        return state
+        if (version < 2) return { pendingCase: null }
+        return persisted as { pendingCase: PendingCase | null }
       },
     },
   ),

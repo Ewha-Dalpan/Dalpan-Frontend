@@ -27,14 +27,14 @@ export const getCase = async (caseId: number) => {
 }
 
 // 사건 이미지는 로그인이 필요해서 <img src>에 바로 못 넣음 → blob으로 받아 URL.createObjectURL로 사용
-export const getCaseImage = async (imageId: number) => {
-  const { data } = await axiosInstance.get<Blob>(`/api/cases/images/${imageId}/`, { responseType: 'blob' })
+export const getCaseImage = async (caseId: number, imageId: number) => {
+  const { data } = await axiosInstance.get<Blob>(`/api/cases/${caseId}/images/${imageId}/`, { responseType: 'blob' })
   return data
 }
 
-// 접수 전 잔액 · 비용 확인
-export const getCasePayment = async () => {
-  const { data } = await axiosInstance.get<CasePayment>('/api/cases/payment/')
+// 이미 만든 사건을 다시 접수할 때 잔액 · 비용 확인 (진행 중인 요청이 있으면 비용 0)
+export const getCasePayment = async (caseId: number) => {
+  const { data } = await axiosInstance.get<CasePayment>(`/api/cases/${caseId}/payment/`)
   return data
 }
 
