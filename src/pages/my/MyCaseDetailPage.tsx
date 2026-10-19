@@ -21,8 +21,19 @@ function MyCaseDetailPage() {
         <div className="relative h-126.5 w-98.25 origin-top-left scale-[min(1,calc(100cqw/393px))]">
           <div className="absolute inset-y-0 left-6 w-86.25 rounded-lg bg-white-100" />
           <div className="absolute top-9 left-1/2 -translate-x-1/2">
-            {/* TODO: API 연동 시 사건 번호·관계 교체 */}
-            <VerdictSummary size="card" caseNumber="月 제0241호" relation="연인" title={item.title} onWhyClick={() => navigate(paths.myCaseReason(item.id))} />
+            {/* TODO: API 연동 시 사건 번호·관계·과실 근거·과실 비율 교체 (지금은 예시 값) */}
+            <VerdictSummary
+              size="card"
+              caseNumber="月 제0241호"
+              relation="연인"
+              title={item.title}
+              myReasons={['내 과실 근거']}
+              otherReasons={['약속 전 연락 공백', '일정의 불확실성', '응답성 부족']}
+              myRatio={10}
+              otherRatio={90}
+              oneLine="상대 쪽으로 저울이 기울었어요."
+              onWhyClick={() => navigate(paths.myCaseReason(item.id))}
+            />
           </div>
         </div>
       </div>

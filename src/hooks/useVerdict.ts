@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { getVerdict } from '../apis/verdictApi'
+import type { Verdict } from '../types/verdict'
 
 // 주소의 :caseId를 숫자로 (없거나 숫자가 아니면 undefined)
 export const useCaseIdParam = () => {
@@ -22,3 +23,15 @@ export const useVerdict = (caseId: number | undefined) =>
 
 // 화면에 보여줄 사건 번호 (예: 제00001호 → 月 제00001호)
 export const formatCaseNumber = (caseNumber: string) => `月 ${caseNumber}`
+
+// 판결 → 판결 요약 카드 · 판결문 이미지에 넣는 값
+export const toVerdictSummary = (verdict: Verdict) => ({
+  caseNumber: formatCaseNumber(verdict.case_number),
+  relation: verdict.relation,
+  title: verdict.title,
+  myReasons: verdict.self_factors.map((factor) => factor.name), // 한쪽은 빈 배열일 수 있음
+  otherReasons: verdict.other_factors.map((factor) => factor.name),
+  myRatio: verdict.fault_ratio,
+  otherRatio: verdict.other_fault_ratio,
+  oneLine: verdict.one_line,
+})

@@ -10,7 +10,7 @@ import Button from '../../components/Button'
 import { EnvelopeBack, EnvelopeFront } from '../../components/Envelope'
 import Header from '../../components/Header'
 import VerdictSummary from '../../components/VerdictSummary'
-import { formatCaseNumber, useCaseIdParam, useVerdict } from '../../hooks/useVerdict'
+import { toVerdictSummary, useCaseIdParam, useVerdict } from '../../hooks/useVerdict'
 import { paths } from '../../routes/paths'
 
 // 도장 연출(3초) 중 화면 가운데에 머무를 때, 제자리('펼쳐보기' 위치)에서 떨어진 거리
@@ -74,12 +74,7 @@ function VerdictPage() {
             style={PAPER_PRESS}
           >
             <div className="absolute top-6.5 left-1/2 -translate-x-1/2">
-              <VerdictSummary
-                size="preview"
-                caseNumber={verdict ? formatCaseNumber(verdict.case_number) : ''}
-                relation={verdict?.relation ?? ''}
-                title={verdict?.title ?? null}
-              />
+              {verdict && <VerdictSummary size="preview" {...toVerdictSummary(verdict)} />}
             </div>
             <div className="absolute top-3.75 left-4 h-75 w-62.5 bg-white-100/50 backdrop-blur-[9px]" />
           </div>
