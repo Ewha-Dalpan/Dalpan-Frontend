@@ -75,10 +75,10 @@ function JudgingPage() {
   useEffect(() => {
     if (!hasShownMinimum || isLeaveModalOpen || !request) return
     if (request.status === 'DONE' && caseId !== undefined) {
-      // 받은 판결문을 저장해 둬서 판결문 화면에서 다시 요청하지 않아도 되게 함
+      // 받은 판결문을 넣어둬서 판결문 화면에서 다시 요청하지 않고 바로 보여줌
       if (request.verdict) queryClient.setQueryData(['verdict', caseId], request.verdict)
       clearPendingCase() // 판결이 끝났으니 '확인 중인 사건'에서 지움
-      navigate(paths.verdict, { replace: true, state: { caseId } })
+      navigate(paths.verdict(caseId), { replace: true })
     }
     // 아직 상황 확인 전 요청이면(이어하기 등) 상황확인으로
     if (request.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })

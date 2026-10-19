@@ -18,9 +18,13 @@ export const paths = {
   received: "/judgment/received",
   confirm: "/judgment/confirm",
   judging: "/judgment/judging",
-  verdict: "/judgment/verdict",
-  verdictResult: "/judgment/verdict/result",
-  verdictReason: "/judgment/verdict/reason",
+  // 판결문 화면은 주소에 사건 ID가 있어서 새로고침해도 같은 판결을 보여줌
+  verdict: (caseId: number | string) => `/judgment/verdicts/${caseId}`, // 판결문 도착 (봉투)
+  verdictPattern: "/judgment/verdicts/:caseId",
+  verdictResult: (caseId: number | string) => `/judgment/verdicts/${caseId}/result`, // 판결문 전체
+  verdictResultPattern: "/judgment/verdicts/:caseId/result",
+  verdictReason: (caseId: number | string) => `/judgment/verdicts/${caseId}/reason`, // 판단 근거
+  verdictReasonPattern: "/judgment/verdicts/:caseId/reason",
   juryRequest: "/judgment/verdict/jury",
   sharedVerdict: (shareId: number | string) => `/shared/${shareId}`,
   sharedVerdictPattern: "/shared/:shareId",

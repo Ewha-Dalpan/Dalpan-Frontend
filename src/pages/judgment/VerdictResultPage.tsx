@@ -12,6 +12,7 @@ import Toast from '../../components/Toast'
 import VerdictBoard from '../../components/VerdictBoard'
 import VerdictSummary from '../../components/VerdictSummary'
 import { useToast } from '../../hooks/useToast'
+import { useCaseIdParam } from '../../hooks/useVerdict'
 import { paths } from '../../routes/paths'
 import { loadKakao } from '../../utils/kakao'
 import { captureImage, shareTo } from '../../utils/share'
@@ -24,6 +25,7 @@ const SHARE_URL = `${window.location.origin}${paths.sharedVerdict(mockVerdict.sh
 
 function VerdictResultPage() {
   const navigate = useNavigate()
+  const caseId = useCaseIdParam() // 주소의 사건 ID (판결 내용 연동은 다음 단계)
   const { toast, showToast, hideToast } = useToast()
   const [isShareOpen, setIsShareOpen] = useState(false) // 공유하기 모달
   const captureRef = useRef<HTMLDivElement>(null) // 저장할 때 캡처하는 판결문 이미지
@@ -74,7 +76,7 @@ function VerdictResultPage() {
       <main className="motion-safe:animate-[fade-up_500ms_ease-out_both]">
         <div className="mt-8.25 h-[min(473px,120.356cqw)]">
           <div className="origin-top-left scale-[min(1,calc(100cqw/393px))]">
-            <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason)} />
+            <VerdictSummary size="full" {...summary} onWhyClick={caseId === undefined ? undefined : () => navigate(paths.verdictReason(caseId))} />
           </div>
         </div>
 

@@ -54,10 +54,10 @@ function App() {
           {/* 사건접수 로딩은 헤더 없는 전체 화면, AI 판결 로딩·판결문은 남색 배경이라 크림색 레이아웃 밖에 둠 */}
           <Route path={paths.received} element={<CaseReceivedPage />} />
           <Route path={paths.judging} element={<JudgingPage />} />
-          <Route path={paths.verdict} element={<VerdictPage />} />
-          <Route path={paths.verdictResult} element={<VerdictResultPage />} />
+          <Route path={paths.verdictPattern} element={<VerdictPage />} />
+          <Route path={paths.verdictResultPattern} element={<VerdictResultPage />} />
           {/* 판단 근거 상세: 판결문 전체 화면 / 내 사건 상세 두 곳에서 같은 페이지로 (자체 헤더라 레이아웃 밖) */}
-          <Route path={paths.verdictReason} element={<VerdictReasonPage />} />
+          <Route path={paths.verdictReasonPattern} element={<VerdictReasonPage />} />
           <Route path={paths.myCaseReasonPattern} element={<VerdictReasonPage />} />
           <Route path={paths.juryRequest} element={<JuryRequestPage />} />
           {/* 계정 관리 (자체 헤더, GNB 없음) */}

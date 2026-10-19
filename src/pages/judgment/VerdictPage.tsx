@@ -4,16 +4,14 @@
 
 import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import stamp from '../../assets/verdict/stamp.png'
 import Button from '../../components/Button'
 import { EnvelopeBack, EnvelopeFront } from '../../components/Envelope'
 import Header from '../../components/Header'
 import VerdictSummary from '../../components/VerdictSummary'
+import { formatCaseNumber, useCaseIdParam, useVerdict } from '../../hooks/useVerdict'
 import { paths } from '../../routes/paths'
-
-// TODO: API 연동 시 방금 판결된 사건으로 교체
-const mockVerdict = { caseNumber: '月 제0241호', relation: '연인', title: '약속 직전 연락 공백 사건' }
 
 // 도장 연출(3초) 중 화면 가운데에 머무를 때, 제자리('펼쳐보기' 위치)에서 떨어진 거리
 const PAPER_INTRO = { '--intro-y': '25px' } as CSSProperties
@@ -34,12 +32,20 @@ function VerdictPage() {
   const navigate = useNavigate()
   const [canOpen, setCanOpen] = useState(prefersReducedMotion) // 펼쳐보기 탭 가능 여부
 
+  // 주소의 사건 ID로 판결 불러오기 (판결 로딩에서 바로 오면 이미 받아둔 판결문을 씀)
+  const caseId = useCaseIdParam()
+  const { data: verdict, isError } = useVerdict(caseId)
+
   // 연출이 끝나면 탭 가능
   useEffect(() => {
     if (canOpen) return
     const timer = setTimeout(() => setCanOpen(true), INTRO_MS)
     return () => clearTimeout(timer)
   }, [canOpen])
+
+  // 잘못된 주소거나 판결을 불러오지 못하면 홈으로
+  if (caseId === undefined) return <Navigate to={paths.home} replace />
+  if (isError) return <Navigate to={paths.home} replace state={{ toast: '판결문을 불러오지 못했어요.' }} />
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-98.25 bg-bg text-white-100">
@@ -68,7 +74,12 @@ function VerdictPage() {
             style={PAPER_PRESS}
           >
             <div className="absolute top-6.5 left-1/2 -translate-x-1/2">
-              <VerdictSummary size="preview" {...mockVerdict} />
+              <VerdictSummary
+                size="preview"
+                caseNumber={verdict ? formatCaseNumber(verdict.case_number) : ''}
+                relation={verdict?.relation ?? ''}
+                title={verdict?.title ?? null}
+              />
             </div>
             <div className="absolute top-3.75 left-4 h-75 w-62.5 bg-white-100/50 backdrop-blur-[9px]" />
           </div>
@@ -89,7 +100,7 @@ function VerdictPage() {
           <Button
             aria-label="판결문 펼쳐보기"
             disabled={!canOpen}
-            onClick={() => navigate(paths.verdictResult, { replace: true })}
+            onClick={() => navigate(paths.verdictResult(caseId), { replace: true })}
             className="absolute inset-0 z-30 enabled:cursor-pointer"
           />
         </div>

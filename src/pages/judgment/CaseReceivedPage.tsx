@@ -73,10 +73,10 @@ function CaseReceivedPage() {
   // 분석이 끝나면 AI 상황확인으로 (replace: 뒤로가기로 이 화면에 다시 안 오게!)
   // 이미 판결까지 끝난 사건이면 판결문으로
   useEffect(() => {
-    if (!hasShownMinimum) return
-    if (request?.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })
-    if (request?.status === 'DONE') navigate(paths.verdict, { replace: true })
-  }, [hasShownMinimum, request?.status, navigate])
+    if (!hasShownMinimum || !request) return
+    if (request.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })
+    if (request.status === 'DONE') navigate(paths.verdict(request.case_id), { replace: true })
+  }, [hasShownMinimum, request, navigate])
 
   // 요청을 찾을 수 없으면(삭제된 사건 등) 홈으로
   useEffect(() => {
