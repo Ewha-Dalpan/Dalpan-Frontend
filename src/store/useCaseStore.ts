@@ -17,6 +17,7 @@ interface PendingCase {
 interface CaseState {
   pendingCase: PendingCase | null
   receiveCase: (ids: { caseId: number; requestId: number }) => void
+  setRequestId: (requestId: number) => void // 다시 접수/판결 요청으로 새 요청이 생겼을 때
   startJudging: () => void
   clearPendingCase: () => void
 }
@@ -28,6 +29,8 @@ export const useCaseStore = create<CaseState>()(
       pendingCase: null,
       receiveCase: ({ caseId, requestId }) =>
         set({ pendingCase: { caseId, requestId, receivedAt: Date.now(), stage: 'confirm' } }),
+      setRequestId: (requestId) =>
+        set((state) => (state.pendingCase ? { pendingCase: { ...state.pendingCase, requestId } } : state)),
       startJudging: () =>
         set((state) => (state.pendingCase ? { pendingCase: { ...state.pendingCase, stage: 'judging' } } : state)),
       clearPendingCase: () => set({ pendingCase: null }),

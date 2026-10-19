@@ -1,9 +1,15 @@
-// AI 재판 - 사건접수 로딩 페이지
-// 업로드 → (결제) → 이 화면 5초 → AI 상황확인으로 자동 이동
+// AI 재판 - 사건접수 로딩 페이지 (분석 대기)
+// 업로드 → 이 화면 (AI가 대화를 분석하는 동안 진행 상태를 반복 조회) → 분석이 끝나면 AI 상황확인으로 자동 이동
 // 모션넣음!! 토끼가 달 뒤에서 튀어 올라옴 → 귀 쫑긋, 달 회전, 별 반짝, 문구 떠오름
 
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { getCasePayment, submitCase } from '../../apis/caseApi'
+import { getVerdictRequest } from '../../apis/verdictApi'
+import Modal from '../../components/modal/Modal'
+import { useCaseStore } from '../../store/useCaseStore'
+import { getApiErrorMessage } from '../../utils/apiError'
 import chair from '../../assets/judgment/received/chair.svg'
 import desk from '../../assets/judgment/received/desk.svg'
 import moon from '../../assets/judgment/received/moon.svg'
@@ -18,8 +24,11 @@ import rabbitHands from '../../assets/judgment/received/rabbit-hands.svg'
 import rabbitNose from '../../assets/judgment/received/rabbit-nose.svg'
 import { paths } from '../../routes/paths'
 
-// 이 화면을 보여주는 시간 (ms)
-const LOADING_MS = 5000
+// 분석이 빨리 끝나도 토끼 모션은 끝까지 보이게 최소로 보여주는 시간 (ms)
+const MIN_SHOW_MS = 3000
+
+// 분석 진행 상태를 다시 조회하는 간격 (ms)
+const POLL_MS = 2000
 
 // 밤하늘 별 위치/크기(px)/반짝이는 시작 시간(s)
 const STARS = [
@@ -34,12 +43,77 @@ const STARS = [
 
 function CaseReceivedPage() {
   const navigate = useNavigate()
+  const pendingCase = useCaseStore((state) => state.pendingCase)
+  const setRequestId = useCaseStore((state) => state.setRequestId)
+  const clearPendingCase = useCaseStore((state) => state.clearPendingCase)
+  const [hasShownMinimum, setHasShownMinimum] = useState(false)
+  // 처음 들어왔을 때 진행 중인 사건이 있었는지 (중간에 사건을 지워도 아래 이동 처리가 덮어써지지 않게 기억)
+  const [hadPendingCase] = useState(pendingCase !== null)
 
-  // 5초 뒤 AI 상황확인으로 이동 (replace: 뒤로가기로 이 화면에 다시 안 오게!)
+  // 최소 시간이 지났는지
   useEffect(() => {
-    const timer = setTimeout(() => navigate(paths.confirm, { replace: true }), LOADING_MS)
+    const timer = setTimeout(() => setHasShownMinimum(true), MIN_SHOW_MS)
     return () => clearTimeout(timer)
-  }, [navigate])
+  }, [])
+
+  // 분석 진행 상태: 분석이 끝나거나(확인 대기) 실패할 때까지 2초마다 다시 조회
+  const requestId = pendingCase?.requestId
+  const { data: request, isError } = useQuery({
+    queryKey: ['verdictRequest', requestId],
+    queryFn: () => getVerdictRequest(requestId!),
+    enabled: requestId !== undefined,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status
+      return status === 'PENDING' || status === 'RUNNING' || status === undefined ? POLL_MS : false
+    },
+  })
+
+  const isFailed = request?.status === 'FAILED' || request?.status === 'CANCELED'
+
+  // 분석이 끝나면 AI 상황확인으로 (replace: 뒤로가기로 이 화면에 다시 안 오게!)
+  // 이미 판결까지 끝난 사건이면 판결문으로
+  useEffect(() => {
+    if (!hasShownMinimum) return
+    if (request?.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })
+    if (request?.status === 'DONE') navigate(paths.verdict, { replace: true })
+  }, [hasShownMinimum, request?.status, navigate])
+
+  // 요청을 찾을 수 없으면(삭제된 사건 등) 홈으로
+  useEffect(() => {
+    if (!isError) return
+    clearPendingCase()
+    navigate(paths.home, { replace: true, state: { toast: '사건 정보를 불러오지 못했어요.' } })
+  }, [isError, clearPendingCase, navigate])
+
+  // 실패하면 다시 접수할 때 드는 톨 (진행 · 확인 대기 요청이 있으면 0)
+  const caseId = pendingCase?.caseId
+  const { data: payment } = useQuery({
+    queryKey: ['casePayment', caseId],
+    queryFn: () => getCasePayment(caseId!),
+    enabled: isFailed && caseId !== undefined,
+  })
+
+  // 같은 사건으로 다시 분석 접수 → 새 요청 ID로 다시 조회 시작
+  const isResubmitting = useRef(false) // 빠르게 두 번 눌러서 톨이 두 번 빠지지 않게
+  const resubmit = useMutation({
+    mutationFn: () => submitCase(caseId!),
+    onSuccess: (newRequest) => setRequestId(newRequest.id),
+    onSettled: () => (isResubmitting.current = false),
+  })
+
+  const handleResubmit = () => {
+    if (isResubmitting.current) return
+    isResubmitting.current = true
+    resubmit.mutate()
+  }
+
+  const handleGoHome = () => {
+    clearPendingCase()
+    navigate(paths.home, { replace: true })
+  }
+
+  // 진행 중인 사건 없이 주소로 바로 들어오면 홈으로
+  if (!hadPendingCase) return <Navigate to={paths.home} replace />
 
   return (
     <div className="relative mx-auto h-dvh w-full max-w-98.25 overflow-hidden bg-bg">
@@ -103,6 +177,31 @@ function CaseReceivedPage() {
         <br />
         사건이 접수됐어요.
       </p>
+
+      {/* 분석 실패 (디자인이 없어서 공통 모달 사용) */}
+      <Modal
+        open={isFailed && !resubmit.isPending}
+        title="대화를 분석하지 못했어요"
+        description={
+          <>
+            {resubmit.isError ? getApiErrorMessage(resubmit.error) : (request?.error_message ?? '잠시 후 다시 시도해 주세요.')}
+            {payment && (
+              <>
+                <br />
+                <span className="text-keycolor-100">
+                  {payment.cost > 0 ? `다시 접수하면 ${payment.cost}톨이 차감돼요.` : '다시 접수해도 톨은 차감되지 않아요.'}
+                </span>
+              </>
+            )}
+          </>
+        }
+        cancelText="홈으로"
+        confirmText="다시 접수하기"
+        wideConfirm
+        onCancel={handleGoHome}
+        onDismiss={() => {}} // 바깥을 눌러도 닫히지 않게 (둘 중 하나를 골라야 함)
+        onConfirm={handleResubmit}
+      />
     </div>
   )
 }
