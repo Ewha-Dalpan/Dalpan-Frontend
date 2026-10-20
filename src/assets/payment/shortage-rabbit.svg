@@ -1,4 +1,17 @@
 <svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="105" height="200" viewBox="0 0 105 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+/* 땀 두 줄만 위아래로 삐질삐질 흐르게 */
+#Vector_16, #Vector_17 { animation: sweat 1.4s ease-in-out infinite; }
+#Vector_17 { animation-delay: 0.25s; }
+@keyframes sweat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2.5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #Vector_16, #Vector_17 { animation: none; }
+}
+</style>
 <g id="_&#235;&#160;&#136;&#236;&#157;&#180;&#236;&#150;&#180;_3" clip-path="url(#clip0_0_12)">
 <g id="Group">
 <path id="Vector" d="M19.4315 181.392L19.2765 184.892C19.2765 184.892 15.1665 187.631 15.6247 194.335C16.0828 201.039 31.4447 199.663 31.4447 199.663C31.4447 199.663 49.0907 200.728 49.5489 193.269C49.5489 193.269 50.5798 184.913 50.034 183.024C49.4883 181.136 23.3528 177.683 19.4247 181.385L19.4315 181.392Z" fill="#FEFEFE"/>
