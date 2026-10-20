@@ -7,19 +7,18 @@ import dot from '../assets/verdict/dot.svg'
 import logoRabbit from '../assets/verdict/logo-rabbit.png'
 import logoText from '../assets/verdict/logo-text.svg'
 import tail from '../assets/verdict/reason-tail-full.svg'
-import riceCake from '../assets/verdict/rice-cake.png'
 import titleImage from '../assets/verdict/title.svg'
+import { getScaleLayout } from '../utils/verdictScale'
 import VerdictScale from './VerdictScale'
 
+// 과실 비율 배지가 접시 왼쪽 위에서 떨어진 거리 
 const LAYOUTS = {
-  image: { height: 852, title: 76, caseNumber: 129, caseTitle: 152, reasons: 256, scale: 335, myRatio: 501, otherRatio: 568, logo: 697 },
-  page: { height: 798, title: 22, caseNumber: 84, caseTitle: 107, reasons: 179, scale: 245, myRatio: 400, otherRatio: 471, logo: 643 },
+  image: { height: 852, title: 76, caseNumber: 129, caseTitle: 152, reasons: 256, scale: 335, myBadge: [5.1, 123.6], otherBadge: [5.6, 120.5], logo: 697 },
+  page: { height: 798, title: 22, caseNumber: 84, caseTitle: 107, reasons: 179, scale: 245, myBadge: [5.1, 113.3], otherBadge: [5.6, 114], logo: 643 },
 }
 
+const SCALE_LEFT = 44
 const SCALE_ZOOM = 1.07453
-
-// 떡 위치 (저울 위쪽 기준) TODO: API 연동 시 과실 비율에 따라 떡 개수·위치 바꾸기
-const riceCakes = [[244, 162], [273, 156], [252, 138], [80, 88]]
 
 export type VerdictBoardData = {
   caseNumber: string
@@ -64,6 +63,12 @@ function RatioBadge({ label, value, left, top }: { label: string; value: number;
 
 function VerdictBoard({ variant, ref, caseNumber, relation, title, myReasons, otherReasons, myRatio, otherRatio, children }: VerdictBoardProps) {
   const y = LAYOUTS[variant]
+  const { leftPan, rightPan } = getScaleLayout(myRatio)
+  // 접시 위치(저울 기준) + 배지 거리 → 보드 위치
+  const badgePosition = (pan: number[], offset: number[]) => ({
+    left: SCALE_LEFT + (pan[0] + offset[0]) * SCALE_ZOOM,
+    top: y.scale + (pan[1] + offset[1]) * SCALE_ZOOM,
+  })
 
   return (
     <div ref={ref} className="relative w-98.25 overflow-hidden bg-white-100" style={{ height: y.height }}>
@@ -89,15 +94,12 @@ function VerdictBoard({ variant, ref, caseNumber, relation, title, myReasons, ot
         ))}
       </div>
 
-      {/* 저울 + 떡 */}
-      {riceCakes.map(([x, dy]) => (
-        <img key={`${x}-${dy}`} src={riceCake} alt="" className="absolute size-12.75 max-w-none object-cover" style={{ left: x, top: y.scale + dy }} />
-      ))}
-      <VerdictScale className="absolute left-11 origin-top-left" style={{ top: y.scale, transform: `scale(${SCALE_ZOOM})` }} />
+      {/* 저울 + 떡 (과실 비율에 따라 기울기 · 떡 개수가 바뀜) */}
+      <VerdictScale myRatio={myRatio} className="absolute origin-top-left" style={{ left: SCALE_LEFT, top: y.scale, transform: `scale(${SCALE_ZOOM})` }} />
 
-      {/* 과실 비율 */}
-      <RatioBadge label="사연자" value={myRatio} left={69} top={y.myRatio} />
-      <RatioBadge label="상대방" value={otherRatio} left={241} top={y.otherRatio} />
+      {/* 과실 비율 (접시 아래) */}
+      <RatioBadge label="사연자" value={myRatio} {...badgePosition(leftPan, y.myBadge)} />
+      <RatioBadge label="상대방" value={otherRatio} {...badgePosition(rightPan, y.otherBadge)} />
 
       {children}
 

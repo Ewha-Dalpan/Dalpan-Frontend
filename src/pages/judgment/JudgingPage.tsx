@@ -14,7 +14,7 @@ import { useCaseStore } from '../../store/useCaseStore'
 import type { ProgressStep } from '../../types/verdict'
 import { getApiErrorMessage } from '../../utils/apiError'
 
-// 단계별 문구 (판결 진행 단계에 맞춰 바뀜)
+// 단계별 문구 (판결 진행 단계에 맞춰 순서대로 바뀜)
 const STEPS = [
   { title: '달토끼가 판결을 찧고 있어요', description: ['대화 속 말과 맥락을 하나씩 살펴보며', '판결을 만들고 있어요.'] },
   { title: '대화의 재료를 살펴보고 있어요', description: ['누가 어떤 말을 했는지 확인 중...'] },
@@ -32,6 +32,9 @@ const STEP_INDEX: Partial<Record<ProgressStep, number>> = {
   GENERATING_JUDGMENT: 4, // 판결 생성
   DONE: 4,
 }
+
+// 문구 하나를 최소로 보여주는 시간 (ms)
+const STEP_MIN_MS = 2000
 
 // 판결이 빨리 끝나도 문구를 읽을 수 있게 최소로 보여주는 시간 (ms)
 const MIN_SHOW_MS = 3000
@@ -70,15 +73,26 @@ function JudgingPage() {
 
   const isFailed = request?.status === 'FAILED' || request?.status === 'CANCELED'
 
+  const progressStep = request?.progress_step
+  const targetStep = progressStep ? (STEP_INDEX[progressStep] ?? 0) : 0
+  const [shownStep, setShownStep] = useState(0)
+
+  const canAdvance = shownStep < targetStep
+  useEffect(() => {
+    if (!canAdvance) return
+    const timer = setTimeout(() => setShownStep((step) => step + 1), STEP_MIN_MS)
+    return () => clearTimeout(timer)
+  }, [shownStep, canAdvance])
+
   // 판결이 끝나면 판결문 도착 화면으로 (replace: 뒤로가기로 로딩에 다시 안 오게!)
   // 나가기 모달이 떠 있는 동안은 기다림
   useEffect(() => {
     if (!hasShownMinimum || isLeaveModalOpen || !request) return
     if (request.status === 'DONE' && caseId !== undefined) {
-      // 받은 판결문을 저장해 둬서 판결문 화면에서 다시 요청하지 않아도 되게 함
+      // 받은 판결문을 넣어둬서 판결문 화면에서 다시 요청하지 않고 바로 보여줌
       if (request.verdict) queryClient.setQueryData(['verdict', caseId], request.verdict)
       clearPendingCase() // 판결이 끝났으니 '확인 중인 사건'에서 지움
-      navigate(paths.verdict, { replace: true, state: { caseId } })
+      navigate(paths.verdict(caseId), { replace: true })
     }
     // 아직 상황 확인 전 요청이면(이어하기 등) 상황확인으로
     if (request.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })
@@ -120,8 +134,7 @@ function JudgingPage() {
   // 진행 중인 사건 없이 주소로 바로 들어오면 홈으로
   if (!hadPendingCase) return <Navigate to={paths.home} replace />
 
-  const progressStep = request?.progress_step
-  const { title, description } = STEPS[progressStep ? (STEP_INDEX[progressStep] ?? 0) : 0]
+  const { title, description } = STEPS[shownStep]
 
   return (
     <div className="mx-auto flex h-dvh w-full max-w-98.25 flex-col bg-bg text-white-100">

@@ -2,7 +2,7 @@
 // 판결문 도착('펼쳐보기')에서 탭하면 이 화면
 
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import closeIcon from '../../assets/verdict/close-dark.svg'
 import copyIcon from '../../assets/verdict/copy.svg'
 import titleImage from '../../assets/verdict/title.svg'
@@ -12,24 +12,36 @@ import Toast from '../../components/Toast'
 import VerdictBoard from '../../components/VerdictBoard'
 import VerdictSummary from '../../components/VerdictSummary'
 import { useToast } from '../../hooks/useToast'
+import { toVerdictSummary, useCaseIdParam, useVerdict } from '../../hooks/useVerdict'
 import { paths } from '../../routes/paths'
 import { loadKakao } from '../../utils/kakao'
 import { captureImage, shareTo } from '../../utils/share'
 import type { ShareTarget } from '../../utils/share'
-import { mockVerdict } from './mockVerdict'
-
-// 공유 링크: 받은 사람은 '판결문 공유 유입' 화면으로 들어옴
-// TODO: API 연동 시 사건별 공유 주소로 교체
-const SHARE_URL = `${window.location.origin}${paths.sharedVerdict(mockVerdict.shareId)}`
+import { createShareLink } from '../../apis/verdictApi'
 
 function VerdictResultPage() {
   const navigate = useNavigate()
+  const caseId = useCaseIdParam() // 주소의 사건 ID
+  const { data: verdict, isError } = useVerdict(caseId)
   const { toast, showToast, hideToast } = useToast()
   const [isShareOpen, setIsShareOpen] = useState(false) // 공유하기 모달
   const captureRef = useRef<HTMLDivElement>(null) // 저장할 때 캡처하는 판결문 이미지
   const shareImage = useRef<Promise<File | null> | null>(null) // 캡처 이미지 
-  const { caseNumber, relation, title, reply, myReasons, otherReasons, myRatio, otherRatio } = mockVerdict
-  const summary = { caseNumber, relation, title } // 판결 요약에 들어가는 값
+  const shareUrl = useRef<Promise<string | null> | null>(null) // 공유 링크 (받은 사람은 '판결문 공유 유입' 화면으로 들어옴)
+
+  // 잘못된 주소거나 판결을 불러오지 못하면 홈으로
+  if (caseId === undefined) return <Navigate to={paths.home} replace />
+  if (isError) return <Navigate to={paths.home} replace state={{ toast: '판결문을 불러오지 못했어요.' }} />
+  if (!verdict) {
+    return (
+      <p role="status" className="text-b2-regular mx-auto min-h-dvh w-full max-w-98.25 bg-white-100 pt-20 text-center text-gray-70">
+        판결문을 불러오는 중이에요
+      </p>
+    )
+  }
+
+  const summary = toVerdictSummary(verdict) // 판결 요약, 판결문 이미지에 들어가는 값
+  const reply = verdict.recommended_reply // 추천 답장
 
   // 추천 답장 클립보드 복사
   const handleCopy = async () => {
@@ -41,18 +53,30 @@ function VerdictResultPage() {
     }
   }
 
-  // 공유하기 모달을 여는 동안 미리 캡처해 둠
+  // 공유하기 모달을 여는 동안 공유 링크 · 캡처 이미지를 미리 만들어 둠
   const openShare = () => {
     void loadKakao() // 카카오톡 버튼을 누르기 전에 SDK를 미리 불러둠
     shareImage.current ??= captureImage(captureRef.current, '달판-판결문.png')
+    // 공유 링크 만들기 → 지금 사이트 주소 + /shared/{토큰} (로컬 · 배포 어디서든 그 사이트로 열리게)
+    shareUrl.current ??= createShareLink(caseId)
+      .then(({ token }) => `${window.location.origin}${paths.sharedVerdict(token)}`)
+      .catch(() => {
+        shareUrl.current = null // 실패하면 다음에 다시 만들 수 있게
+        return null
+      })
     setIsShareOpen(true)
   }
 
   // 모달을 먼저 닫고 공유
   const handleShare = async (target: ShareTarget) => {
     setIsShareOpen(false)
+    const url = await shareUrl.current
+    if (!url) {
+      showToast('공유 링크를 만들지 못했어요. 잠시 후 다시 시도해 주세요.')
+      return
+    }
     const message = await shareTo(target, {
-      url: SHARE_URL,
+      url,
       text: `달판 AI 판결문 | ${summary.title}`,
       image: shareImage.current,
     })
@@ -72,9 +96,9 @@ function VerdictResultPage() {
       </header>
 
       <main className="motion-safe:animate-[fade-up_500ms_ease-out_both]">
-        <div className="mt-8.25 h-[min(473px,120.356cqw)]">
+        <div className="mt-8.25">
           <div className="origin-top-left scale-[min(1,calc(100cqw/393px))]">
-            <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason)} />
+            <VerdictSummary size="full" {...summary} onWhyClick={() => navigate(paths.verdictReason(caseId))} />
           </div>
         </div>
 
@@ -101,7 +125,7 @@ function VerdictResultPage() {
 
       {/* 공유용 판결문 이미지 */}
       <div aria-hidden="true" inert className="pointer-events-none fixed top-0 left-[-10000px]">
-        <VerdictBoard variant="image" ref={captureRef} {...summary} myReasons={myReasons} otherReasons={otherReasons} myRatio={myRatio} otherRatio={otherRatio} />
+        <VerdictBoard variant="image" ref={captureRef} {...summary} title={summary.title ?? ''} />
       </div>
 
       <ShareSheet open={isShareOpen} onClose={() => setIsShareOpen(false)} onSelect={handleShare} />

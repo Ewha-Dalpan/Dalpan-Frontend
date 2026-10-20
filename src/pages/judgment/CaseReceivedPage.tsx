@@ -73,10 +73,10 @@ function CaseReceivedPage() {
   // 분석이 끝나면 AI 상황확인으로 (replace: 뒤로가기로 이 화면에 다시 안 오게!)
   // 이미 판결까지 끝난 사건이면 판결문으로
   useEffect(() => {
-    if (!hasShownMinimum) return
-    if (request?.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })
-    if (request?.status === 'DONE') navigate(paths.verdict, { replace: true })
-  }, [hasShownMinimum, request?.status, navigate])
+    if (!hasShownMinimum || !request) return
+    if (request.status === 'AWAITING_CONFIRMATION') navigate(paths.confirm, { replace: true })
+    if (request.status === 'DONE') navigate(paths.verdict(request.case_id), { replace: true })
+  }, [hasShownMinimum, request, navigate])
 
   // 요청을 찾을 수 없으면(삭제된 사건 등) 홈으로
   useEffect(() => {
@@ -168,15 +168,17 @@ function CaseReceivedPage() {
         </div>
       </div>
 
-      {/* 사건 접수 완료 문구 */}
-      <p
-        role="status"
-        className="text-h2-semibold absolute inset-x-0 top-107.75 text-center text-black motion-safe:animate-[fade-up_600ms_ease-out_900ms_both]"
-      >
-        달토끼에게
-        <br />
-        사건이 접수됐어요.
-      </p>
+      {/* 사건 접수 완료 문구 + 분석이 오래 걸려서 기다려 달라는 안내 (조금 늦게 떠오름) */}
+      <div role="status" className="absolute inset-x-0 top-107.75 text-center">
+        <p className="text-h2-semibold text-black motion-safe:animate-[fade-up_600ms_ease-out_900ms_both]">
+          달토끼에게
+          <br />
+          사건이 접수됐어요.
+        </p>
+        <p className="text-b3-regular mt-2 text-gray-70 motion-safe:animate-[fade-up_600ms_ease-out_1300ms_both]">
+          조금만 기다려주세요...
+        </p>
+      </div>
 
       {/* 분석 실패 (디자인이 없어서 공통 모달 사용) */}
       <Modal
