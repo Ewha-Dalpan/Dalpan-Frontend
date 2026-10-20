@@ -70,9 +70,9 @@ function MyPage() {
               <span>{me ? `${me.coin_balance}톨` : ''}</span>
             </span>
           </div>
-          {['톨 충전하기', '톨 이용 내역'].map((label) => (
-            <Button key={label} aria-disabled="true" className="text-b2-medium flex h-[46px] items-center bg-white-100 pl-[26px] pt-px text-left">{label}</Button>
-          ))}
+          <Button onClick={() => navigate(paths.tollCharge)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">톨 충전하기</Button>
+          {/* TODO: 톨 이용 내역 화면이 생기면 연결 */}
+          <Button aria-disabled="true" className="text-b2-medium flex h-[46px] items-center bg-white-100 pl-[26px] pt-px text-left">톨 이용 내역</Button>
         </div>
       </section>
 
