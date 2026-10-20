@@ -81,7 +81,7 @@ function VerdictSummary({
       <div className="mt-[11.2px] flex items-start justify-between pr-[21.4px] pl-[22.2px]">
         <ul aria-label="내 과실 근거" className="flex max-w-[158px] flex-col items-start gap-[6.514px]">
           {myReasons.slice(0, MAX_REASONS).map((reason) => (
-            <li key={reason} className="flex max-w-full items-center">
+            <li key={reason} className="flex max-w-full items-end">
               <img src={tailLeft} alt="" className="mr-[-15.821px] block max-w-none shrink-0 -scale-x-100" />
               <ReasonChip label={reason} />
             </li>
@@ -89,7 +89,7 @@ function VerdictSummary({
         </ul>
         <ul aria-label="상대 과실 근거" className="flex max-w-[158px] flex-col items-end gap-[6.514px]">
           {otherReasons.slice(0, MAX_REASONS).map((reason, index) => (
-            <li key={reason} className="flex max-w-full items-center">
+            <li key={reason} className="flex max-w-full items-end">
               <span className="mr-[-15.821px] flex min-w-0">
                 <ReasonChip label={reason} />
               </span>
