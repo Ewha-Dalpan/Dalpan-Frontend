@@ -22,6 +22,9 @@ import MyJuryActivityPage from './pages/my/MyJuryActivityPage'
 import MyCasesPage from './pages/my/MyCasesPage'
 import MyCaseDetailPage from './pages/my/MyCaseDetailPage'
 import AccountPage from './pages/my/AccountPage'
+import TollShortagePage from './pages/payment/TollShortagePage'
+import TollChargePage from './pages/payment/TollChargePage'
+import PaymentCompletePage from './pages/payment/PaymentCompletePage'
 import LoginPage from './pages/onboarding/LoginPage'
 import SignupPage from './pages/onboarding/SignupPage'
 import KakaoCallbackPage from './pages/onboarding/KakaoCallbackPage'
@@ -62,6 +65,10 @@ function App() {
           <Route path={paths.juryRequest} element={<JuryRequestPage />} />
           {/* 계정 관리 (자체 헤더, GNB 없음) */}
           <Route path={paths.myAccount} element={<AccountPage />} />
+          {/* 결제: 톨 부족 → 톨 충전 → 결제 완료 (자체 헤더 · 배경) */}
+          <Route path={paths.tollShortage} element={<TollShortagePage />} />
+          <Route path={paths.tollCharge} element={<TollChargePage />} />
+          <Route path={paths.paymentComplete} element={<PaymentCompletePage />} />
         </Route>
 
         {/* 공유 받은 사람이 링크로 들어오는 판결문 (헤더·GNB 없는 단독 화면, 로그인 불필요) */}

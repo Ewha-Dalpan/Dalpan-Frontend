@@ -1,11 +1,8 @@
 // AI 재판 - 대화 캡처 업로드 페이지 (2.1.1)
 // 헤더는 JudgmentLayout에서!
 
-import { useRef, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createCase } from '../../apis/caseApi'
-import { getCoinBalance } from '../../apis/coinApi'
 import uploadRabbits from '../../assets/judgment/upload-rabbits.mp4'
 import Button from '../../components/Button'
 import ChipSelect from '../../components/ChipSelect'
@@ -13,69 +10,51 @@ import Modal from '../../components/modal/Modal'
 import PhotoUploadBox from '../../components/PhotoUploadBox'
 import type { Photo } from '../../components/PhotoUploadBox'
 import Toast from '../../components/Toast'
+import { TOLL_PER_CASE, useCoinBalance } from '../../hooks/useCoinBalance'
+import { useSubmitCase } from '../../hooks/useSubmitCase'
 import { useToast } from '../../hooks/useToast'
 import { paths } from '../../routes/paths'
-import { useCaseStore } from '../../store/useCaseStore'
+import { useUploadDraftStore } from '../../store/useUploadDraftStore'
 import { RELATIONS, type CaseRelation } from '../../types/case'
-import { getApiErrorMessage } from '../../utils/apiError'
 
 // 첨부 가능한 사진 장수
 const MIN_PHOTOS = 1
 const MAX_PHOTOS = 6
 
-// 사건 1건 접수에 드는 톨
-const TOLL_PER_CASE = 1
-
 function UploadPage() {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const [relation, setRelation] = useState<CaseRelation>(RELATIONS[0]) // 상대와의 관계
-  const [photos, setPhotos] = useState<Photo[]>([]) // 대화 캡처
+  // 톨 부족 → 충전 화면에 갔다가 돌아오면, 올려둔 관계 · 사진을 그대로 다시 보여줌
+  const draft = useUploadDraftStore((state) => state.draft)
+  const setDraft = useUploadDraftStore((state) => state.setDraft)
+  const [relation, setRelation] = useState<CaseRelation>(draft?.relation ?? RELATIONS[0]) // 상대와의 관계
+  const [photos, setPhotos] = useState<Photo[]>(draft?.photos ?? []) // 대화 캡처
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false) // 사건 접수 확인 모달
-  const receiveCase = useCaseStore((state) => state.receiveCase)
   const { toast, showToast, hideToast } = useToast()
 
   // 보유 톨 (접수 확인 모달에 표시)
-  const { data: balance } = useQuery({ queryKey: ['coinBalance'], queryFn: getCoinBalance, select: (data) => data.balance })
+  const { data: balance } = useCoinBalance()
 
-  // 사건 접수: 관계 + 대화 캡처 업로드 → 1톨 차감 후 AI 분석 시작
-  const submission = useMutation({
-    mutationFn: createCase,
-    onSuccess: ({ case_id, verdict_request }) => {
-      // 톨이 줄었으니 보유 톨 · 내 정보를 다시 불러오게 함
-      void queryClient.invalidateQueries({ queryKey: ['coinBalance'] })
-      void queryClient.invalidateQueries({ queryKey: ['me'] })
-      // 접수 로딩 · 상황 확인에서 진행 상태를 조회할 수 있게 사건 ID 저장
-      receiveCase({ caseId: case_id, requestId: verdict_request.id })
-      navigate(paths.received)
-    },
-    onError: (error) => {
+  // 사건 접수: 관계 + 대화 캡처 업로드 → 1톨 차감 후 AI 분석 시작 → 사건접수 로딩
+  const { submit, isPending } = useSubmitCase({
+    onError: (message) => {
       setIsSubmitModalOpen(false)
-      showToast(getApiErrorMessage(error))
+      showToast(message)
     },
   })
 
   // 최소 장수를 채워야 CTA 활성화
   const canSubmit = photos.length >= MIN_PHOTOS
 
-  // 모달에서 사건 접수하기 → 사건접수 로딩
-  // TODO: 결제하기 화면이 생기면 톨이 부족할 때 결제로 이동
-  // 빠르게 두 번 눌러서 2톨이 빠지지 않게 잠금 (화면이 다시 그려지기 전에도 바로 막힘)
-  const isSubmitting = useRef(false)
-
+  // 모달에서 사건 접수하기
+  // 톨이 부족하면 올린 사진을 기억해 두고 톨 부족 창으로 (충전 후 결제 완료에서 그대로 접수)
   const handleConfirmSubmit = () => {
-    if (isSubmitting.current) return
     if (balance !== undefined && balance < TOLL_PER_CASE) {
+      setDraft({ relation, photos })
       setIsSubmitModalOpen(false)
-      showToast('톨이 부족해요. 톨을 충전한 뒤 다시 접수해 주세요.')
+      navigate(paths.tollShortage)
       return
     }
-    isSubmitting.current = true
-    submission.mutate(
-      { relation, images: photos.map((photo) => photo.file) },
-      // 실패하면 다시 접수할 수 있게 잠금 해제 (성공하면 화면을 떠나서 그대로 둠)
-      { onError: () => (isSubmitting.current = false) },
-    )
+    submit({ relation, photos })
   }
 
   return (
@@ -129,10 +108,10 @@ function UploadPage() {
           </>
         }
         cancelText="취소"
-        confirmText={submission.isPending ? '접수하는 중...' : '사건 접수하기'}
+        confirmText={isPending ? '접수하는 중...' : '사건 접수하기'}
         wideConfirm
         onCancel={() => {
-          if (!submission.isPending) setIsSubmitModalOpen(false)
+          if (!isPending) setIsSubmitModalOpen(false)
         }}
         onConfirm={handleConfirmSubmit}
       />

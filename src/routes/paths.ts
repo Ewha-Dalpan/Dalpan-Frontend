@@ -26,6 +26,10 @@ export const paths = {
   verdictReason: (caseId: number | string) => `/judgment/verdicts/${caseId}/reason`, // 판단 근거
   verdictReasonPattern: "/judgment/verdicts/:caseId/reason",
   juryRequest: "/judgment/verdict/jury",
+  // 톨이 부족할 때 → 톨 충전 → 결제 완료
+  tollShortage: "/judgment/toll/shortage",
+  tollCharge: "/toll/charge",
+  paymentComplete: "/toll/charge/complete",
   sharedVerdict: (shareId: number | string) => `/shared/${shareId}`,
   sharedVerdictPattern: "/shared/:shareId",
   sharedVerdictReason: (shareId: number | string) => `/shared/${shareId}/reason`,

@@ -13,7 +13,7 @@ type VerdictScaleProps = {
 }
 
 function VerdictScale({ myRatio, className = '', style }: VerdictScaleProps) {
-  const { src, flipped, cakes } = getScaleLayout(myRatio)
+  const { src, imageHeight, flipped, cakes } = getScaleLayout(myRatio)
 
   return (
     <div aria-hidden="true" className={`h-[232.659px] w-[274.538px] ${className}`} style={style}>
@@ -26,7 +26,12 @@ function VerdictScale({ myRatio, className = '', style }: VerdictScaleProps) {
           style={{ left: x, top: y, width: size, height: size }}
         />
       ))}
-      <img src={src} alt="" className={`absolute inset-0 block size-full max-w-none ${flipped ? '-scale-x-100' : ''}`} />
+      <img
+        src={src}
+        alt=""
+        className={`absolute top-0 left-0 block w-full max-w-none ${flipped ? '-scale-x-100' : ''}`}
+        style={{ height: imageHeight }}
+      />
     </div>
   )
 }
