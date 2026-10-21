@@ -1,5 +1,5 @@
 // 결제 - 결제 완료 (2.2.2)
-// Paddle 결제창에서 결제를 마치면 이 화면 → '보유톨을 활용해 접수하기'
+// Paddle 결제창에서 결제를 마치면 이 화면 → '보유 이용권을 활용해 접수하기'
 // 업로드에서 톨이 부족해서 들어왔으면 올려둔 사진으로 바로 접수, 마이에서 충전하러 왔으면 업로드 화면으로
 
 import { useNavigate } from 'react-router-dom'
@@ -42,16 +42,16 @@ function PaymentCompletePage() {
     <main className="mx-auto flex min-h-dvh w-full max-w-98.25 flex-col bg-keycolor-5 px-6 pt-16.75 pb-10">
       <h1 role="status" className="text-h2-semibold">
         <span className="block text-keycolor-100">결제가 완료됐어요!</span>
-        <span className="block text-gray-90">톨을 사용해 판결을 받아보세요</span>
+        <span className="block text-gray-90">이용권을 사용해 판결을 받아보세요</span>
       </h1>
 
       <div className="mt-[61px] flex flex-col gap-3.75">
-        <TollRow label="보유 톨" amount={balance} highlight />
-        <TollRow label="필요 톨" amount={TOLL_PER_CASE} />
+        <TollRow label="보유 이용권" amount={balance} highlight />
+        <TollRow label="필요 이용권" amount={TOLL_PER_CASE} />
       </div>
 
       <Button variant="primary" fullWidth disabled={isPending} onClick={handleSubmit} className="mt-auto h-10">
-        {isPending ? '접수하는 중...' : '보유톨을 활용해 접수하기'}
+        {isPending ? '접수하는 중...' : '보유 이용권을 활용해 접수하기'}
       </Button>
       <Toast toast={toast} onHide={hideToast} />
     </main>

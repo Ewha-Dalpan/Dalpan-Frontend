@@ -19,14 +19,14 @@ function TollShortagePage() {
         <h1 className="text-h2-semibold">
           앗....
           <br />
-          톨이 부족해요
+          이용권이 부족해요
         </h1>
         <p className="text-b2-regular text-gray-30">1톨로 판결문을 받아보세요.</p>
       </div>
 
-      {/* 톨 충전하러 가기 → 톨 충전 */}
+      {/* 이용권 충전하러 가기 → 이용권 충전 */}
       <Button variant="white" fullWidth onClick={() => navigate(paths.tollCharge)} className="mt-auto">
-        톨 충전하러 가기
+        이용권 충전하러 가기
       </Button>
     </main>
   )

@@ -1,7 +1,7 @@
-// 결제 - 톨 충전 (2.2.2)
-// 보유 톨 + 충전 상품 목록, 가격 버튼을 누르면
+// 결제 - 이용권 충전 (2.2.2)
+// 보유 이용권 + 충전 상품 목록, 가격 버튼을 누르면
 // 주문 생성 → Paddle 결제창 → 결제 확인(주문 상태가 PAID가 될 때까지 조회) → 결제 완료
-// 톨 부족 창 '톨 충전하러 가기' / 마이 '톨 충전하기'에서 들어옴
+// 이용권 부족 창 '이용권 충전하러 가기' / 마이 '톨 충전하기'에서 들어옴
 
 import { useEffect, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -21,8 +21,8 @@ import type { CoinProduct } from '../../types/payment'
 import { getApiErrorMessage } from '../../utils/apiError'
 import { loadPaddle, openPaddleCheckout } from '../../utils/paddle'
 
-// '인기' 칸에 맨 위로 보여줄 상품
-const POPULAR_COIN_AMOUNT = 10
+// '인기' 칸에 맨 위로 보여줄 상품 (피그마 기준 5톨)
+const POPULAR_COIN_AMOUNT = 5
 
 // 결제 후 주문 상태를 다시 조회하는 간격, 최대로 기다리는 시간 (ms)
 const ORDER_POLL_MS = 2000
@@ -30,17 +30,23 @@ const ORDER_TIMEOUT_MS = 60000
 
 const PADDLE_LOAD_ERROR = '결제창을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
 
+// 백엔드는 보너스를 합친 전체 톨 수만 줌 (예: 11톨)
+// 피그마처럼 '10톨 + 1톨 보너스'로 나눠 보여주려고 전체 톨 수별 보너스를 적어둠
+const BONUS_BY_TOTAL: Record<number, number> = { 11: 1, 23: 3, 55: 5 }
+
 const formatPrice = (price: number) => `${price.toLocaleString('ko-KR')}원`
 
-// 상품 한 줄: 톨 수량 · 가격 버튼 · 아래 구분선
+// 상품 한 줄: 톨 수량 (+ 보너스) · 가격 버튼 · 아래 구분선
 function ProductRow({ product, disabled, onSelect }: { product: CoinProduct; disabled: boolean; onSelect: (product: CoinProduct) => void }) {
   const price = formatPrice(product.price_krw)
+  const bonus = BONUS_BY_TOTAL[product.coin_amount] ?? 0
   return (
     <li>
       <div className="flex h-6.75 items-center justify-between pl-0.75">
         <span className="flex items-center gap-1.25">
           <TollIcon />
-          <span className="text-b2-semibold text-gray-90">{product.coin_amount}톨</span>
+          <span className="text-b2-semibold text-gray-90">{product.coin_amount - bonus}톨</span>
+          {bonus > 0 && <span className="text-l2-medium text-[#ff5634]">+ {bonus}톨 보너스</span>}
         </span>
         <button
           type="button"
@@ -141,10 +147,10 @@ function TollChargePage() {
     }
     if (order?.status === 'EXPIRED') return reset('결제 시간이 지나 주문이 만료됐어요. 다시 시도해 주세요.')
     if (order?.status === 'REFUNDED') return reset('환불된 주문이에요.')
-    if (isOrderError) return reset('결제를 확인하지 못했어요. 잠시 후 보유 톨을 확인해 주세요.')
+    if (isOrderError) return reset('결제를 확인하지 못했어요. 잠시 후 보유 이용권을 확인해 주세요.')
 
     // 너무 오래 PAID가 안 되면 (결제 완료 알림 지연 등) 안내하고 멈춤
-    const timer = setTimeout(() => reset('결제 확인이 늦어지고 있어요. 잠시 후 보유 톨을 확인해 주세요.'), ORDER_TIMEOUT_MS)
+    const timer = setTimeout(() => reset('결제 확인이 늦어지고 있어요. 잠시 후 보유 이용권을 확인해 주세요.'), ORDER_TIMEOUT_MS)
     return () => clearTimeout(timer)
   }, [paidOrderId, order?.status, isOrderError, queryClient, navigate, showToast])
 
@@ -155,27 +161,27 @@ function TollChargePage() {
       <img src={chargeMoon} alt="" aria-hidden="true" className="pointer-events-none absolute top-32.5 -left-100.5 block max-w-none" />
 
       <div className="relative">
-        <Header depth={2} title="코인 충전" onBack={goBack} />
+        <Header depth={2} title="이용권 충전" onBack={goBack} />
       </div>
 
-      {/* 떡을 뿌리는 토끼 (아래쪽은 '충전 코인' 박스에 살짝 가려짐) */}
+      {/* 떡을 뿌리는 토끼 (아래쪽은 '이용권' 박스에 살짝 가려짐) */}
       <img src={chargeRabbit} alt="" aria-hidden="true" className="pointer-events-none absolute top-12.5 left-[170px] block max-w-none" />
 
-      <section aria-label="보유 코인" className="absolute top-14.25 left-6.75">
-        <p className="text-l1-medium">보유 코인</p>
+      <section aria-label="보유 이용권" className="absolute top-14.25 left-6.75">
+        <p className="text-l1-medium">보유 이용권</p>
         <p className="text-h2-medium mt-1.5 flex items-center gap-1.5">
           <TollIcon size="lg" />
           {balance === undefined ? '-' : `${balance}톨`}
         </p>
       </section>
 
-      <h1 className="text-h3-medium absolute top-45.5 left-6.75 text-gray-100">톨을 충전해요.</h1>
+      <h1 className="text-h3-medium absolute top-45.5 left-6.75 text-gray-100">이용권을 충전해요.</h1>
 
       {/* 목록 헤더(화면 y 228)부터는 차례로 쌓음: 헤더 51 + 177 */}
       <main className="relative px-6 pt-44.25">
-        {/* 목록 헤더: 충전 코인 / 결제금액 */}
+        {/* 목록 헤더: 이용권 / 결제금액 */}
         <div className="text-l1-medium flex h-13 items-center justify-between rounded-lg bg-white-100 pr-4.5 pl-4.25 text-[#343434] shadow-[0_0_30px_rgba(138,63,53,0.25)]">
-          <span>충전 코인</span>
+          <span>이용권</span>
           <span>결제금액</span>
         </div>
 
