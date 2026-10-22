@@ -22,7 +22,6 @@ interface CaseState {
   clearPendingCase: () => void
 }
 
-// TODO: 이어하기 모달까지 연동되면 서버의 진행 중 사건(unfinished)으로 교체
 export const useCaseStore = create<CaseState>()(
   persist(
     (set) => ({
