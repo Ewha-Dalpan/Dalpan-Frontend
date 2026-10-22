@@ -28,7 +28,7 @@ const parts = [
   { src: jointShine, x: 81.19594, y: 560.80334 },
   { src: jointShade, x: 64.33382, y: 560.4675 },
 ]
-const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value)))
+const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value / 10) * 10))
 
 function JuryBalance({ value, touched, showHint, onChange, onTouch }: Props) {
   const [active, setActive] = useState<Side | null>(null)
@@ -62,8 +62,8 @@ function JuryBalance({ value, touched, showHint, onChange, onTouch }: Props) {
     const current = side === 'left' ? value : 100 - value
     let next: number
     switch (event.key) {
-      case 'ArrowDown': case 'ArrowRight': next = current + 5; break
-      case 'ArrowUp': case 'ArrowLeft': next = current - 5; break
+      case 'ArrowDown': case 'ArrowRight': next = current + 10; break
+      case 'ArrowUp': case 'ArrowLeft': next = current - 10; break
       case 'Home': next = 0; break
       case 'End': next = 100; break
       default: return
