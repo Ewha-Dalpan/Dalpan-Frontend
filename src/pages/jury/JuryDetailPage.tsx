@@ -1,3 +1,5 @@
+import JuryReportDialog from './JuryReportDialog'
+import JuryCaseReportButton from './JuryCaseReportButton'
 import { useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header'
@@ -17,7 +19,7 @@ import JuryCaseStatus from './JuryCaseStatus'
 import JuryCaseContent from './JuryCaseContent'
 import avatar1 from '../../assets/jury/detail/avatar1.png'
 import me from '../../assets/jury/detail/me.png'
-import more from '../../assets/jury/detail/more.svg'
+import JuryActionMenu from './JuryActionMenu'
 import people from '../../assets/jury/detail/people.svg'
 import colon from '../../assets/jury/detail/colon.svg'
 import commentIcon from '../../assets/jury/detail/comment.svg'
@@ -39,6 +41,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
   const nickname = useAuthStore((state) => state.nickname)
   const [draft, setDraft] = useState('')
   const [editing, setEditing] = useState(false)
+  const [reporting, setReporting] = useState<number | null>(null)
   const [deleting, setDeleting] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
   const pending = useRef(false)
@@ -67,7 +70,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
     finally { pending.current = false; setBusy(false) }
   }
   return <div className="mx-auto min-h-dvh max-w-[393px] bg-white-100 text-gray-90">
-    <Header depth={2} theme="white" title="배심원석" onBack={() => navigate(paths.juryExplore, { replace: true })} />
+    <div className="relative"><Header depth={2} theme="white" title="배심원석" onBack={() => navigate(paths.juryExplore, { replace: true })} /><JuryCaseReportButton caseId={item.case_id} isAuthor={item.is_author} /></div>
     <main className="pt-[5px]">
       <JuryCaseContent item={item} />
       <section aria-label="판결 결과" className="mx-[18px] mt-[18px] h-[180px] rounded-[8px] bg-gray-5 pt-[19px]">
@@ -83,7 +86,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
           {query.isError && <Button onClick={() => void query.refetch()}>댓글을 불러오지 못했어요. 다시 시도</Button>}
           {query.isSuccess && !comments.length && <p className="text-b2-regular text-gray-50">첫 댓글을 남겨보세요.</p>}
           {comments.map((comment) => <article key={comment.id}>
-            <div className="mb-[4px] flex items-center justify-between"><div className="flex items-center gap-[4px]"><img src={comment.is_mine ? me : avatar1} alt="" className="size-[24px] rounded-full object-cover"  /><span className="text-l1-regular">{comment.nickname}</span><span className="text-l2-regular text-gray-50">{new Date(comment.created_at).toLocaleDateString('ko-KR')}</span></div><button type="button" aria-label={`${comment.nickname} 댓글 메뉴`} onClick={() => comment.is_mine ? setDeleting(comment.id) : showToast('신고 기능은 다음 연동에서 제공할 예정이에요.')}><img src={more} alt="" /></button></div>
+            <div className="mb-[4px] flex items-center justify-between"><div className="flex items-center gap-[4px]"><img src={comment.is_mine ? me : avatar1} alt="" className="size-[24px] rounded-full object-cover"  /><span className="text-l1-regular">{comment.nickname}</span><span className="text-l2-regular text-gray-50">{new Date(comment.created_at).toLocaleDateString('ko-KR')}</span></div><JuryActionMenu label={`${comment.nickname} 댓글 메뉴`} actionLabel={comment.is_mine ? '댓글 삭제' : '신고'} onAction={() => comment.is_mine ? setDeleting(comment.id) : setReporting(comment.id)} /></div>
             <p className="text-b2-regular w-[334px] max-w-full whitespace-pre-line break-words">{comment.content}</p>
           </article>)}
         </div>
@@ -94,6 +97,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
       {editing && <div className="mb-[8px] flex w-fit items-center gap-[4px] rounded-full bg-keycolor-20 px-[8px] py-[4px] text-l2-regular text-keycolor-70"><img src={me} alt="" className="size-[16px] rounded-full bg-[#ffd95c]" />{nickname}</div>}
       <div className="relative"><Textarea disabled={busy} maxLength={1000} aria-label="댓글 달기" value={draft} onFocus={() => setEditing(true)} onChange={(event) => setDraft(event.target.value)} placeholder="댓글 달기" className="min-h-[42px] max-h-[180px] overflow-y-auto placeholder:text-gray-40" style={{ padding: '9px 44px 9px 17px', fontSize: 15, fontWeight: 400, lineHeight: '24px' }} />{editing && <Button type="submit" disabled={busy || !draft.trim()} aria-label="댓글 전송" className="absolute right-[5px] bottom-[5px] flex size-[32px] items-center justify-center rounded-[8px] bg-keycolor-100 disabled:opacity-40"><img src={send} alt="" /></Button>}</div>
     </form>
+    {reporting !== null && <JuryReportDialog caseId={item.case_id} commentId={reporting} onClose={() => setReporting(null)} onComplete={(message) => { setReporting(null); showToast(message) }} />}
     <Modal open={deleting !== null} title="댓글을 삭제할까요?" cancelText="취소" confirmText={busy ? '삭제 중…' : '삭제'} onCancel={() => { if (!busy) setDeleting(null) }} onConfirm={() => { if (deleting !== null) void mutateComment(deleting) }} />
     <Toast toast={toast ?? (typeof location.state?.toast === 'string' ? { id: location.key, message: location.state.toast } : null)} onHide={() => { hideToast(); navigate(location.pathname, { replace: true, state: null }) }} />
   </div>

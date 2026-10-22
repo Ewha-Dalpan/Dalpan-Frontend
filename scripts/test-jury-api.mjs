@@ -36,3 +36,15 @@ test('사연자 비율로 투표하고 댓글은 해당 사건에 작성·삭제
 test('공개 이미지 주소에 사건 ID와 이미지 ID를 포함한다', () => {
   assert.equal(api.getJuryImageUrl(42, 7), 'https://example.com/api/jury/cases/42/images/7/')
 })
+
+test('사건 신고는 사건 경로에 사유와 내용을 전송한다', async () => {
+  const body = { reason: 'OTHER', detail: '신고 사유 상세' }
+  await api.reportJuryCase(42, body)
+  assert.deepEqual(calls.pop(), { method: 'post', args: ['/api/jury/cases/42/reports/', body] })
+})
+
+test('댓글 신고는 사건 ID와 댓글 ID를 함께 지정한다', async () => {
+  const body = { reason: 'PRIVACY', detail: '' }
+  await api.reportJuryComment(42, 7, body)
+  assert.deepEqual(calls.pop(), { method: 'post', args: ['/api/jury/cases/42/comments/7/reports/', body] })
+})

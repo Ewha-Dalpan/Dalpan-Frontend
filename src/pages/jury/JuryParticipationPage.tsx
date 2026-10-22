@@ -1,3 +1,4 @@
+import JuryCaseReportButton from './JuryCaseReportButton'
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
@@ -59,6 +60,7 @@ function Participation({ item, loggedIn }: { item: JuryCaseDetail; loggedIn: boo
       onPointerDown={resetHint} onKeyDown={resetHint}>
       <div className="absolute left-0 top-0 h-[804px] w-[393px] origin-top-left scale-[min(1,calc(100cqw/393px))]">
         <Header depth={2} title="배심원석" theme="white" onBack={goBack} />
+        <JuryCaseReportButton caseId={item.case_id} isAuthor={item.is_author} />
         <main>
           <div className="absolute inset-x-0 top-[56px]"><JuryCaseContent item={item} /></div>
           <JuryBalance value={ratio} touched={touched} showHint={showHint} onChange={setRatio} onTouch={() => { setTouched(true); setShowHint(false) }} />
