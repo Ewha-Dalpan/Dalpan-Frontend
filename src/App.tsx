@@ -62,7 +62,7 @@ function App() {
           {/* 판단 근거 상세: 판결문 전체 화면 / 내 사건 상세 두 곳에서 같은 페이지로 (자체 헤더라 레이아웃 밖) */}
           <Route path={paths.verdictReasonPattern} element={<VerdictReasonPage />} />
           <Route path={paths.myCaseReasonPattern} element={<VerdictReasonPage />} />
-          <Route path={paths.juryRequest} element={<JuryRequestPage />} />
+          <Route path={paths.juryRequestPattern} element={<JuryRequestPage />} />
           {/* 계정 관리 (자체 헤더, GNB 없음) */}
           <Route path={paths.myAccount} element={<AccountPage />} />
           {/* 결제: 톨 부족 → 톨 충전 → 결제 완료 (자체 헤더 · 배경) */}

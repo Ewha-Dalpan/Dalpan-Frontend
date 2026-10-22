@@ -26,7 +26,7 @@ const paintCells = (context: CanvasRenderingContext2D, grid: MosaicGrid, cells: 
 type MosaicEditorProps = {
   src: string
   onCancel: () => void
-  onSave: (editedSrc: string) => void
+  onSave: (editedSrc: string) => void | Promise<void>
 }
 
 function MosaicEditor({ src, onCancel, onSave }: MosaicEditorProps) {
@@ -36,6 +36,7 @@ function MosaicEditor({ src, onCancel, onSave }: MosaicEditorProps) {
   const [strokes, setStrokes] = useState<number[][]>([]) // 문지른 한 번마다 칠한 칸 번호
   const [mode, setMode] = useState<Mode>('paint')
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
   const stroke = useRef<{ cells: Set<number>; x: number; y: number } | null>(null) // 지금 문지르는 중인 획
 
   // 지금까지 칠한 칸 전체
@@ -51,6 +52,8 @@ function MosaicEditor({ src, onCancel, onSave }: MosaicEditorProps) {
     let cancelled = false
     createMosaicGrid(src).then((created) => {
       if (!cancelled) setGrid(created)
+    }).catch(() => {
+      if (!cancelled) setError('이미지를 불러오지 못했어요. 닫고 다시 시도해 주세요.')
     })
     return () => {
       cancelled = true
@@ -127,9 +130,12 @@ function MosaicEditor({ src, onCancel, onSave }: MosaicEditorProps) {
   const handleSave = async () => {
     if (paintedCells.size === 0) return onCancel() // 바뀐 게 없으면 그냥 닫기
     setIsSaving(true)
+    setError('')
     try {
-      onSave(await applyMosaic(src, paintedCells))
+      await onSave(await applyMosaic(src, paintedCells))
     } catch {
+      setError('편집 이미지를 저장하지 못했어요. 다시 시도해 주세요.')
+    } finally {
       setIsSaving(false)
     }
   }
@@ -143,13 +149,13 @@ function MosaicEditor({ src, onCancel, onSave }: MosaicEditorProps) {
       // Esc → 취소
       onCancel={(event) => {
         event.preventDefault()
-        onCancel()
+        if (!isSaving) onCancel()
       }}
       className="m-0 h-dvh max-h-none w-full max-w-none bg-gray-100 text-white-100 backdrop:bg-black/60 open:motion-safe:animate-[fade-up_300ms_ease-out_both]"
     >
       <div className="mx-auto flex h-full max-w-98.25 flex-col">
         <header className="flex h-12.75 shrink-0 items-center justify-between px-4">
-          <Button onClick={onCancel} className="text-b2-regular cursor-pointer px-1 py-2">
+          <Button onClick={onCancel} disabled={isSaving} className="text-b2-regular cursor-pointer px-1 py-2">
             취소
           </Button>
           <h2 className="text-b2-semibold">사진 가리기</h2>
@@ -173,6 +179,8 @@ function MosaicEditor({ src, onCancel, onSave }: MosaicEditorProps) {
             </>
           )}
         </p>
+
+        {error && <p role="alert" className="px-6 pt-2 text-center">{error}</p>}
 
         {/* 사진 (세로로 긴 캡처는 위아래로 스크롤) */}
         <div className="mt-3 min-h-0 flex-1 overflow-y-auto px-6 pb-4">

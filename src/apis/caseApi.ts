@@ -2,7 +2,7 @@
 
 import axiosInstance from './axiosInstance'
 import type { Paginated } from '../types/common'
-import type { Case, CasePayment, CreateCaseRequest, CreateCaseResponse, UpdateSituationRequest } from '../types/case'
+import type { Case, CaseImage, CasePayment, CreateCaseRequest, CreateCaseResponse, UpdateSituationRequest } from '../types/case'
 import type { VerdictRequest } from '../types/verdict'
 
 // 내 사건 목록 (unfinished: true면 판결 안 끝난 사건만)
@@ -53,4 +53,21 @@ export const updateSituation = async (caseId: number, body: UpdateSituationReque
 export const requestJudgment = async (caseId: number) => {
   const { data } = await axiosInstance.post<VerdictRequest>(`/api/cases/${caseId}/judgment/`)
   return data
+}
+
+export const getPublicCaseImage = async (caseId: number, imageId: number) => {
+  const { data } = await axiosInstance.get<Blob>(`/api/cases/${caseId}/images/${imageId}/public-image/`, { responseType: 'blob' })
+  return data
+}
+
+export const uploadPublicCaseImage = async (caseId: number, imageId: number, image: Blob) => {
+  const form = new FormData()
+  const extension = image.type === 'image/jpeg' ? 'jpg' : image.type === 'image/webp' ? 'webp' : 'png'
+  form.append('image', image, `public-${imageId}.${extension}`)
+  const { data } = await axiosInstance.put<CaseImage>(`/api/cases/${caseId}/images/${imageId}/public-image/`, form)
+  return data
+}
+
+export const resetPublicCaseImage = async (caseId: number, imageId: number) => {
+  await axiosInstance.delete(`/api/cases/${caseId}/images/${imageId}/public-image/`)
 }

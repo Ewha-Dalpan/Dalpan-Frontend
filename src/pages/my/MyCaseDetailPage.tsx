@@ -7,6 +7,7 @@ import { getVerdict } from '../../apis/verdictApi'
 import { toVerdictSummary, useCaseIdParam } from '../../hooks/useVerdict'
 import { getApiErrorMessage, isApiStatus } from '../../utils/apiError'
 import Button from '../../components/Button'
+import CasePublicationActions from '../../components/CasePublicationActions'
 
 function MyCaseDetailPage() {
   const navigate = useNavigate()
@@ -40,6 +41,9 @@ function MyCaseDetailPage() {
       <div className="relative z-10 mt-6 mr-3.25 ml-3.5">
         <EnvelopeBack className="relative h-[45.75px]" />
         <EnvelopeFront className="relative h-[497.93px]" />
+      </div>
+      <div className="absolute inset-x-6 bottom-6 z-20">
+        <CasePublicationActions caseId={caseId} isPublic={verdict.is_public} />
       </div>
     </section>
   )

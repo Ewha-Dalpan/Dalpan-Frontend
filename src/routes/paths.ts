@@ -25,7 +25,8 @@ export const paths = {
   verdictResultPattern: "/judgment/verdicts/:caseId/result",
   verdictReason: (caseId: number | string) => `/judgment/verdicts/${caseId}/reason`, // 판단 근거
   verdictReasonPattern: "/judgment/verdicts/:caseId/reason",
-  juryRequest: "/judgment/verdict/jury",
+  juryRequest: (caseId: number | string) => `/judgment/verdicts/${caseId}/jury`,
+  juryRequestPattern: "/judgment/verdicts/:caseId/jury",
   // 톨이 부족할 때 → 톨 충전 → 결제 완료
   tollShortage: "/judgment/toll/shortage",
   tollCharge: "/toll/charge",
