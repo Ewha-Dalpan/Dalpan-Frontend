@@ -1,6 +1,8 @@
-import { useRef } from "react";
-import type { PointerEvent } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
+import { Link, useOutletContext } from "react-router-dom";
+import { getFeaturedCases } from '../../apis/featuredCasesApi';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
+import { paths } from '../../routes/paths';
 import aiJudge from "../../assets/home/ai-judge.svg";
 import ground from "../../assets/home/ground.svg";
 import participants from "../../assets/home/participants.svg";
@@ -8,62 +10,16 @@ import rabbitHome from "../../assets/home/rabbit-home.mp4";
 import Button from "../../components/Button";
 import type { MainLayoutContext } from "../../layouts/MainLayout";
 
-// API 연결 전 가아짜 데이터
-const featuredCases = [
-  {
-    id: 1,
-    category: "연애",
-    title: ["약속 당일 4시간 연락이 없었는데,", "제가 예민한 건가요?"],
-    participantCount: 128,
-  },
-  {
-    id: 2,
-    category: "친구",
-    title: ["제 생일은 넘어가고", "자기 생일 선물은 챙겨달라는 친구"],
-    participantCount: 96,
-  },
-  {
-    id: 3,
-    category: "직장·학교",
-    title: ["팀플 단톡방에서 제 의견만 계속", "무시돼요. 제가 예민한 걸까요?"],
-    participantCount: 32,
-  },
-  {
-    id: 4,
-    category: "가족",
-    title: ["부모님이 제 진로 얘기만 나오면", "비교하세요."],
-    participantCount: 71,
-  },
-];
-
 function HomePage() {
   const { startJudgment } = useOutletContext<MainLayoutContext>();
-  const dragStart = useRef<{ x: number; scrollLeft: number } | null>(null);
-
-  // 터치는 기본 스와이프, 마우스는 드래그로 이동!!
-  function startDrag(event: PointerEvent<HTMLUListElement>) {
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
-    event.preventDefault();
-    event.currentTarget.focus({ preventScroll: true });
-    dragStart.current = {
-      x: event.clientX,
-      scrollLeft: event.currentTarget.scrollLeft,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
-  function moveDrag(event: PointerEvent<HTMLUListElement>) {
-    if (!dragStart.current) return;
-    event.currentTarget.scrollLeft =
-      dragStart.current.scrollLeft + dragStart.current.x - event.clientX;
-  }
-
-  function endDrag(event: PointerEvent<HTMLUListElement>) {
-    dragStart.current = null;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  }
+  const scroll = useHorizontalScroll(240);
+  const featured = useQuery({
+    queryKey: ['featuredCases'],
+    queryFn: getFeaturedCases,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <div className="relative isolate min-h-[max(733px,calc(100dvh-59px))] overflow-hidden pt-[17px]">
@@ -125,35 +81,20 @@ function HomePage() {
         <ul
           tabIndex={0}
           aria-labelledby="featured-cases-title"
-          onPointerDown={startDrag}
-          onPointerMove={moveDrag}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onLostPointerCapture={() => {
-            dragStart.current = null;
-          }}
-          onDragStart={(event) => event.preventDefault()}
-          onKeyDown={(event) => {
-            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-            event.preventDefault();
-            event.currentTarget.scrollBy({
-              left: event.key === "ArrowRight" ? 240 : -240,
-            });
-          }}
+          {...scroll}
           className="mt-[10px] flex cursor-grab select-none gap-[8px] overflow-x-auto overscroll-x-contain px-[24px] active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {featuredCases.map((item) => (
+          {featured.data?.map((item) => (
             <li
-              key={item.id}
+              key={item.case_id}
               className="relative h-[137px] w-[232px] shrink-0 rounded-[20px] bg-white-100"
             >
+              <Link to={paths.juryParticipate(item.case_id)} aria-label={item.title} className="absolute inset-0 rounded-[20px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
               <span className="text-l1-medium absolute left-[15px] top-[17px] rounded-[50px] bg-keycolor-5 px-[8px] py-[4px] text-keycolor-100">
-                {item.category}
+                {item.relation}
               </span>
-              <h3 className="text-b2-medium absolute left-[18px] top-[49px] whitespace-nowrap text-gray-90">
-                {item.title[0]}
-                <br />
-                {item.title[1]}
+              <h3 className="text-b2-medium absolute left-[18px] top-[49px] w-[189px] line-clamp-2 break-words text-gray-90">
+                {item.title}
               </h3>
               <div className="absolute left-[18px] top-[102px] flex items-center gap-[2px]">
                 <span className="relative size-[16px] shrink-0">
@@ -164,12 +105,19 @@ function HomePage() {
                   />
                 </span>
                 <span className="text-l1-medium text-gray-50">
-                  {item.participantCount}명 참여
+                  {item.jury_count}명 참여
                 </span>
               </div>
+              </Link>
             </li>
           ))}
         </ul>
+        {featured.isPending && <p role="status" className="text-b2-regular mx-6 py-4">사건을 불러오는 중이에요.</p>}
+        {featured.isError && <div role="alert" className="text-b2-regular mx-6 py-4">
+          <p>사건을 불러오지 못했어요.</p>
+          <Button onClick={() => void featured.refetch()} className="mt-2 underline">다시 시도</Button>
+        </div>}
+        {featured.isSuccess && featured.data.length === 0 && <p role="status" className="text-b2-regular mx-6 py-4">아직 공개된 사건이 없어요.</p>}
       </section>
     </div>
   );
