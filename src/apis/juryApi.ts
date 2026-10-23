@@ -9,6 +9,7 @@ import type {
   JuryRelation,
   JurySort,
   JuryVoteResponse,
+  JuryVoteRequest,
   ReportRequest,
 } from '../types/jury'
 
@@ -22,8 +23,7 @@ export const getJuryCase = async (caseId: number) => {
   return data
 }
 
-// TODO: 투표 요청 body 구조 확인 필요 (명세서 상세 비어 있음)
-export const voteJuryCase = async (caseId: number, body: Record<string, unknown>) => {
+export const voteJuryCase = async (caseId: number, body: JuryVoteRequest) => {
   const { data } = await axiosInstance.post<JuryVoteResponse>(`/api/jury/cases/${caseId}/votes/`, body)
   return data
 }
@@ -45,8 +45,13 @@ export const deleteJuryComment = async (caseId: number, commentId: number) => {
 }
 
 // 공개 사건 이미지 (로그인 없이 볼 수 있어서 <img src>에 바로 사용 가능)
-export const getJuryImageUrl = (imageId: number) => `${import.meta.env.VITE_API_BASE_URL}/api/jury/images/${imageId}/`
+export const getJuryImageUrl = (caseId: number, imageId: number) =>
+  `${(import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "")}/api/jury/cases/${caseId}/images/${imageId}/`
 
 export const reportJuryCase = async (caseId: number, body: ReportRequest) => {
   await axiosInstance.post(`/api/jury/cases/${caseId}/reports/`, body)
+}
+
+export const reportJuryComment = async (caseId: number, commentId: number, body: ReportRequest) => {
+  await axiosInstance.post(`/api/jury/cases/${caseId}/comments/${commentId}/reports/`, body)
 }

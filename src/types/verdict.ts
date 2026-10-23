@@ -103,5 +103,5 @@ export type ShareLink = {
 export type PublishResponse = {
   case_id: number
   is_public: boolean
-  verdict: PublicVerdict
+  verdict: Pick<PublicVerdict, 'case_id' | 'case_number' | 'title' | 'relation' | 'case_summary' | 'fault_ratio' | 'other_fault_ratio'>
 }

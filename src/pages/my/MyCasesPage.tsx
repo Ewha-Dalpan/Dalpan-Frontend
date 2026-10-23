@@ -1,23 +1,55 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { paths } from '../../routes/paths'
-import { exampleMyCases } from './exampleMyCases'
+import { useInfiniteQuery, useQueries } from '@tanstack/react-query'
+import { getCases } from '../../apis/caseApi'
+import { getVerdict } from '../../apis/verdictApi'
+import { getApiErrorMessage, isApiStatus } from '../../utils/apiError'
+import ResumeCaseModal from '../../components/modal/ResumeCaseModal'
+import type { CaseStatus } from '../../types/case'
 import Button from '../../components/Button'
 import folderTexture from '../../assets/my/cases/folder-texture.png'
 import separator from '../../assets/my/cases/separator.svg'
+
+const statusLabels: Record<CaseStatus, string> = { WRITING: '작성 중', CONFIRMING: '상황 확인 중', READY: '판결 대기', JUDGING: '판결 중', JUDGED: '판결 완료' }
 
 function MyCasesPage() {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
+  const [resumeId, setResumeId] = useState<number | null>(null)
+  const { data, isPending, isError, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage, isFetchNextPageError } = useInfiniteQuery({
+    queryKey: ['myCases'],
+    queryFn: ({ pageParam }) => getCases({ page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _pages, lastPageParam) => lastPage.next ? lastPageParam + 1 : undefined,
+  })
+  const cases = data?.pages.flatMap((page) => page.results) ?? []
+  const judgedIds = [...new Set(cases.filter((item) => item.status === 'JUDGED').map((item) => item.id))]
+  const verdictQueries = useQueries({
+    queries: judgedIds.map((caseId) => ({
+      queryKey: ['verdict', caseId],
+      queryFn: () => getVerdict(caseId),
+      staleTime: 0,
+      retry: (count: number, failure: Error) => !isApiStatus(failure, 404) && !isApiStatus(failure, 401) && count < 2,
+    })),
+  })
+  const publicIds = new Set(judgedIds.filter((_id, index) => verdictQueries[index].data?.is_public))
+  const failedVerdictQueries = verdictQueries.filter((query) => query.isError)
+  if (isPending) return <p role="status" className="p-6 text-center text-white-100">사건 목록을 불러오는 중이에요.</p>
+  if (isError && !data) return <div role="alert" className="p-6 text-center text-white-100"><p>{getApiErrorMessage(error)}</p><Button onClick={() => void refetch()} className="mt-4">다시 시도</Button></div>
+
   return (
     <section aria-label="내 사건 목록" className="mx-[24px] grid grid-cols-2 items-start gap-[9px] pt-[17px]">
-      {exampleMyCases.map((item) => {
+      {cases.length === 0 && <p className="col-span-2 py-6 text-center text-white-100">아직 접수한 사건이 없어요.</p>}
+      {cases.map((entry) => {
+        const item = { ...entry, category: entry.situation?.relation ?? '관계 미정', status: publicIds.has(entry.id) ? '배심원석 공개 중' : statusLabels[entry.status] ?? '상태 확인 중', date: new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(entry.created_at)) }
+
         const selected = selectedId === item.id
         return (
           <Button key={item.id} aria-expanded={selected} aria-controls={`case-preview-${item.id}`}
-            aria-label={`${item.category} ${item.date} 접수, ${item.status}, ${selected ? '판결문 보기' : '제목 미리보기'}`}
-            onClick={() => selected ? navigate(paths.myCaseDetail(item.id)) : setSelectedId(item.id)}
+            aria-label={`${item.category} ${item.date} 접수, ${item.status}, ${selected ? entry.status === 'JUDGED' ? '판결문 보기' : '사건 이어하기' : '제목 미리보기'}`}
+            onClick={() => { if (!selected) setSelectedId(item.id); else if (entry.status === 'JUDGED') navigate(paths.myCaseDetail(item.id)); else setResumeId(item.id) }}
             onKeyDown={(event) => { if (event.key === 'Escape') setSelectedId(null) }}
             className={`relative min-w-0 cursor-pointer rounded-[8px] text-left motion-safe:transition-[height] motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${selected ? 'h-[159px]' : 'h-[125px]'}`}
           >
@@ -45,6 +77,10 @@ function MyCasesPage() {
           </Button>
         )
       })}
+      {failedVerdictQueries.length > 0 && <div role="alert" className="col-span-2 text-center text-white-100"><p>일부 사건의 배심원석 공개 여부를 확인하지 못했어요.</p><Button disabled={failedVerdictQueries.some((query) => query.isFetching)} onClick={() => { failedVerdictQueries.forEach((query) => void query.refetch()) }} className="my-4">공개 여부 다시 확인</Button></div>}
+      {isFetchNextPageError && <p role="alert" className="col-span-2 text-white-100">추가 사건을 불러오지 못했어요. 다시 시도해 주세요.</p>}
+      {hasNextPage && <Button disabled={isFetchingNextPage} onClick={() => void fetchNextPage()} className="col-span-2 my-4 text-white-100">{isFetchingNextPage ? '불러오는 중…' : isFetchNextPageError ? '다시 시도' : '더 보기'}</Button>}
+      {resumeId !== null && <ResumeCaseModal caseId={resumeId} onClose={() => setResumeId(null)} />}
     </section>
   )
 }

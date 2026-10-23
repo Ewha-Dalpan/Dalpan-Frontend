@@ -26,7 +26,7 @@ function TollShortagePage() {
 
       {/* 이용권 충전하러 가기 → 이용권 충전 */}
       <Button variant="white" fullWidth onClick={() => navigate(paths.tollCharge)} className="mt-auto">
-        이용권 충전하러 가기
+        내 이용권 확인하기
       </Button>
     </main>
   )

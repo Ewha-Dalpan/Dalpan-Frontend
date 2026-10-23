@@ -23,7 +23,7 @@ function MyPage() {
   const refreshToken = useAuthStore((state) => state.refreshToken)
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 
-  // 내 정보 (닉네임 / 보유 톨)
+  // 내 정보 (닉네임 / 보유 이용권)
   const { data: me } = useQuery({ queryKey: ['me'], queryFn: getMe })
 
   // 서버에서 refresh 토큰을 폐기하고 로그아웃 (서버 요청이 실패해도 이 기기에서는 로그아웃)
@@ -59,10 +59,10 @@ function MyPage() {
       </section>
 
       <section aria-labelledby="tol-heading" className="mt-[23px]">
-        <h2 id="tol-heading" className="text-l1-regular ml-[24px]">톨 관리</h2>
+        <h2 id="tol-heading" className="text-l1-regular ml-[24px]">이용권 관리</h2>
         <div className="mt-[9.5px] flex flex-col gap-[2px] text-gray-90">
           <div className="text-b2-medium relative flex h-[46px] items-center bg-white-100 pl-[26px] pt-px">
-            <span>보유 톨</span>
+            <span>보유 이용권</span>
             <span className="absolute left-[calc(100%-77px)] top-[12px] flex items-center gap-px">
               <span className="relative size-[21px] overflow-hidden" aria-hidden="true">
                 <img src={tolIcon} alt="" className="absolute left-[4.691px] top-[0.431px] block max-w-none rotate-[19.17deg]" />
@@ -70,9 +70,9 @@ function MyPage() {
               <span>{me ? `${me.coin_balance}톨` : ''}</span>
             </span>
           </div>
-          <Button onClick={() => navigate(paths.tollCharge)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">톨 충전하기</Button>
-          {/* TODO: 톨 이용 내역 화면이 생기면 연결 */}
-          <Button aria-disabled="true" className="text-b2-medium flex h-[46px] items-center bg-white-100 pl-[26px] pt-px text-left">톨 이용 내역</Button>
+          <Button onClick={() => navigate(paths.tollCharge)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">이용권 충전하기</Button>
+          {/* TODO: 이용권 이용 내역 화면이 생기면 연결 */}
+          <Button aria-disabled="true" className="text-b2-medium flex h-[46px] items-center bg-white-100 pl-[26px] pt-px text-left">이용권 이용 내역</Button>
         </div>
       </section>
 

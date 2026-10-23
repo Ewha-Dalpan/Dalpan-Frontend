@@ -1,21 +1,26 @@
-// 배심원석(목록, 상세, 투표, 댓글, 신고) API 타입
-// TODO: 명세서 상세 페이지가 비어 있어서, 안쪽 구조를 모르는 필드는 unknown으로 둠 (확정되면 수정)
-
 import type { CaseRelation } from './case'
 
-// 배심원석 관계 필터 값 (사건 접수 관계 값과 같음)
 export type JuryRelation = CaseRelation
 
-export type JurySort = 'latest' | 'popular' // 최신순 / 배심원 많은 순
+export type JurySort = 'latest' | 'popular'
 
 export type JuryCaseListItem = {
   case_id: number
   relation: string
   title: string
-  jury_count: number // 참여한 배심원 수
+  jury_count: number
   comment_count: number
-  public_at: string // 공개된 시각
-  thumbnail: unknown // TODO: 구조 확인 필요
+  public_at: string
+  thumbnail: string | null
+}
+
+export type JuryRatio = {
+  author: number
+  other: number
+}
+
+export type JuryVoteRequest = {
+  fault_ratio: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100
 }
 
 export type JuryCaseDetail = {
@@ -23,22 +28,22 @@ export type JuryCaseDetail = {
   relation: string
   title: string
   summary: string
-  images: unknown[] // TODO: 구조 확인 필요 (이미지 id 등)
+  images: string[]
   public_at: string
-  is_author: boolean // 내가 올린 사건인지
+  is_author: boolean
   can_vote: boolean
   can_view_result: boolean
-  my_vote: unknown // TODO: 구조 확인 필요
-  result: unknown // TODO: 구조 확인 필요 (투표했거나 작성자일 때만, 그 외 null)
+  my_vote: JuryRatio | null
+  result: JuryRatio | null
   jury_count: number
   comment_count: number
 }
 
 export type JuryVoteResponse = {
-  my_vote: unknown // TODO: 구조 확인 필요
-  result: unknown // TODO: 구조 확인 필요
+  my_vote: JuryRatio
+  result: JuryRatio | null
   jury_count: number
-  coin_rewarded: boolean // 코인 지급 여부 (하루 5회 넘으면 false)
+  coin_rewarded: boolean
 }
 
 export type JuryComment = {
@@ -53,5 +58,5 @@ export type ReportReason = 'ABUSE' | 'PRIVACY' | 'SPAM' | 'OTHER'
 
 export type ReportRequest = {
   reason: ReportReason
-  detail?: string // 최대 500자, OTHER면 필수
+  detail?: string
 }
