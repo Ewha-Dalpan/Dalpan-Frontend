@@ -60,3 +60,14 @@ export type ReportRequest = {
   reason: ReportReason
   detail?: string
 }
+
+export type JuryActivity = {
+  case_id: number
+  title: string
+  relation: string
+  has_voted: boolean
+  my_fault_ratio: number | null
+  my_comment_count: number
+  last_activity_at: string
+  thumbnail: string | null
+}

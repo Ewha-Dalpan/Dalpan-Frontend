@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react'
-import type { DragEvent, KeyboardEvent, PointerEvent } from 'react'
+import type { DragEvent, KeyboardEvent, MouseEvent, PointerEvent } from 'react'
 
 export const useHorizontalScroll = (step: number) => {
   const drag = useRef<{ x: number; scrollLeft: number; moved: boolean; scale: number } | null>(null)
 
+  const suppressClick = useRef(false)
   const frame = useRef<number | null>(null)
   const pending = useRef<{ element: HTMLElement; left: number } | null>(null)
 
@@ -18,6 +19,7 @@ export const useHorizontalScroll = (step: number) => {
   }, [])
 
   const onPointerDown = (event: PointerEvent<HTMLElement>) => {
+    suppressClick.current = false
     if (event.pointerType !== 'mouse' || !event.isPrimary || event.button !== 0) return
     drag.current = { x: event.clientX, scrollLeft: event.currentTarget.scrollLeft, moved: false, scale: event.currentTarget.getBoundingClientRect().width / event.currentTarget.offsetWidth }
   }
@@ -28,6 +30,7 @@ export const useHorizontalScroll = (step: number) => {
     if (!drag.current.moved) {
       if (Math.abs(dx) < 5) return
       drag.current.moved = true
+      suppressClick.current = true
       event.currentTarget.setPointerCapture(event.pointerId)
     }
     pending.current = { element: event.currentTarget, left: drag.current.scrollLeft - dx }
@@ -51,6 +54,9 @@ export const useHorizontalScroll = (step: number) => {
   }
 
   return {
+    onClickCapture: (event: MouseEvent<HTMLElement>) => {
+      if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false }
+    },
     onPointerDown,
     onPointerMove,
     onPointerUp: endDrag,

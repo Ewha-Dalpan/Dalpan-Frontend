@@ -18,6 +18,7 @@ import JuryDetailPage from './pages/jury/JuryDetailPage'
 import JuryPage from './pages/jury/JuryPage'
 import JuryExplorePage from './pages/jury/JuryExplorePage'
 import MyPage from './pages/my/MyPage'
+import TicketHistoryPage from './pages/my/TicketHistoryPage'
 import MyJuryActivityPage from './pages/my/MyJuryActivityPage'
 import MyCasesPage from './pages/my/MyCasesPage'
 import MyCaseDetailPage from './pages/my/MyCaseDetailPage'
@@ -43,6 +44,7 @@ function App() {
       <Routes>
         {/* 로그인한 사람만 볼 수 있는 화면 (로그인 안 했으면 로그인 화면부터) */}
         <Route element={<RequireAuth />}>
+          <Route path={paths.myTicketHistory} element={<TicketHistoryPage />} />
           <Route element={<MainLayout />}>
             <Route path={paths.home} element={<HomePage />} />
             <Route path={paths.jury} element={<JuryPage />} />

@@ -3,6 +3,7 @@
 import axiosInstance from './axiosInstance'
 import type { Paginated } from '../types/common'
 import type {
+  JuryActivity,
   JuryCaseDetail,
   JuryCaseListItem,
   JuryComment,
@@ -54,4 +55,9 @@ export const reportJuryCase = async (caseId: number, body: ReportRequest) => {
 
 export const reportJuryComment = async (caseId: number, commentId: number, body: ReportRequest) => {
   await axiosInstance.post(`/api/jury/cases/${caseId}/comments/${commentId}/reports/`, body)
+}
+
+export const getMyJuryActivities = async (params: { page?: number; type?: 'all' | 'votes' | 'comments' } = {}) => {
+  const { data } = await axiosInstance.get<Paginated<JuryActivity>>('/api/jury/me/activities/', { params })
+  return data
 }
