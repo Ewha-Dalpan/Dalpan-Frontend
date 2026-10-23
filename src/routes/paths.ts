@@ -39,4 +39,14 @@ export const paths = {
   kakaoCallback: "/oauth/kakao",
   signup: "/signup",
   splash: "/splash",
+  // 로그인 없이 볼 수 있는 서비스 안내 · 정책 페이지 (Paddle 결제 심사용, 로그인 화면 아래 링크)
+  pricing: "/pricing",
+  terms: "/terms",
+  refund: "/refund",
+  privacy: "/privacy",
+  // 위 페이지의 영문 버전 (Paddle 심사팀이 해외에 있어서)
+  pricingEn: "/en/pricing",
+  termsEn: "/en/terms",
+  refundEn: "/en/refund",
+  privacyEn: "/en/privacy",
 } as const;

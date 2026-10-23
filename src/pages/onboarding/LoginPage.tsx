@@ -9,6 +9,7 @@ import logo from '../../assets/onboarding/splash-logo.svg'
 import ground from '../../assets/onboarding/splash-ground.svg'
 import rabbits from '../../assets/onboarding/splash-rabbits.svg'
 import KakaoIcon from './KakaoIcon'
+import PolicyFooter from '../policy/PolicyFooter'
 
 function LoginPage() {
   const { isLoggedIn } = useAuth()
@@ -25,7 +26,7 @@ function LoginPage() {
   if (isLoggedIn) return <Navigate to={paths.home} replace />
 
   return (
-    <main className="relative mx-auto min-h-[max(798px,100dvh)] w-full max-w-[393px] overflow-hidden bg-bg text-white-100">
+    <main className="relative mx-auto min-h-[max(860px,100dvh)] w-full max-w-[393px] overflow-hidden bg-bg text-white-100">
       <img src={logo} alt="달판" className="absolute left-1/2 top-[73px] block max-w-none -translate-x-1/2" />
       <img src={ground} alt="" className="pointer-events-none absolute left-full top-[452.11px] block max-w-none -translate-x-1/2" />
       <img src={rabbits} alt="" className="pointer-events-none absolute left-5.75 top-81 block max-w-none" />
@@ -35,6 +36,8 @@ function LoginPage() {
         <span className="flex -translate-x-[0.5px] items-end gap-[11px]"><KakaoIcon />카카오로 계속하기</span>
       </Button>
       <p role="status" className="text-l1-regular absolute inset-x-[23px] top-[736px] text-center text-white-100">{message}</p>
+      {/* 서비스 안내 · 정책 링크 (로그인 없이 볼 수 있음) */}
+      <PolicyFooter switchTo={paths.pricingEn} className="absolute inset-x-[23px] bottom-6" />
     </main>
   )
 }
