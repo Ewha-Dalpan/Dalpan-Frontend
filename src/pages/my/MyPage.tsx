@@ -84,8 +84,7 @@ function MyPage() {
             </span>
           </div>
           <Button onClick={() => navigate(paths.tollCharge)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">이용권 충전하기</Button>
-          {/* TODO: 이용권 이용 내역 화면이 생기면 연결 */}
-          <Button aria-disabled="true" className="text-b2-medium flex h-[46px] items-center bg-white-100 pl-[26px] pt-px text-left">이용권 이용 내역</Button>
+          <Button onClick={() => navigate(paths.myTicketHistory)} className="text-b2-medium flex h-[46px] cursor-pointer items-center bg-white-100 pl-[26px] pt-px text-left">이용권 이용 내역</Button>
         </div>
       </section>
 

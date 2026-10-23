@@ -12,7 +12,7 @@ export type CoinLedger = {
   tx_type_label: string // 화면에 보여줄 이름
   amount: number
   balance_after: number // 이 내역 이후 잔액
-  case: unknown // TODO: 구조 확인 필요 (관련 사건)
+  case: number | null
   created_at: string
 }
 

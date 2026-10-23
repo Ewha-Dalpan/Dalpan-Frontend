@@ -7,6 +7,7 @@ export const paths = {
   juryDetailPattern: "/jury/cases/:caseId/detail",
   juryExplore: "/jury/explore",
   my: "/my",
+  myTicketHistory: "/my/ticket-history",
   myJuryActivity: "/my/jury-activity",
   myCases: "/my/cases",
   myCaseDetail: (caseId: number | string) => `/my/cases/${caseId}`,
