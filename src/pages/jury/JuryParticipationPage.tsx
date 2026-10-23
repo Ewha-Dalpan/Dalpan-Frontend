@@ -32,6 +32,8 @@ function Participation({ item, loggedIn }: { item: JuryCaseDetail; loggedIn: boo
       client.setQueryData(['juryCase', item.case_id, true], { ...item, ...result, can_vote: false, can_view_result: true })
       void client.invalidateQueries({ queryKey: ['juryCases'] })
       void client.invalidateQueries({ queryKey: ['me'] })
+      void client.invalidateQueries({ queryKey: ['myJuryActivities'] })
+      void client.invalidateQueries({ queryKey: ['myJuryActivityCount'] })
       navigate(paths.juryDetail(item.case_id), { replace: true, state: { toast: result.coin_rewarded ? '판결을 제출했어요. 참여 보상 1톨이 지급됐어요.' : '판결을 제출했어요.' } })
     } catch (error) {
       showToast(getApiErrorMessage(error))
