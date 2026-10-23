@@ -29,8 +29,8 @@ function MyPage() {
     refetchOnMount: 'always',
   })
   const activities = useQuery({
-    queryKey: ['myJuryActivityCount'],
-    queryFn: async () => (await getMyJuryActivities({ page: 1, type: 'all' })).count,
+    queryKey: ['myJuryActivityCount', 'votes'],
+    queryFn: async () => (await getMyJuryActivities({ page: 1, type: 'votes' })).count,
     staleTime: 0,
     refetchOnMount: 'always',
   })
