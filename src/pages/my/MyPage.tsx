@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import Button from '../../components/Button'
 import Modal from '../../components/modal/Modal'
 import { useNavigate } from 'react-router-dom'
+import { getCases } from '../../apis/caseApi'
+import { getMyJuryActivities } from '../../apis/juryApi'
 import { getMe, logout } from '../../apis/accountApi'
 import { useSignOut } from '../../hooks/useSignOut'
 import { paths } from '../../routes/paths'
@@ -10,12 +12,6 @@ import { useAuthStore } from '../../store/useAuthStore'
 import profileRabbit from '../../assets/my/profile-rabbit.png'
 import editIcon from '../../assets/my/edit.svg'
 import tolIcon from '../../assets/my/tol.svg'
-
-// TODO: 내 사건, 배심 활동 개수는 각 목록 API 연동 시 교체
-const profile = {
-  caseCount: 4,
-  juryCount: 12,
-}
 
 function MyPage() {
   const navigate = useNavigate()
@@ -25,6 +21,19 @@ function MyPage() {
 
   // 내 정보 (닉네임 / 보유 이용권)
   const { data: me } = useQuery({ queryKey: ['me'], queryFn: getMe })
+
+  const cases = useQuery({
+    queryKey: ['myCaseCount'],
+    queryFn: async () => (await getCases({ page: 1 })).count,
+    staleTime: 0,
+    refetchOnMount: 'always',
+  })
+  const activities = useQuery({
+    queryKey: ['myJuryActivityCount'],
+    queryFn: async () => (await getMyJuryActivities({ page: 1, type: 'all' })).count,
+    staleTime: 0,
+    refetchOnMount: 'always',
+  })
 
   // 서버에서 refresh 토큰을 폐기하고 로그아웃 (서버 요청이 실패해도 이 기기에서는 로그아웃)
   const handleLogout = async () => {
@@ -49,14 +58,18 @@ function MyPage() {
         <div className="grid h-[83px] grid-cols-2 border-t border-gray-10">
           <Button onClick={() => navigate(paths.myCases)} className="flex cursor-pointer flex-col items-center border-r border-gray-10 pt-[17px]">
             <span className="text-b2-regular translate-x-[2.75px] text-gray-50">내 사건</span>
-            <span className="text-b1-semibold translate-x-[2.75px]">{profile.caseCount}건</span>
+            <span className="text-b1-semibold translate-x-[2.75px]">{cases.isError ? '조회 실패' : cases.data === undefined ? '…' : `${cases.data}건`}</span>
           </Button>
           <Button onClick={() => navigate(paths.myJuryActivity)} className="flex cursor-pointer flex-col items-center pt-[17px]">
             <span className="text-b2-regular -translate-x-[1.5px] text-gray-50">배심 활동</span>
-            <span className="text-b1-semibold -translate-x-[1.5px]">{profile.juryCount}건</span>
+            <span className="text-b1-semibold -translate-x-[1.5px]">{activities.isError ? '조회 실패' : activities.data === undefined ? '…' : `${activities.data}건`}</span>
           </Button>
         </div>
       </section>
+
+      {(cases.isError || activities.isError) && <div role="alert" className="mx-[24px] mt-2 text-l1-regular text-gray-60">
+        건수를 불러오지 못했어요. <Button className="underline" onClick={() => { if (cases.isError) void cases.refetch(); if (activities.isError) void activities.refetch() }}>다시 시도</Button>
+      </div>}
 
       <section aria-labelledby="tol-heading" className="mt-[23px]">
         <h2 id="tol-heading" className="text-l1-regular ml-[24px]">이용권 관리</h2>
