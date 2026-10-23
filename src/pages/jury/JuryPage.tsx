@@ -1,5 +1,7 @@
 import Button from "../../components/Button";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getRandomCases } from "../../apis/featuredCasesApi";
+import { Link, useNavigate } from "react-router-dom";
 import { paths } from "../../routes/paths";
 import romanceParticipants from "../../assets/home/participants.svg";
 import participants from "../../assets/jury/participants.svg";
@@ -11,7 +13,8 @@ import friendBubble from "../../assets/jury/bubble-friend.svg";
 
 type CaseBubbleProps = {
   category: string;
-  title: [string, string];
+  title: string;
+  caseId: number;
   count: number;
   bubble: string;
   className: string;
@@ -20,6 +23,7 @@ type CaseBubbleProps = {
 
 function CaseBubble({
   category,
+  caseId,
   title,
   count,
   bubble,
@@ -28,6 +32,7 @@ function CaseBubble({
 }: CaseBubbleProps) {
   return (
     <li className={`absolute ${className}`}>
+      <Link to={paths.juryParticipate(caseId)} aria-label={title} className="absolute inset-0 rounded-[20px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
       <img
         src={bubble}
         alt=""
@@ -39,11 +44,9 @@ function CaseBubble({
         {category}
       </span>
       <p
-        className={`text-b3-medium absolute whitespace-nowrap ${friend ? "left-[15px] top-[44px] text-gray-100" : `${category === "직장/학교" ? "left-[14px]" : "left-[15px]"} top-[42px] text-gray-90`}`}
+        className={`text-b3-medium absolute w-[calc(100%-30px)] line-clamp-2 break-words ${friend ? "left-[15px] top-[44px] text-gray-100" : `${category === "직장/학교" ? "left-[14px]" : "left-[15px]"} top-[42px] text-gray-90`}`}
       >
-        {title[0]}
-        <br />
-        {title[1]}
+        {title}
       </p>
       <div
         className={`absolute flex items-center gap-[2px] ${friend ? "left-[15px] top-[89px]" : `${category === "직장/학교" ? "left-[14px]" : "left-[15px]"} top-[87px]`}`}
@@ -57,12 +60,25 @@ function CaseBubble({
         </span>
         <span className="text-l2-medium text-gray-50">{count}명 참여</span>
       </div>
+      </Link>
     </li>
   );
 }
 
 function JuryPage() {
   const navigate = useNavigate();
+  const randomCases = useQuery({
+    queryKey: ['featuredCases', 'random'],
+    queryFn: getRandomCases,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
+  });
+  const slots = [
+    { bubble: romanceBubble, className: 'left-[39px] top-0 h-[125.375px] w-[204px]' },
+    { bubble: friendBubble, className: 'left-[162px] top-[113px] h-[128.918px] w-[206px]', friend: true },
+    { bubble: schoolBubble, className: 'left-[45px] top-[207px] h-[125px] w-[162px]' },
+  ];
 
   return (
     <section
@@ -96,33 +112,22 @@ function JuryPage() {
               className="absolute left-0 top-[-74.49%] h-[246.94%] w-full max-w-none"
             />
           </div>
-          <ul aria-label="배심원 참여 사건 예시">
-            <CaseBubble
-              category="직장/학교"
-              title={["팀플 단톡방에서", "제 의견만 계속 무시돼요."]}
-              count={32}
-              bubble={schoolBubble}
-              className="left-[45px] top-[207px] h-[125px] w-[162px]"
-            />
-            <CaseBubble
-              category="연애"
-              title={[
-                "약속 당일 4시간 연락이 없었는데,",
-                "제가 예민한 건가요?",
-              ]}
-              count={128}
-              bubble={romanceBubble}
-              className="left-[39px] top-0 h-[125.375px] w-[204px]"
-            />
-            <CaseBubble
-              category="친구"
-              title={["제 생일은 넘어가고", "자기 생일 선물은 챙겨달라는 친구"]}
-              count={96}
-              bubble={friendBubble}
-              friend
-              className="left-[162px] top-[113px] h-[128.918px] w-[206px]"
-            />
+          <ul aria-label="무작위 배심 참여 사건">
+            {randomCases.data?.map((item, index) => <CaseBubble
+              key={item.case_id}
+              caseId={item.case_id}
+              category={item.relation}
+              title={item.title}
+              count={item.jury_count}
+              {...slots[index]}
+            />)}
           </ul>
+          {randomCases.isPending && <p role="status" className="text-b2-regular mx-6 py-4">사건을 불러오는 중이에요.</p>}
+          {randomCases.isError && <div role="alert" className="text-b2-regular mx-6 py-4">
+            <p>사건을 불러오지 못했어요.</p>
+            <Button onClick={() => void randomCases.refetch()} className="mt-2 underline">다시 시도</Button>
+          </div>}
+          {randomCases.isSuccess && randomCases.data.length === 0 && <p role="status" className="text-b2-regular mx-6 py-4">아직 공개된 사건이 없어요.</p>}
         </div>
       </div>
     </section>

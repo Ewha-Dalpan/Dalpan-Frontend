@@ -1,6 +1,11 @@
 import { getJuryCases } from './juryApi'
 
-export async function getFeaturedCases() {
+export async function getPopularCases() {
+  const page = await getJuryCases({ page: 1, sort: 'popular' })
+  return page.results.slice(0, 3)
+}
+
+export async function getRandomCases() {
   const first = await getJuryCases({ page: 1, sort: 'latest' })
   const indices = new Set<number>()
   for (let index = Math.max(0, first.count - 3); index < first.count; index++) {

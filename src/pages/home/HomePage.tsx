@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useOutletContext } from "react-router-dom";
-import { getFeaturedCases } from '../../apis/featuredCasesApi';
+import { getPopularCases } from '../../apis/featuredCasesApi';
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 import { paths } from '../../routes/paths';
 import aiJudge from "../../assets/home/ai-judge.svg";
@@ -14,8 +14,8 @@ function HomePage() {
   const { startJudgment } = useOutletContext<MainLayoutContext>();
   const scroll = useHorizontalScroll(240);
   const featured = useQuery({
-    queryKey: ['featuredCases'],
-    queryFn: getFeaturedCases,
+    queryKey: ['featuredCases', 'popular'],
+    queryFn: getPopularCases,
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: false,
