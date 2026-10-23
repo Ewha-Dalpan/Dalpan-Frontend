@@ -72,16 +72,16 @@ const COPY: Record<PolicyLang, PricingCopy> = {
       { title: 'Jury opinions', body: 'Post your case to the jury board and get opinions from other users.' },
       { title: 'Share verdicts', body: 'Share your verdict with friends as a link or an image.' },
     ],
-    pricingTitle: 'Credit pricing',
-    listHeader: ['Credits', 'Price'],
-    amount: (amount) => `${amount} ${amount === 1 ? 'credit' : 'credits'}`,
+    pricingTitle: 'AI verdict packs',
+    listHeader: ['Pack', 'Price'],
+    amount: (amount) => `${amount} AI ${amount === 1 ? 'verdict' : 'verdicts'}`,
     bonus: (bonus) => `+ ${bonus} bonus`,
     price: (price) => `₩${price.toLocaleString('en-US')}`,
     notes: [
       'Prices are in Korean won (KRW).',
-      'Each AI verdict uses 1 credit.',
-      'New members get 1 free credit when they sign up.',
-      'Credits are a one-time purchase and are never charged automatically.',
+      'Each pack is a set of verdict passes. 1 pass = 1 AI verdict.',
+      'New members get 1 free verdict pass when they sign up.',
+      'Packs are a one-time purchase and are never charged automatically.',
       'Payments are processed by Paddle.com, our Merchant of Record.',
       <>
         Full refund for any reason within 14 days of payment.{' '}
