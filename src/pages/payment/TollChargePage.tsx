@@ -20,6 +20,7 @@ import { paths } from '../../routes/paths'
 import type { CoinProduct } from '../../types/payment'
 import { getApiErrorMessage } from '../../utils/apiError'
 import { loadPaddle, openPaddleCheckout } from '../../utils/paddle'
+import { BONUS_BY_TOTAL, formatPrice } from './coinProduct'
 
 // '인기' 칸에 맨 위로 보여줄 상품 (피그마 기준 5톨)
 const POPULAR_COIN_AMOUNT = 5
@@ -29,12 +30,6 @@ const ORDER_POLL_MS = 2000
 const ORDER_TIMEOUT_MS = 60000
 
 const PADDLE_LOAD_ERROR = '결제창을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
-
-// 백엔드는 보너스를 합친 전체 톨 수만 줌 (예: 11톨)
-// 피그마처럼 '10톨 + 1톨 보너스'로 나눠 보여주려고 전체 톨 수별 보너스를 적어둠
-const BONUS_BY_TOTAL: Record<number, number> = { 11: 1, 23: 3, 55: 5 }
-
-const formatPrice = (price: number) => `${price.toLocaleString('ko-KR')}원`
 
 // 상품 한 줄: 톨 수량 (+ 보너스) · 가격 버튼 · 아래 구분선
 function ProductRow({ product, disabled, onSelect }: { product: CoinProduct; disabled: boolean; onSelect: (product: CoinProduct) => void }) {

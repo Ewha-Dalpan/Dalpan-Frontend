@@ -28,6 +28,11 @@ import PaymentCompletePage from './pages/payment/PaymentCompletePage'
 import LoginPage from './pages/onboarding/LoginPage'
 import SignupPage from './pages/onboarding/SignupPage'
 import KakaoCallbackPage from './pages/onboarding/KakaoCallbackPage'
+import PricingPage from './pages/policy/PricingPage'
+import PolicyPage from './pages/policy/PolicyPage'
+import { PRIVACY_POLICY, REFUND_POLICY } from './pages/policy/policies'
+import { PRIVACY_POLICY_EN, REFUND_POLICY_EN, TERMS_EN } from './pages/policy/policiesEn'
+import { TERMS } from './pages/onboarding/terms'
 import { paths } from './routes/paths'
 
 function App() {
@@ -81,6 +86,17 @@ function App() {
         <Route path={paths.kakaoCallback} element={<KakaoCallbackPage />} />
         <Route path={paths.signup} element={<SignupPage />} />
         <Route path={paths.splash} element={<Navigate to={paths.login} replace />} />
+
+        {/* 서비스 안내 · 정책 (로그인 불필요, Paddle 결제 심사용) */}
+        <Route path={paths.pricing} element={<PricingPage />} />
+        <Route path={paths.terms} element={<PolicyPage title="서비스 이용약관" sections={TERMS.terms.sections} switchTo={paths.termsEn} />} />
+        <Route path={paths.refund} element={<PolicyPage title="환불 정책" sections={REFUND_POLICY} switchTo={paths.refundEn} />} />
+        <Route path={paths.privacy} element={<PolicyPage title="개인정보처리방침" sections={PRIVACY_POLICY} switchTo={paths.privacyEn} />} />
+        {/* 영문 버전 (Paddle 심사팀이 해외에 있어서) */}
+        <Route path={paths.pricingEn} element={<PricingPage lang="en" />} />
+        <Route path={paths.termsEn} element={<PolicyPage lang="en" title="Terms of Service" sections={TERMS_EN} switchTo={paths.terms} />} />
+        <Route path={paths.refundEn} element={<PolicyPage lang="en" title="Refund Policy" sections={REFUND_POLICY_EN} switchTo={paths.refund} />} />
+        <Route path={paths.privacyEn} element={<PolicyPage lang="en" title="Privacy Policy" sections={PRIVACY_POLICY_EN} switchTo={paths.privacy} />} />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
     </BrowserRouter>
