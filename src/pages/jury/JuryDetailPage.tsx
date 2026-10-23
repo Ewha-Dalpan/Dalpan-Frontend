@@ -1,5 +1,4 @@
 import JuryReportDialog from './JuryReportDialog'
-import JuryCaseReportButton from './JuryCaseReportButton'
 import { useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header'
@@ -70,7 +69,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
     finally { pending.current = false; setBusy(false) }
   }
   return <div className="mx-auto min-h-dvh max-w-[393px] bg-white-100 text-gray-90">
-    <div className="relative"><Header depth={2} theme="white" title="배심원석" onBack={() => navigate(paths.juryExplore, { replace: true })} /><JuryCaseReportButton caseId={item.case_id} isAuthor={item.is_author} /></div>
+    <Header depth={2} theme="white" title="배심원석" onBack={() => navigate(paths.juryExplore, { replace: true })} />
     <main className="pt-[5px]">
       <JuryCaseContent item={item} />
       <section aria-label="판결 결과" className="mx-[18px] mt-[18px] h-[180px] rounded-[8px] bg-gray-5 pt-[19px]">
