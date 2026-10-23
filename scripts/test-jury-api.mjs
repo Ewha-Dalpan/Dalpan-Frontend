@@ -13,6 +13,12 @@ const source = readFileSync(new URL('../src/apis/juryApi.ts', import.meta.url), 
 const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText
 const api = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`)
 
+test('내 배심 활동은 투표한 사건만 페이지별로 조회한다', async () => {
+  const params = { page: 2, type: 'votes' }
+  await api.getMyJuryActivities(params)
+  assert.deepEqual(calls.pop(), { method: 'get', args: ['/api/jury/me/activities/', { params }] })
+})
+
 test('목록 필터와 페이지를 전달한다', async () => {
   const params = { page: 2, relation: '친구', sort: 'popular' }
   await api.getJuryCases(params)

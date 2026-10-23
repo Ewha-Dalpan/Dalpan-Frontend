@@ -28,11 +28,11 @@ const parts = [
   { src: jointShine, x: 81.19594, y: 560.80334 },
   { src: jointShade, x: 64.33382, y: 560.4675 },
 ]
-const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value / 10) * 10))
+const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value)))
 
 function JuryBalance({ value, touched, showHint, onChange, onTouch }: Props) {
   const [active, setActive] = useState<Side | null>(null)
-  const drag = useRef<{ id: number; y: number; value: number; scale: number; side: Side } | null>(null)
+  const drag = useRef<{ id: number; y: number; value: number; latest: number; scale: number; side: Side } | null>(null)
   const offset = (value - 50) * 1.4
   const angle = -Math.atan2(offset, 118.65) * 180 / Math.PI
   const motion = active ? '' : 'transition-transform duration-150 ease-out motion-reduce:transition-none'
@@ -42,7 +42,7 @@ function JuryBalance({ value, touched, showHint, onChange, onTouch }: Props) {
     event.preventDefault()
     event.currentTarget.focus({ preventScroll: true })
     event.currentTarget.setPointerCapture(event.pointerId)
-    drag.current = { id: event.pointerId, y: event.clientY, value, side, scale: event.currentTarget.getBoundingClientRect().width / 155 }
+    drag.current = { id: event.pointerId, y: event.clientY, value, latest: value, side, scale: event.currentTarget.getBoundingClientRect().width / 155 }
     setActive(side)
     onTouch()
   }
@@ -50,10 +50,12 @@ function JuryBalance({ value, touched, showHint, onChange, onTouch }: Props) {
     const current = drag.current
     if (!current || current.id !== event.pointerId) return
     const delta = (event.clientY - current.y) / current.scale / 1.4
-    onChange(clamp(current.value + (current.side === 'left' ? delta : -delta)))
+    current.latest = clamp(current.value + (current.side === 'left' ? delta : -delta))
+    onChange(current.latest)
   }
   const end = (event: PointerEvent<HTMLDivElement>) => {
     if (drag.current?.id !== event.pointerId) return
+    onChange(Math.round(drag.current.latest / 10) * 10)
     drag.current = null
     setActive(null)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
@@ -125,7 +127,7 @@ function JuryBalance({ value, touched, showHint, onChange, onTouch }: Props) {
           aria-describedby="jury-scale-instructions" onPointerDown={(event) => start(event, side)} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end}
           onKeyDown={(event) => keyDown(event, side)} className="absolute top-[90px] z-10 h-[240px] w-[155px] touch-none cursor-ns-resize rounded-lg outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-keycolor-40" style={{ left: side === 'left' ? 10 : 228 }} />
       ))}
-      <p id="jury-scale-instructions" className="sr-only">더 잘못한 쪽을 아래로 드래그하세요. 위아래 방향키로 5씩 조절할 수 있습니다.</p>
+      <p id="jury-scale-instructions" className="sr-only">더 잘못한 쪽을 아래로 드래그하세요. 손을 놓으면 10단위로 맞춰집니다. 위아래 방향키로 10씩 조절할 수 있습니다.</p>
       {showHint && !touched && <div role="status" className="pointer-events-none absolute left-[72px] top-[158px] z-20 h-[39.376px] w-[251px]">
         <img src={hint} alt="" className="absolute left-[-41.9px] top-[-41.9px] block max-w-none" />
         <p className="text-l1-regular absolute left-[11px] top-[13.38px] whitespace-nowrap text-white-100">더 잘못한 쪽이 더 무거워지도록 드래그해주세요</p>
