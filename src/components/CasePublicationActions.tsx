@@ -30,6 +30,7 @@ export default function CasePublicationActions({ caseId, isPublic }: Props) {
         queryClient.invalidateQueries({ queryKey: ['verdict', caseId] }),
         queryClient.invalidateQueries({ queryKey: ['myCases'] }),
         queryClient.invalidateQueries({ queryKey: ['juryCases'] }),
+        queryClient.invalidateQueries({ queryKey: ['featuredCases'] }),
         queryClient.invalidateQueries({ queryKey: ['juryPublication', caseId] }),
       ])
       setOpen(false)

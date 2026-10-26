@@ -55,7 +55,7 @@ function JuryExplorePage() {
               <div className="flex min-w-0 flex-1 flex-col items-start gap-[4px]">
                 <span className="text-l1-medium rounded-[50px] bg-sub px-[8px] py-[4px]">{item.relation}</span>
                 <div className="flex w-full flex-col gap-[7px] px-[2px]">
-                  <h2 className="text-b2-medium">{item.title}</h2>
+                  <h2 className="text-b2-medium break-keep [overflow-wrap:anywhere]">{item.title}</h2>
                   <div className="text-l1-medium flex flex-wrap items-start gap-[7px] text-gray-50">
                     <span className="flex items-center gap-[2px] whitespace-nowrap">
                       <span className="relative size-[16px] shrink-0">

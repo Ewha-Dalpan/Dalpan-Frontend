@@ -16,8 +16,6 @@ function HomePage() {
   const featured = useQuery({
     queryKey: ['featuredCases', 'popular'],
     queryFn: getPopularCases,
-    staleTime: 0,
-    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
   });
 

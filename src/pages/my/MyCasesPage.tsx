@@ -30,7 +30,6 @@ function MyCasesPage() {
     queries: judgedIds.map((caseId) => ({
       queryKey: ['verdict', caseId],
       queryFn: () => getVerdict(caseId),
-      staleTime: 0,
       retry: (count: number, failure: Error) => !isApiStatus(failure, 404) && !isApiStatus(failure, 401) && count < 2,
     })),
   })
