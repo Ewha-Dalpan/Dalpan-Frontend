@@ -1,0 +1,53 @@
+export const paths = {
+  home: "/",
+  jury: "/jury",
+  juryParticipate: (caseId: number | string) => `/jury/cases/${caseId}`,
+  juryParticipatePattern: "/jury/cases/:caseId",
+  juryDetail: (caseId: number | string) => `/jury/cases/${caseId}/detail`,
+  juryDetailPattern: "/jury/cases/:caseId/detail",
+  juryExplore: "/jury/explore",
+  my: "/my",
+  myTicketHistory: "/my/ticket-history",
+  myJuryActivity: "/my/jury-activity",
+  myCases: "/my/cases",
+  myCaseDetail: (caseId: number | string) => `/my/cases/${caseId}`,
+  myCaseDetailPattern: "/my/cases/:caseId",
+  myCaseReason: (caseId: number | string) => `/my/cases/${caseId}/reason`,
+  myCaseReasonPattern: "/my/cases/:caseId/reason",
+  myAccount: "/my/account",
+  upload: "/judgment/upload",
+  received: "/judgment/received",
+  confirm: "/judgment/confirm",
+  judging: "/judgment/judging",
+  // 판결문 화면은 주소에 사건 ID가 있어서 새로고침해도 같은 판결을 보여줌
+  verdict: (caseId: number | string) => `/judgment/verdicts/${caseId}`, // 판결문 도착 (봉투)
+  verdictPattern: "/judgment/verdicts/:caseId",
+  verdictResult: (caseId: number | string) => `/judgment/verdicts/${caseId}/result`, // 판결문 전체
+  verdictResultPattern: "/judgment/verdicts/:caseId/result",
+  verdictReason: (caseId: number | string) => `/judgment/verdicts/${caseId}/reason`, // 판단 근거
+  verdictReasonPattern: "/judgment/verdicts/:caseId/reason",
+  juryRequest: (caseId: number | string) => `/judgment/verdicts/${caseId}/jury`,
+  juryRequestPattern: "/judgment/verdicts/:caseId/jury",
+  // 톨이 부족할 때 → 톨 충전 → 결제 완료
+  tollShortage: "/judgment/toll/shortage",
+  tollCharge: "/toll/charge",
+  paymentComplete: "/toll/charge/complete",
+  sharedVerdict: (shareId: number | string) => `/shared/${shareId}`,
+  sharedVerdictPattern: "/shared/:shareId",
+  sharedVerdictReason: (shareId: number | string) => `/shared/${shareId}/reason`,
+  sharedVerdictReasonPattern: "/shared/:shareId/reason",
+  login: "/login",
+  kakaoCallback: "/oauth/kakao",
+  signup: "/signup",
+  splash: "/splash",
+  // 로그인 없이 볼 수 있는 서비스 안내 · 정책 페이지 (Paddle 결제 심사용, 로그인 화면 아래 링크)
+  pricing: "/pricing",
+  terms: "/terms",
+  refund: "/refund",
+  privacy: "/privacy",
+  // 위 페이지의 영문 버전 (Paddle 심사팀이 해외에 있어서)
+  pricingEn: "/en/pricing",
+  termsEn: "/en/terms",
+  refundEn: "/en/refund",
+  privacyEn: "/en/privacy",
+} as const;
