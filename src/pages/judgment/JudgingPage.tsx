@@ -91,6 +91,7 @@ function JudgingPage() {
     if (request.status === 'DONE' && caseId !== undefined) {
       // 받은 판결문을 넣어둬서 판결문 화면에서 다시 요청하지 않고 바로 보여줌
       if (request.verdict) queryClient.setQueryData(['verdict', caseId], request.verdict)
+      void queryClient.invalidateQueries({ queryKey: ['myCases'] })
       clearPendingCase() // 판결이 끝났으니 '확인 중인 사건'에서 지움
       navigate(paths.verdict(caseId), { replace: true })
     }

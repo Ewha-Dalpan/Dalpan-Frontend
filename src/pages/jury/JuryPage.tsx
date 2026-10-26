@@ -17,7 +17,6 @@ type CaseBubbleProps = {
   count: number;
   bubble: string;
   className: string;
-  friend?: boolean;
 };
 
 function CaseBubble({
@@ -27,20 +26,19 @@ function CaseBubble({
   count,
   bubble,
   className,
-  friend = false,
 }: CaseBubbleProps) {
   return (
-    <li className={`relative w-[230px] max-w-[calc(100%-48px)] shrink-0 not-first:-mt-[8px] ${className}`}>
-      <Link to={paths.juryParticipate(caseId)} aria-label={title} className="relative block min-h-[129px] rounded-[20px] px-[15px] pt-[13px] pb-[22px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
+    <li className={`relative w-[230px] max-w-[calc(100%-48px)] shrink-0 not-first:-mt-[18px] ${className}`}>
+      <Link to={paths.juryParticipate(caseId)} aria-label={title} className="relative block rounded-[20px] px-[15px] pt-[13px] pb-[22px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
       <img
         src={bubble}
         alt=""
         className="pointer-events-none absolute -left-[34px] -top-[34px] h-[calc(100%+68px)] w-[calc(100%+68px)] max-w-none rotate-180"
       />
-      <span className={`relative inline-block rounded-[50px] bg-keycolor-5 px-[8px] py-[4px] text-keycolor-100 ${friend ? 'text-l1-medium' : 'text-l2-medium'}`}>
+      <span className="text-l2-medium relative inline-block rounded-[50px] bg-keycolor-5 px-[8px] py-[4px] text-keycolor-100">
         {category}
       </span>
-      <p className="text-b3-medium relative mt-[3px] break-words text-gray-90">
+      <p className="text-b3-medium relative mt-[3px] break-keep [overflow-wrap:anywhere] text-gray-90">
         {title}
       </p>
       <div className="relative mt-[3px] flex items-center gap-[2px]">
@@ -63,20 +61,18 @@ function JuryPage() {
   const randomCases = useQuery({
     queryKey: ['featuredCases', 'random'],
     queryFn: getRandomCases,
-    staleTime: 0,
-    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
   });
   const slots = [
     { bubble: romanceBubble, className: 'ml-[39px]' },
-    { bubble: friendBubble, className: 'mr-[25px] self-end', friend: true },
+    { bubble: friendBubble, className: 'mr-[25px] self-end' },
     { bubble: romanceBubble, className: 'ml-[45px]' },
   ];
 
   return (
     <section
       aria-label="배심원석 안내"
-      className="relative min-h-[640px] pt-[3px]"
+      className="relative min-h-[calc(100dvh-152px)] pt-[3px]"
     >
       <h1 className="text-h4-semibold ml-[26px]">
         다른 사람의 사건을 읽고,
@@ -96,7 +92,7 @@ function JuryPage() {
         배심원석 입장
       </Button>
 
-      <div className="relative mt-[103px] min-h-[480px] overflow-x-clip">
+      <div className="relative mt-[103px] overflow-x-clip">
         <div className="relative mx-auto w-full max-w-[393px]">
           <ul aria-label="무작위 배심 참여 사건" className="relative z-10 flex flex-col">
             {randomCases.data?.map((item, index) => <CaseBubble

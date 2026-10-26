@@ -105,6 +105,7 @@ function JuryRequestForm({ item, verdict }: { item: Case; verdict: Verdict }) {
         queryClient.invalidateQueries({ queryKey: ['verdict', item.id] }),
         queryClient.invalidateQueries({ queryKey: ['myCases'] }),
         queryClient.invalidateQueries({ queryKey: ['juryCases'] }),
+        queryClient.invalidateQueries({ queryKey: ['featuredCases'] }),
       ])
       navigate(paths.jury, { replace: true, state: { toast: verdict.is_public ? '공개 이미지를 저장했어요.' : '배심원석에 사건을 올렸어요.' } })
     } catch (error) {

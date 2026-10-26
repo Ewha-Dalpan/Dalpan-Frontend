@@ -30,6 +30,7 @@ function Participation({ item, loggedIn }: { item: JuryCaseDetail; loggedIn: boo
       const result = await voteJuryCase(item.case_id, { fault_ratio: (100 - ratio) as JuryVoteRequest['fault_ratio'] })
       client.setQueryData(['juryCase', item.case_id, true], { ...item, ...result, can_vote: false, can_view_result: true })
       void client.invalidateQueries({ queryKey: ['juryCases'] })
+      void client.invalidateQueries({ queryKey: ['featuredCases'] })
       void client.invalidateQueries({ queryKey: ['me'] })
       void client.invalidateQueries({ queryKey: ['myJuryActivities'] })
       void client.invalidateQueries({ queryKey: ['myJuryActivityCount'] })

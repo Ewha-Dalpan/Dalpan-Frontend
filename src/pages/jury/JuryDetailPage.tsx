@@ -64,6 +64,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
         client.invalidateQueries({ queryKey: ['juryComments', item.case_id] }),
         client.invalidateQueries({ queryKey: ['juryCase', item.case_id] }),
         client.invalidateQueries({ queryKey: ['juryCases'] }),
+        client.invalidateQueries({ queryKey: ['featuredCases'] }),
       ])
     } catch (error) { showToast(getApiErrorMessage(error)) }
     finally { pending.current = false; setBusy(false) }

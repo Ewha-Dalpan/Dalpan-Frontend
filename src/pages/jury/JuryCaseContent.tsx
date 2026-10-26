@@ -19,9 +19,9 @@ export default function JuryCaseContent({ item }: { item: JuryCaseDetail }) {
   return <div className="flex-none flex flex-col gap-[23px]">
     <div className="mx-[24px] flex flex-col items-center gap-[4px]">
       <p className="text-l2-regular text-gray-30">{Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}</p>
-      <div className="flex items-center justify-center gap-[2px]">
+      <div className="flex w-full items-center justify-center gap-[2px]">
         <span className="text-l1-medium shrink-0 rounded-full bg-keycolor-5 px-[8px] py-[4px] text-keycolor-100">{item.relation}</span>
-        <h2 className="text-h3-semibold line-clamp-2">{item.title}</h2>
+        <h2 className="text-h3-semibold min-w-0 break-keep [overflow-wrap:anywhere]">{item.title}</h2>
       </div>
     </div>
     <ul tabIndex={0} aria-label="대화 캡처 (좌우로 넘겨보기)" {...scrollHandlers}

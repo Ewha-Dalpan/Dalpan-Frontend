@@ -56,7 +56,8 @@ function VerdictSummary({
   onWhyClick,
 }: VerdictSummaryProps) {
   const scale = SCALES[size]
-  const { leftPan, rightPan } = getScaleLayout(myRatio)
+  const { leftPan, rightPan, imageHeight } = getScaleLayout(myRatio)
+  const scaleTopInset = size === 'card' ? Math.min(leftPan[1], rightPan[1], 30.711) : 0
 
   // 과실 비율 배지 (접시 아래)
   const ratios = [
@@ -80,27 +81,27 @@ function VerdictSummary({
       {/* 칩 한 줄은 카드 절반 폭까지만 (길면 칩 안에서 줄바꿈해서 칩이 겹치지 않게) */}
       <div className="mt-[11.2px] flex items-start justify-between pr-[21.4px] pl-[22.2px]">
         <ul aria-label="내 과실 근거" className="flex max-w-[158px] flex-col items-start gap-[6.514px]">
-          {myReasons.slice(0, MAX_REASONS).map((reason) => (
-            <li key={reason} className="flex max-w-full items-end">
+          {(size === 'card' ? myReasons : myReasons.slice(0, MAX_REASONS)).map((reason, index) => (
+            <li key={`${index}-${reason}`} className="flex max-w-full items-end">
               <img src={tailLeft} alt="" className="mr-[-15.821px] block max-w-none shrink-0 -scale-x-100" />
               <ReasonChip label={reason} />
             </li>
           ))}
         </ul>
         <ul aria-label="상대 과실 근거" className="flex max-w-[158px] flex-col items-end gap-[6.514px]">
-          {otherReasons.slice(0, MAX_REASONS).map((reason, index) => (
-            <li key={reason} className="flex max-w-full items-end">
+          {(size === 'card' ? otherReasons : otherReasons.slice(0, MAX_REASONS)).map((reason, index) => (
+            <li key={`${index}-${reason}`} className="flex max-w-full items-end">
               <span className="mr-[-15.821px] flex min-w-0">
                 <ReasonChip label={reason} />
               </span>
-              <img src={RIGHT_TAILS[index]} alt="" className="block max-w-none shrink-0" />
+              <img src={RIGHT_TAILS[Math.min(index, RIGHT_TAILS.length - 1)]} alt="" className="block max-w-none shrink-0" />
             </li>
           ))}
         </ul>
       </div>
 
       {/* 저울 + 떡 + 과실 비율 (칩과 겹치지 않게 칩 아래로 간격을 두고 시작) */}
-      <div className="relative mt-4" style={{ height: SCALE_AREA_HEIGHT }}>
+      <div className="relative" style={{ marginTop: 16 - scaleTopInset, height: size === 'card' ? Math.max(232.659, imageHeight) : SCALE_AREA_HEIGHT }}>
         <VerdictScale myRatio={myRatio} className="absolute top-0" style={{ left: SCALE_LEFT }} />
         {ratios.map((ratio) => (
           <div
@@ -119,7 +120,7 @@ function VerdictSummary({
         <Button
           onClick={onWhyClick}
           aria-disabled={onWhyClick ? undefined : true}
-          className={`mt-[7.45px] flex items-center text-[12.098px] font-medium leading-normal tracking-[-0.03em] whitespace-nowrap text-gray-50 ${onWhyClick ? 'cursor-pointer' : ''}`}
+          className={`${size === 'card' ? 'mt-[3.26px]' : 'mt-[7.45px]'} flex items-center text-[12.098px] font-medium leading-normal tracking-[-0.03em] whitespace-nowrap text-gray-50 ${onWhyClick ? 'cursor-pointer' : ''}`}
         >
           <span className="mr-[-1.861px]">왜 이렇게 판단했을까?</span><img src={arrow} alt="" className="block max-w-none" />
         </Button>

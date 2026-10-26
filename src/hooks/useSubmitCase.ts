@@ -19,6 +19,8 @@ export const useSubmitCase = ({ onError }: { onError: (message: string) => void 
   const submission = useMutation({
     mutationFn: ({ relation, photos }: UploadDraft) => createCase({ relation, images: photos.map((photo) => photo.file) }),
     onSuccess: ({ case_id, verdict_request }) => {
+      void queryClient.invalidateQueries({ queryKey: ['myCases'] })
+      void queryClient.invalidateQueries({ queryKey: ['myCaseCount'] })
       // 톨이 줄었으니 보유 톨, 내 정보를 다시 불러오게 함
       void queryClient.invalidateQueries({ queryKey: ['coinBalance'] })
       void queryClient.invalidateQueries({ queryKey: ['me'] })
