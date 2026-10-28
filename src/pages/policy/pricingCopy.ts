@@ -19,7 +19,9 @@ type PricingCopy = {
   headline: string
   description: string
   features: { title: string; body: string }[]
+  disclaimer: string // 법적·사실 판단이 아니라는 안내 (Paddle 심사: AI가 사람을 판단하는 서비스로 보이면 안 됨)
   pricingTitle: string
+  pricingSummary: string // 결제 대상은 AI 분석 이용권뿐, 배심원석은 무료
   listHeader: [string, string]
   amount: (amount: number) => string
   bonus: (bonus: number) => string
@@ -34,19 +36,21 @@ export const PRICING_COPY: Record<PolicyLang, PricingCopy> = {
   ko: {
     title: '서비스 안내',
     headline: '내가 예민한 걸까?',
-    description: '헷갈리는 관계 속 갈등, 달판이 상황과 대화를 보고 판결해드려요.',
+    description: '헷갈리는 관계 속 갈등, 내가 나눈 대화를 돌아보고 내 소통 방식에 대한 참고용 관점을 받아 보세요.',
     features: [
-      { title: 'AI 판결문', body: '대화 캡처와 상황 설명을 올리면 AI가 분석해서 과실 비율과 판단 근거를 담은 판결문을 써 드려요.' },
-      { title: '배심원 의견', body: '내 사건을 배심원석에 올려 다른 사용자들의 의견을 받아 볼 수 있어요.' },
-      { title: '판결문 공유', body: '받은 판결문을 링크나 이미지로 친구에게 공유할 수 있어요.' },
+      { title: 'AI 대화 돌아보기', body: '내가 참여한 대화 캡처를 올리면 AI가 대화 흐름과 서로의 입장을 정리하고, 양쪽 입장을 비율로 나타낸 참고용 분석을 보여 드려요.' },
+      { title: '배심원 의견 (무료)', body: '상대방 정보를 가린 대화를 배심원석에 올려 다른 사용자들의 의견을 무료로 받아 볼 수 있어요.' },
+      { title: '결과 공유', body: '받은 분석 결과를 링크나 이미지로 친구에게 공유할 수 있어요.' },
     ],
+    disclaimer: '달판의 AI 분석은 내 소통 방식을 돌아보기 위한 참고용 관점이며, 법적·사실 판단이나 특정인에 대한 평가가 아니에요. 대화를 올리기 전에 상대방의 이름과 프로필 사진은 가려 주세요.',
     pricingTitle: '이용권 가격',
+    pricingSummary: '결제가 필요한 상품은 AI 대화 분석 이용권뿐이에요. 배심원석(사건 공개, 투표, 댓글)과 공유는 무료예요.',
     listHeader: ['이용권', '결제금액'],
     amount: (amount) => `이용권 ${amount}개`,
     bonus: (bonus) => `+ ${bonus}개 보너스`,
     price: formatPrice,
     notes: [
-      'AI 판결 1회에 이용권 1개를 사용해요.',
+      'AI 대화 분석 1회에 이용권 1개를 사용해요.',
       '처음 가입하면 이용권 1개를 무료로 드려요.',
       '한 번 결제하는 상품이며, 자동으로 다시 결제되지 않아요.',
       '결제는 판매자(Merchant of Record)인 Paddle.com을 통해 진행돼요.',
@@ -58,21 +62,23 @@ export const PRICING_COPY: Record<PolicyLang, PricingCopy> = {
   en: {
     title: 'About Dalpan',
     headline: 'Am I being too sensitive?',
-    description: 'Confused about a conflict in your relationship? Dalpan reviews the situation and the conversation, and delivers a verdict.',
+    description: 'Look back on a conversation that confused you, and get a reference perspective on your own communication style.',
     features: [
-      { title: 'AI verdict', body: 'Upload chat screenshots and describe the situation. Our AI analyzes them and writes a verdict with the fault ratio and the reasoning behind it.' },
-      { title: 'Jury opinions', body: 'Post your case to the jury board and get opinions from other users.' },
-      { title: 'Share verdicts', body: 'Share your verdict with friends as a link or an image.' },
+      { title: 'AI conversation review', body: 'Upload screenshots of a conversation you took part in. Our AI summarizes how the conversation unfolded and each side\'s point of view, and shows a reference analysis that expresses both perspectives as a ratio.' },
+      { title: 'Jury opinions (free)', body: 'Post a conversation with the other person\'s information hidden to the jury board and get opinions from other users for free.' },
+      { title: 'Share results', body: 'Share your review with friends as a link or an image.' },
     ],
-    pricingTitle: 'AI verdict packs',
+    disclaimer: 'Dalpan\'s AI analysis is a reference perspective to help you reflect on your own communication. It is not a legal or factual determination, and not an assessment of any person. Please hide the other person\'s name and profile photo before uploading.',
+    pricingTitle: 'AI conversation review packs',
+    pricingSummary: 'The only paid product is AI conversation review packs. The jury board (posting, voting, comments) and sharing are free.',
     listHeader: ['Pack', 'Price'],
-    amount: (amount) => `${amount} AI ${amount === 1 ? 'verdict' : 'verdicts'}`,
+    amount: (amount) => `${amount} AI ${amount === 1 ? 'review' : 'reviews'}`,
     bonus: (bonus) => `+ ${bonus} bonus`,
     price: (price) => `₩${price.toLocaleString('en-US')}`,
     notes: [
       'Prices are in Korean won (KRW).',
-      'Each pack is a set of verdict passes. 1 pass = 1 AI verdict.',
-      'New members get 1 free verdict pass when they sign up.',
+      'Each pack is a set of review passes. 1 pass = 1 AI conversation review.',
+      'New members get 1 free review pass when they sign up.',
       'Packs are a one-time purchase and are never charged automatically.',
       'Payments are processed by Paddle.com, our Merchant of Record.',
     ],

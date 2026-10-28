@@ -57,8 +57,8 @@ const pricingBody = (lang: PolicyLang) => {
   return layout(
     lang,
     copy.title,
-    `<section class="mt-4"><h2 class="text-h3-medium">${escape(copy.headline)}</h2><p class="text-b3-regular">${escape(copy.description)}</p><ul class="mt-4 flex flex-col gap-4">${features}</ul></section>` +
-      `<section class="mt-9"><h2 class="text-h3-medium">${escape(copy.pricingTitle)}</h2><ul class="text-b3-medium mt-3 flex flex-col gap-1.5">${products}</ul><ul class="text-l2-medium mt-4 flex flex-col gap-1.5">${notes}${refund}</ul></section>` +
+    `<section class="mt-4"><h2 class="text-h3-medium">${escape(copy.headline)}</h2><p class="text-b3-regular">${escape(copy.description)}</p><ul class="mt-4 flex flex-col gap-4">${features}</ul><p class="text-l2-medium mt-3">${escape(copy.disclaimer)}</p></section>` +
+      `<section class="mt-9"><h2 class="text-h3-medium">${escape(copy.pricingTitle)}</h2><p class="text-b3-regular">${escape(copy.pricingSummary)}</p><ul class="text-b3-medium mt-3 flex flex-col gap-1.5">${products}</ul><ul class="text-l2-medium mt-4 flex flex-col gap-1.5">${notes}${refund}</ul></section>` +
       `<p class="mt-9"><a href="${paths.login}">${escape(copy.start)}</a></p>`,
   )
 }
