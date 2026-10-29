@@ -7,7 +7,7 @@ import { OPERATOR, POLICY_EFFECTIVE_DATE_EN } from './operator'
 export const TERMS_EN: TermsSection[] = [
   {
     title: 'Article 1 (Purpose)',
-    body: `These Terms set out the rights, obligations and responsibilities between ${OPERATOR.serviceEn} (operated by ${OPERATOR.name}, the "Operator") and its members regarding the use of the AI verdict service (AI verdicts based on uploaded chat screenshots, jury opinion requests, reply suggestions, sharing, etc., the "Service").`,
+    body: `These Terms set out the rights, obligations and responsibilities between ${OPERATOR.serviceEn} (operated by ${OPERATOR.name}, the "Operator") and its members regarding the use of the conversation reflection service (AI analysis of chat screenshots of conversations the member took part in, called "AI verdict" (AI 판결) in the app; jury opinion requests; reply suggestions; sharing, etc., the "Service").`,
   },
   {
     title: 'Article 2 (Operator Information)',
@@ -19,31 +19,31 @@ export const TERMS_EN: TermsSection[] = [
   },
   {
     title: 'Article 4 (Paid Services and Payment)',
-    body: "1. The Operator sells verdict passes, each of which can be used to request one AI verdict. Prices for each pack are shown on the pricing page and the purchase screen. 2. Verdict passes are one-time purchases and are never charged automatically or on a recurring basis. 3. Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle handles payments, taxes, payment-related customer service inquiries and refunds. 4. Payments are also subject to Paddle's Buyer Terms in addition to these Terms.",
+    body: "1. The Operator sells review passes, each of which can be used to request one AI conversation review. Prices for each pack are shown on the pricing page and the purchase screen. Review passes are the only paid product; the jury board (posting cases, voting, comments) and sharing are provided free of charge. 2. Review passes are one-time purchases and are never charged automatically or on a recurring basis. 3. Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle handles payments, taxes, payment-related customer service inquiries and refunds. 4. Payments are also subject to Paddle's Buyer Terms in addition to these Terms.",
   },
   {
-    title: 'Article 5 (Use and Refund of Verdict Passes)',
-    body: '1. Verdict passes can be purchased, or granted free of charge for reasons set by the Operator, such as signing up. 2. One verdict pass is used for each AI verdict request. 3. Purchased verdict passes are fully refunded for any reason if requested within 14 days of payment. See the Refund Policy for details. 4. Free verdict passes involve no payment and are therefore not refundable. 5. Verdict passes have no cash value, cannot be exchanged for cash and cannot be transferred to other members.',
+    title: 'Article 5 (Use and Refund of Review Passes)',
+    body: '1. Review passes can be purchased, or granted free of charge for reasons set by the Operator, such as signing up. 2. One review pass is used for each AI review request. 3. Purchased review passes are fully refunded for any reason if requested within 14 days of payment. See the Refund Policy for details. 4. Free review passes involve no payment and are therefore not refundable. 5. Review passes have no cash value, cannot be exchanged for cash and cannot be transferred to other members.',
   },
   {
     title: 'Article 6 (Member Obligations and Prohibited Conduct)',
-    body: "Members may only upload conversations in which they are a participant or for which they have the participants' consent, and must not post content that defames or disparages others. Members must also not: 1. disclose another person's personal information, such as their name, contact details, face or account, without consent (doxxing); 2. harass or threaten any person, or promote hatred or discrimination; 3. post content that violates the law, such as sexually explicit or violent content; 4. disrupt the Service, for example by using it through automated means or abusing the payment or refund process.",
+    body: "Members may only upload conversations in which they are a participant or for which they have the participants' consent, and must not post content that defames or disparages others. Before uploading chat screenshots, members must hide information that identifies the other person, such as their name and profile photo. Members must also not: 1. disclose another person's personal information, such as their name, contact details, face or account, without consent (doxxing); 2. harass or threaten any person, or promote hatred or discrimination; 3. post content that violates the law, such as sexually explicit or violent content; 4. disrupt the Service, for example by using it through automated means or abusing the payment or refund process.",
   },
   {
     title: 'Article 7 (Content Moderation)',
-    body: '1. The Operator may review content that violates Article 6 or has been reported, and may remove it or make it private. Depending on the severity of the violation, the Operator may also restrict the member\'s use of the Service. 2. When publishing a case to the jury board, members can hide personal information such as names with the mosaic tool, and must make sure no personal information is exposed before publishing. 3. Members can report problematic cases and comments on the jury board, and the Operator reviews reports and takes appropriate action.',
+    body: '1. The Operator may review content that violates Article 6 or has been reported, and may remove it or make it private. Depending on the severity of the violation, the Operator may also restrict the member\'s use of the Service. 2. When publishing a case to the jury board, members must hide personal information such as the other person\'s name and profile photo with the mosaic tool, and must make sure no personal information is exposed before publishing. The Operator makes a case private if it finds or receives a report that personal information is exposed. 3. Members can report problematic cases and comments on the jury board, and the Operator reviews reports and takes appropriate action.',
   },
   {
     title: 'Article 8 (Intellectual Property)',
-    body: '1. Rights to content uploaded by members, such as chat screenshots, remain with the member (or the original rights holder). The Operator uses such content only to the extent necessary to provide the Service (AI verdicts, jury board publishing, sharing, etc.). 2. Members may freely use and share the AI verdicts and suggested replies they receive for personal purposes. 3. Rights to the design, characters, logo and software of the Service belong to the Operator, and members may not copy or commercially use them without the Operator\'s permission.',
+    body: '1. Rights to content uploaded by members, such as chat screenshots, remain with the member (or the original rights holder). The Operator uses such content only to the extent necessary to provide the Service (AI conversation reviews, jury board publishing, sharing, etc.). 2. Members may freely use and share the AI conversation reviews and suggested replies they receive for personal purposes. 3. Rights to the design, characters, logo and software of the Service belong to the Operator, and members may not copy or commercially use them without the Operator\'s permission.',
   },
   {
-    title: 'Article 9 (Disclaimer of AI Verdicts)',
-    body: 'AI verdicts are analyses based on uploaded conversations provided for reference only, and do not replace legal judgment or professional advice. The Operator does not guarantee their accuracy and is not liable for any damage arising from reliance on them.',
+    title: 'Article 9 (Nature of AI Analysis and Disclaimer)',
+    body: '1. AI conversation reviews (including perspective ratios) are a reference perspective based only on the conversation the member uploads, provided to help the member reflect on their own communication style. They are not a legal judgment or a determination of facts, and not an assessment of any person. 2. AI conversation reviews do not replace legal, psychological or other professional advice, and members must not use the results to blame others or to cause disadvantage to others. 3. The Operator does not guarantee the accuracy of AI conversation reviews and is not liable for any damage arising from reliance on them.',
   },
   {
     title: 'Article 10 (Changes and Suspension of the Service)',
-    body: '1. The Operator may change or temporarily suspend the Service when necessary, such as for improvements or system maintenance, and will announce important changes in the Service in advance. 2. If the Service is discontinued, unused purchased verdict passes will be refunded.',
+    body: '1. The Operator may change or temporarily suspend the Service when necessary, such as for improvements or system maintenance, and will announce important changes in the Service in advance. 2. If the Service is discontinued, unused purchased review passes will be refunded.',
   },
   {
     title: 'Article 11 (Termination)',
@@ -66,7 +66,7 @@ export const TERMS_EN: TermsSection[] = [
 export const REFUND_POLICY_EN: TermsSection[] = [
   {
     title: '1. Refund Period',
-    body: 'Purchased verdict passes are fully refunded for any reason, whether or not they have been used, if you request a refund within 14 days of payment.',
+    body: 'Purchased review passes are fully refunded for any reason, whether or not they have been used, if you request a refund within 14 days of payment.',
   },
   {
     title: '2. How to Request a Refund',
@@ -77,16 +77,16 @@ export const REFUND_POLICY_EN: TermsSection[] = [
     body: 'Orders are processed by Paddle.com as the Merchant of Record, so refunds are issued by Paddle.com to the original payment method. The time it takes for the refund to arrive depends on your payment provider (e.g., card issuer).',
   },
   {
-    title: '4. Verdict Passes After a Refund',
-    body: 'Once a refund is completed, the number of verdict passes added by that payment is removed from the remaining verdict passes in your account. They are deducted from your balance regardless of whether they were purchased or free, and if you have already used them and your balance is insufficient, only the remaining balance is removed.',
+    title: '4. Review Passes After a Refund',
+    body: 'Once a refund is completed, the number of review passes added by that payment is removed from the remaining review passes in your account. They are deducted from your balance regardless of whether they were purchased or free, and if you have already used them and your balance is insufficient, only the remaining balance is removed.',
   },
   {
-    title: '5. Free Verdict Passes',
-    body: 'Verdict passes granted free of charge, such as the sign-up bonus or jury activity rewards, involve no payment and are therefore not refundable.',
+    title: '5. Free Review Passes',
+    body: 'Review passes granted free of charge, such as the sign-up bonus or jury activity rewards, involve no payment and are therefore not refundable.',
   },
   {
     title: '6. Returns for Service Errors',
-    body: 'If a verdict request fails due to a system error, the verdict pass used is returned automatically without a refund request.',
+    body: 'If a review request fails due to a system error, the review pass used is returned automatically without a refund request.',
   },
   {
     title: '7. After 14 Days',
@@ -105,19 +105,19 @@ export const REFUND_POLICY_EN: TermsSection[] = [
 export const PRIVACY_POLICY_EN: TermsSection[] = [
   {
     title: '1. Personal Information We Process',
-    body: '- Required: ID, password (stored encrypted) or social account identifier (e.g., Kakao), nickname - Required: chat screenshot images uploaded while using the Service and the conversations they contain - For payments: payment email and payment history (payment method details such as card numbers are processed directly by Paddle.com; the Operator never receives or stores them) - Collected automatically: device information, access logs, service usage records',
+    body: '- Required: ID, password (stored encrypted) or social account identifier (e.g., Kakao), nickname - Required: chat screenshot images uploaded while using the Service and the conversations they contain (the Operator asks members to hide the other person\'s name, profile photo, etc. before uploading) - For payments: payment email and payment history (payment method details such as card numbers are processed directly by Paddle.com; the Operator never receives or stores them) - Collected automatically: device information, access logs, service usage records',
   },
   {
     title: '2. Purposes of Processing',
-    body: '- Sign-up, identity verification and preventing misuse of the Service - Providing AI verdicts (situation analysis, fault ratio, etc.) - Managing verdict pass purchases and usage, and processing payments and refunds - Operating community features such as jury opinion requests - Improving the Service and analyzing errors',
+    body: '- Sign-up, identity verification and preventing misuse of the Service - Providing AI conversation reviews (situation analysis, fault ratio, etc.) - Managing review pass purchases and usage, and processing payments and refunds - Operating community features such as jury opinion requests - Improving the Service and analyzing errors',
   },
   {
     title: '3. Retention Period',
-    body: 'Personal information is deleted without delay when a member deletes their account. However, where applicable laws (such as the Korean E-Commerce Act) require a specific retention period, it is kept for that period (e.g., payment records for 5 years).',
+    body: '- Uploaded chat screenshots (including images published to the jury board): automatically deleted 3 weeks after upload, or immediately if the member deletes their account before then. - AI analysis results and other personal information: deleted without delay when a member deletes their account. However, where applicable laws (such as the Korean E-Commerce Act) require a specific retention period, it is kept for that period (e.g., payment records for 5 years).',
   },
   {
     title: '4. Third-Party Provision and Processors',
-    body: 'We do not provide members\' personal information to third parties in principle (except where required by law). To provide the Service, we share only the minimum necessary information with the following companies: - Paddle.com: verdict pass payments, tax handling and refunds (processes payment information directly as the Merchant of Record) - Kakao: social login - Railway: server operation and data storage - Liner AI: analysis of uploaded conversations and AI verdict processing',
+    body: 'We do not provide members\' personal information to third parties in principle (except where required by law). To provide the Service, we share only the minimum necessary information with the following companies: - Paddle.com: review pass payments, tax handling and refunds (processes payment information directly as the Merchant of Record) - Kakao: social login - Railway: server operation and data storage - Liner AI: analysis of uploaded conversations and AI analysis processing',
   },
   {
     title: '5. Your Rights',

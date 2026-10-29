@@ -34,10 +34,14 @@ function PricingPage({ lang = 'ko' }: { lang?: PolicyLang }) {
               </li>
             ))}
           </ul>
+          {/* 법적·사실 판단이 아니라는 안내 */}
+          <p className="text-l2-medium mt-3 leading-4 text-gray-30">{copy.disclaimer}</p>
         </section>
 
         <section aria-labelledby="pricing-list" className="mt-9">
           <h2 id="pricing-list" className="text-h3-medium">{copy.pricingTitle}</h2>
+          {/* 결제 대상은 이용권뿐, 배심원석은 무료 */}
+          <p className="text-b3-regular mt-1.5 text-gray-10">{copy.pricingSummary}</p>
 
           {/* 목록 헤더와 상품 카드는 이용권 충전 화면과 같은 모양 */}
           <div className="text-l1-medium mt-3 flex h-13 items-center justify-between rounded-lg bg-white-100 pr-4.5 pl-4.25 text-[#343434]">
