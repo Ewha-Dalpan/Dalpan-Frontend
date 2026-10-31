@@ -87,8 +87,6 @@ const pricing = (file: string, lang: PolicyLang): StaticPage => ({
 })
 
 export const STATIC_PAGES: StaticPage[] = [
-  // 도메인 첫 화면: 해외 심사팀이 바로 읽을 수 있게 영문 서비스 안내 (화면이 뜨면 로그인 여부에 따라 이동)
-  pricing('index.html', 'en'),
   pricing('pricing.html', 'ko'),
   pricing('en/pricing.html', 'en'),
   policy('terms.html', 'ko', '서비스 이용약관', '달판 서비스 이용약관', TERMS.terms.sections),
