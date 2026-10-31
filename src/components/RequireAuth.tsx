@@ -13,11 +13,6 @@ function RequireAuth() {
   const { pathname, search } = useLocation()
 
   if (!isLoggedIn) {
-    // 첫 화면(/)은 로그인 화면 대신 서비스 안내로 (Paddle 심사: 도메인 첫 화면이 로그인 장벽이면 안 됨)
-    // 브라우저 언어가 한국어가 아니면 영문 안내로
-    if (pathname === paths.home) {
-      return <Navigate to={navigator.language.startsWith('ko') ? paths.pricing : paths.pricingEn} replace />
-    }
     return <Navigate to={paths.login} replace state={{ from: pathname + search } satisfies LoginLocationState} />
   }
   return <Outlet />

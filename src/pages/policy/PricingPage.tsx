@@ -1,6 +1,5 @@
 // 서비스 안내 · 가격 (로그인 없이 볼 수 있음, 한국어 /pricing · 영문 /en/pricing)
 // Paddle 심사: 무엇을 파는지(서비스 설명, 받는 것)와 가격이 로그인 없이 보여야 함
-// 로그인 안 한 사람이 첫 화면(/)에 오면 이 화면으로 옴 (RequireAuth)
 // 가격 목록은 이용권 충전 화면과 같은 모양 (결제 버튼만 없음)
 
 import { Link } from 'react-router-dom'
