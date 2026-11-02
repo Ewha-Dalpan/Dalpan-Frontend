@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { getCasePayment, requestJudgment } from '../../apis/caseApi'
 import { getVerdictRequest } from '../../apis/verdictApi'
-import loadingRabbit from '../../assets/judgment/loading.mp4'
+import loadingRabbit from '../../assets/judgment/loading.webp'
 import Header from '../../components/Header'
 import Modal from '../../components/modal/Modal'
 import { paths } from '../../routes/paths'
@@ -144,16 +144,13 @@ function JudgingPage() {
 
       <main className="flex flex-1 flex-col items-center justify-center pb-21">
         {/* 망치 찧는 토끼~ */}
-        <video
+        <img
           src={loadingRabbit}
-          autoPlay
-          loop
-          muted
-          playsInline
+          alt=""
           aria-hidden="true"
           width={656}
           height={390}
-          className="block h-auto w-63 [clip-path:inset(0_0_1px_0)]"
+          className="block h-auto w-63"
         />
 
         {/* 문구가 바뀔 때마다 다시 아래에서 부드럽게 올라옴 (제목 → 설명 순서) */}
