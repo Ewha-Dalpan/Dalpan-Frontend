@@ -3,6 +3,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useUploadDraftStore } from './useUploadDraftStore'
 
 interface AuthState {
   accessToken: string | null // API 요청에 붙이는 토큰 (30분)
@@ -21,7 +22,10 @@ export const useAuthStore = create<AuthState>()(
       nickname: null,
       login: ({ access, refresh, nickname }) => set({ accessToken: access, refreshToken: refresh, nickname }),
       setAccessToken: (access) => set({ accessToken: access }),
-      logout: () => set({ accessToken: null, refreshToken: null, nickname: null }),
+      logout: () => {
+        useUploadDraftStore.getState().clearDraft() // 올려둔 사진이 다음 사용자에게 남지 않게
+        set({ accessToken: null, refreshToken: null, nickname: null })
+      },
     }),
     { name: 'dalpan-auth' },
   ),

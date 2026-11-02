@@ -1,5 +1,5 @@
 // 서비스 안내 · 정책 페이지를 빌드할 때 내용이 들어간 정적 HTML로도 만듦 (vite.config.ts의 prerender 플러그인이 씀)
-// Paddle 심사 스캐너는 자바스크립트를 실행하지 않아서, 빈 <div id="root">만 있으면 '공사 중인 사이트'로 판단함
+// 결제 심사 스캐너는 자바스크립트를 실행하지 않아서, 빈 <div id="root">만 있으면 '공사 중인 사이트'로 판단함
 // 화면이 뜨면 React가 #root를 원래 화면으로 바꿈
 
 import { TERMS, type TermsSection } from '../onboarding/terms'

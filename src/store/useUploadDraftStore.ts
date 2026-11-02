@@ -1,10 +1,11 @@
 // 접수 대기 중인 대화 캡처 (관계 + 사진)
-// 톨이 부족해서 톨 부족 창 → 충전 → 결제 완료 화면을 오가는 동안 올린 사진을 기억했다가, 결제 후 그대로 접수함
-// 사진 파일은 저장소(localStorage)에 넣을 수 없어서 메모리에만 둠 
+// 톨이 부족해서 톨 부족 창 → 충전 화면을 오가는 동안 올린 사진을 기억함
+// 평소에는 메모리에만 두고, PayApp 결제창에 다녀오는 동안만 브라우저에 보관함 (uploadDraftStorage)
 
 import { create } from 'zustand'
 import type { Photo } from '../components/PhotoUploadBox'
 import type { CaseRelation } from '../types/case'
+import { deleteStoredDraft } from '../utils/uploadDraftStorage'
 
 export type UploadDraft = {
   relation: CaseRelation
@@ -20,5 +21,8 @@ interface UploadDraftState {
 export const useUploadDraftStore = create<UploadDraftState>((set) => ({
   draft: null,
   setDraft: (draft) => set({ draft }),
-  clearDraft: () => set({ draft: null }),
+  clearDraft: () => {
+    void deleteStoredDraft()
+    set({ draft: null })
+  },
 }))

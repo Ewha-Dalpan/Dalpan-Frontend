@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { isAxiosError } from 'axios'
 import './index.css'
 import App from './App'
+import { purgeExpiredDraft } from './utils/uploadDraftStorage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,8 @@ for (const key of ['juryCases', 'myCases', 'featuredCases']) {
   queryClient.setQueryDefaults([key], { staleTime: 30_000, gcTime: 15 * 60_000 })
 }
 queryClient.setQueryDefaults(['verdict'], { staleTime: 60_000, gcTime: 15 * 60_000 })
+
+void purgeExpiredDraft()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

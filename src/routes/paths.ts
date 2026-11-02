@@ -28,10 +28,10 @@ export const paths = {
   verdictReasonPattern: "/judgment/verdicts/:caseId/reason",
   juryRequest: (caseId: number | string) => `/judgment/verdicts/${caseId}/jury`,
   juryRequestPattern: "/judgment/verdicts/:caseId/jury",
-  // 톨이 부족할 때 → 톨 충전 → 결제 완료
+  // 톨이 부족할 때 → 톨 충전 → PayApp 결제창 → 결제 결과 (?order_id=)
   tollShortage: "/judgment/toll/shortage",
   tollCharge: "/toll/charge",
-  paymentComplete: "/toll/charge/complete",
+  paymentResult: "/payments/result",
   sharedVerdict: (shareId: number | string) => `/shared/${shareId}`,
   sharedVerdictPattern: "/shared/:shareId",
   sharedVerdictReason: (shareId: number | string) => `/shared/${shareId}/reason`,
@@ -40,12 +40,12 @@ export const paths = {
   kakaoCallback: "/oauth/kakao",
   signup: "/signup",
   splash: "/splash",
-  // 로그인 없이 볼 수 있는 서비스 안내 · 정책 페이지 (Paddle 결제 심사용, 로그인 화면 아래 링크)
+  // 로그인 없이 볼 수 있는 서비스 안내 · 정책 페이지 (로그인 화면 아래 링크)
   pricing: "/pricing",
   terms: "/terms",
   refund: "/refund",
   privacy: "/privacy",
-  // 위 페이지의 영문 버전 (Paddle 심사팀이 해외에 있어서)
+  // 위 페이지의 영문 버전 (해외 사용자 · 심사용)
   pricingEn: "/en/pricing",
   termsEn: "/en/terms",
   refundEn: "/en/refund",

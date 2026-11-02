@@ -6,7 +6,7 @@ import { paths } from '../../routes/paths';
 import aiJudge from "../../assets/home/ai-judge.svg";
 import ground from "../../assets/home/ground.svg";
 import participants from "../../assets/home/participants.svg";
-import rabbitHome from "../../assets/home/rabbit-home.mp4";
+import rabbitHome from "../../assets/home/rabbit-home.webp";
 import Button from "../../components/Button";
 import type { MainLayoutContext } from "../../layouts/MainLayout";
 
@@ -27,17 +27,13 @@ function HomePage() {
         className="pointer-events-none absolute left-[calc(50%+0.5px)] top-[466px] -z-10 block max-w-none -translate-x-1/2"
       />
       {/* 움직이는 토끼 */}
-      <video
+      <img
         src={rabbitHome}
-        autoPlay
-        loop
-        muted
-        playsInline
+        alt=""
         aria-hidden="true"
         width={756}
         height={390}
-        // 일부 기기에서 영상 아래에 검은 선이 생겨서 2px씩 잘라냈어요!!
-        className="pointer-events-none absolute inset-x-0 top-[408px] -z-10 block h-auto w-full [clip-path:inset(0_2px_2px_0)]"
+        className="pointer-events-none absolute inset-x-0 top-[408px] -z-10 block h-auto w-full"
       />
 
       <section
