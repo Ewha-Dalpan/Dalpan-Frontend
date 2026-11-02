@@ -25,7 +25,7 @@ import MyCaseDetailPage from './pages/my/MyCaseDetailPage'
 import AccountPage from './pages/my/AccountPage'
 import TollShortagePage from './pages/payment/TollShortagePage'
 import TollChargePage from './pages/payment/TollChargePage'
-import PaymentCompletePage from './pages/payment/PaymentCompletePage'
+import PaymentResultPage from './pages/payment/PaymentResultPage'
 import LoginPage from './pages/onboarding/LoginPage'
 import SignupPage from './pages/onboarding/SignupPage'
 import KakaoCallbackPage from './pages/onboarding/KakaoCallbackPage'
@@ -72,10 +72,10 @@ function App() {
           <Route path={paths.juryRequestPattern} element={<JuryRequestPage />} />
           {/* 계정 관리 (자체 헤더, GNB 없음) */}
           <Route path={paths.myAccount} element={<AccountPage />} />
-          {/* 결제: 톨 부족 → 톨 충전 → 결제 완료 (자체 헤더 · 배경) */}
+          {/* 결제: 톨 부족 → 톨 충전 → PayApp 결제창 → 결제 결과 (자체 헤더 · 배경) */}
           <Route path={paths.tollShortage} element={<TollShortagePage />} />
           <Route path={paths.tollCharge} element={<TollChargePage />} />
-          <Route path={paths.paymentComplete} element={<PaymentCompletePage />} />
+          <Route path={paths.paymentResult} element={<PaymentResultPage />} />
         </Route>
 
         {/* 공유 받은 사람이 링크로 들어오는 판결문 (헤더·GNB 없는 단독 화면, 로그인 불필요) */}
@@ -89,12 +89,12 @@ function App() {
         <Route path={paths.signup} element={<SignupPage />} />
         <Route path={paths.splash} element={<Navigate to={paths.login} replace />} />
 
-        {/* 서비스 안내 · 정책 (로그인 불필요, Paddle 결제 심사용) */}
+        {/* 서비스 안내 · 정책 (로그인 불필요) */}
         <Route path={paths.pricing} element={<PricingPage />} />
         <Route path={paths.terms} element={<PolicyPage title="서비스 이용약관" sections={TERMS.terms.sections} switchTo={paths.termsEn} />} />
         <Route path={paths.refund} element={<PolicyPage title="환불 정책" sections={REFUND_POLICY} switchTo={paths.refundEn} />} />
         <Route path={paths.privacy} element={<PolicyPage title="개인정보처리방침" sections={PRIVACY_POLICY} switchTo={paths.privacyEn} />} />
-        {/* 영문 버전 (Paddle 심사팀이 해외에 있어서) */}
+        {/* 영문 버전 (해외 사용자 · 심사용) */}
         <Route path={paths.pricingEn} element={<PricingPage lang="en" />} />
         <Route path={paths.termsEn} element={<PolicyPage lang="en" title="Terms of Service" sections={TERMS_EN} switchTo={paths.terms} />} />
         <Route path={paths.refundEn} element={<PolicyPage lang="en" title="Refund Policy" sections={REFUND_POLICY_EN} switchTo={paths.refund} />} />

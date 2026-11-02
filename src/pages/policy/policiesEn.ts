@@ -19,11 +19,11 @@ export const TERMS_EN: TermsSection[] = [
   },
   {
     title: 'Article 4 (Paid Services and Payment)',
-    body: "1. The Operator sells review passes, each of which can be used to request one AI conversation review. Prices for each pack are shown on the pricing page and the purchase screen. Review passes are the only paid product; the jury board (posting cases, voting, comments) and sharing are provided free of charge. 2. Review passes are one-time purchases and are never charged automatically or on a recurring basis. 3. Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle handles payments, taxes, payment-related customer service inquiries and refunds. 4. Payments are also subject to Paddle's Buyer Terms in addition to these Terms.",
+    body: "1. The Operator sells review passes, each of which can be used to request one AI conversation review. Prices for each pack are shown on the pricing page and the purchase screen. Review passes are the only paid product; the jury board (posting cases, voting, comments) and sharing are provided free of charge. 2. Review passes are one-time purchases and are never charged automatically or on a recurring basis. 3. Payments are processed through PayApp, a payment gateway service, and members pay on the PayApp payment page. The Operator is the seller of review passes and handles delivery of the product and refund inquiries. 4. Members must enter a mobile phone number (Korean 010 numbers only) when paying. The terms of PayApp and the payment method provider may also apply.",
   },
   {
     title: 'Article 5 (Use and Refund of Review Passes)',
-    body: '1. Review passes can be purchased, or granted free of charge for reasons set by the Operator, such as signing up. 2. One review pass is used for each AI review request. 3. Purchased review passes are fully refunded for any reason if requested within 14 days of payment. See the Refund Policy for details. 4. Free review passes involve no payment and are therefore not refundable. 5. Review passes have no cash value, cannot be exchanged for cash and cannot be transferred to other members.',
+    body: '1. Review passes can be purchased, or granted free of charge for reasons set by the Operator, such as signing up. 2. One review pass is used for each AI review request. 3. Unused purchased review passes are refunded for any reason if requested within 14 days of payment. Review passes that have already been used are not refundable. See the Refund Policy for details. 4. Free review passes involve no payment and are therefore not refundable. 5. Review passes have no cash value, cannot be exchanged for cash and cannot be transferred to other members.',
   },
   {
     title: 'Article 6 (Member Obligations and Prohibited Conduct)',
@@ -66,19 +66,19 @@ export const TERMS_EN: TermsSection[] = [
 export const REFUND_POLICY_EN: TermsSection[] = [
   {
     title: '1. Refund Period',
-    body: 'Purchased review passes are fully refunded for any reason, whether or not they have been used, if you request a refund within 14 days of payment.',
+    body: 'Unused purchased review passes are refunded for any reason if you request a refund within 14 days of payment. If none have been used, the full amount paid is refunded. If some have been used, the amount for the unused passes (amount paid ÷ passes received × unused passes) is refunded. Review passes that have already been used are not refundable.',
   },
   {
     title: '2. How to Request a Refund',
-    body: `- Look up your order at paddle.net with the email address you used for payment and request a refund from Paddle directly, or - email ${OPERATOR.email} with the email address you used for payment, the payment date and your Paddle order number (shown in the receipt email).`,
+    body: `Email ${OPERATOR.email} with the mobile phone number you entered at payment, the payment date and the amount paid.`,
   },
   {
     title: '3. Refund Processing',
-    body: 'Orders are processed by Paddle.com as the Merchant of Record, so refunds are issued by Paddle.com to the original payment method. The time it takes for the refund to arrive depends on your payment provider (e.g., card issuer).',
+    body: 'Payments are processed through PayApp, a payment gateway service. After reviewing the request, the Operator, as the seller, cancels the payment through PayApp and the amount is returned to the original payment method. The time it takes for the refund to arrive depends on your payment provider (e.g., card issuer).',
   },
   {
     title: '4. Review Passes After a Refund',
-    body: 'Once a refund is completed, the number of review passes added by that payment is removed from the remaining review passes in your account. They are deducted from your balance regardless of whether they were purchased or free, and if you have already used them and your balance is insufficient, only the remaining balance is removed.',
+    body: 'Once a refund is completed, the refunded number of review passes is removed from your account.',
   },
   {
     title: '5. Free Review Passes',
@@ -90,11 +90,11 @@ export const REFUND_POLICY_EN: TermsSection[] = [
   },
   {
     title: '7. After 14 Days',
-    body: "Refund requests made more than 14 days after payment are reviewed case by case under Paddle's Buyer Terms and refund policy. Where applicable law grants more favorable rights, that law prevails.",
+    body: 'Refund requests made more than 14 days after payment are reviewed case by case under applicable law. Where applicable law grants more favorable rights, that law prevails.',
   },
   {
     title: '8. Refund Restrictions',
-    body: "If fraudulent use such as fraud or refund abuse is identified, a refund may be refused under Paddle's refund policy, and use of the Service may be restricted under the Terms of Service.",
+    body: 'If fraudulent use such as fraud or refund abuse is identified, a refund may be refused, and use of the Service may be restricted under the Terms of Service.',
   },
   {
     title: 'Effective Date',
@@ -105,7 +105,7 @@ export const REFUND_POLICY_EN: TermsSection[] = [
 export const PRIVACY_POLICY_EN: TermsSection[] = [
   {
     title: '1. Personal Information We Process',
-    body: '- Required: ID, password (stored encrypted) or social account identifier (e.g., Kakao), nickname - Required: chat screenshot images uploaded while using the Service and the conversations they contain (the Operator asks members to hide the other person\'s name, profile photo, etc. before uploading) - For payments: payment email and payment history (payment method details such as card numbers are processed directly by Paddle.com; the Operator never receives or stores them) - Collected automatically: device information, access logs, service usage records',
+    body: '- Required: ID, password (stored encrypted) or social account identifier (e.g., Kakao), nickname - Required: chat screenshot images uploaded while using the Service and the conversations they contain (the Operator asks members to hide the other person\'s name, profile photo, etc. before uploading) - For payments: mobile phone number and payment history (payment method details such as card numbers are processed directly by PayApp and the payment method provider; the Operator never receives or stores them) - Collected automatically: device information, access logs, service usage records',
   },
   {
     title: '2. Purposes of Processing',
@@ -113,11 +113,11 @@ export const PRIVACY_POLICY_EN: TermsSection[] = [
   },
   {
     title: '3. Retention Period',
-    body: '- Uploaded chat screenshots (including images published to the jury board): automatically deleted 3 weeks after upload, or immediately if the member deletes their account before then. - AI analysis results and other personal information: deleted without delay when a member deletes their account. However, where applicable laws (such as the Korean E-Commerce Act) require a specific retention period, it is kept for that period (e.g., payment records for 5 years).',
+    body: '- Uploaded chat screenshots (including images published to the jury board): automatically deleted 3 weeks after upload, or immediately if the member deletes their account before then. - Chat screenshots while going to the payment page: temporarily kept in the member\'s browser so the case can be submitted right after payment, and deleted upon submission or logout, or after 24 hours at the latest. - AI analysis results and other personal information: deleted without delay when a member deletes their account. However, where applicable laws (such as the Korean E-Commerce Act) require a specific retention period, it is kept for that period (e.g., payment records for 5 years).',
   },
   {
     title: '4. Third-Party Provision and Processors',
-    body: 'We do not provide members\' personal information to third parties in principle (except where required by law). To provide the Service, we share only the minimum necessary information with the following companies: - Paddle.com: review pass payments, tax handling and refunds (processes payment information directly as the Merchant of Record) - Kakao: social login - Railway: server operation and data storage - Liner AI: analysis of uploaded conversations and AI analysis processing',
+    body: 'We do not provide members\' personal information to third parties in principle (except where required by law). To provide the Service, we share only the minimum necessary information with the following companies: - PayApp: review pass payment processing and payment cancellation (processes payment information directly on its payment page) - Kakao: social login - Railway: server operation and data storage - Liner AI: analysis of uploaded conversations and AI analysis processing',
   },
   {
     title: '5. Your Rights',

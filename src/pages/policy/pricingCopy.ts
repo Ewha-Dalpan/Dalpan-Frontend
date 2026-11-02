@@ -5,9 +5,9 @@ import { paths } from '../../routes/paths'
 import { formatPrice } from '../payment/coinProduct'
 import type { PolicyLang } from './operator'
 
-// 상품 API가 아직 화면설계서와 달라서 화면설계서 가격을 적어둠 (백엔드 상품이 맞춰지면 API로 교체)
+// 빌드 때 만드는 정적 HTML에도 들어가서 적어둠 (상품 API /api/payments/products/와 같게 유지)
 export const PRICING_PRODUCTS = [
-  { amount: 1, bonus: 0, price: 990 },
+  { amount: 1, bonus: 0, price: 1000 },
   { amount: 5, bonus: 0, price: 4950 },
   { amount: 10, bonus: 1, price: 9900 },
   { amount: 20, bonus: 3, price: 19800 },
@@ -19,7 +19,7 @@ type PricingCopy = {
   headline: string
   description: string
   features: { title: string; body: string }[]
-  disclaimer: string // 법적·사실 판단이 아니라는 안내 (Paddle 심사: AI가 사람을 판단하는 서비스로 보이면 안 됨)
+  disclaimer: string // 법적·사실 판단이 아니라는 안내 (결제 심사: AI가 사람을 판단하는 서비스로 보이면 안 됨)
   pricingTitle: string
   pricingSummary: string // 결제 대상은 AI 분석 이용권뿐, 배심원석은 무료
   listHeader: [string, string]
@@ -53,9 +53,9 @@ export const PRICING_COPY: Record<PolicyLang, PricingCopy> = {
       'AI 대화 분석 1회에 이용권 1개를 사용해요.',
       '처음 가입하면 이용권 1개를 무료로 드려요.',
       '한 번 결제하는 상품이며, 자동으로 다시 결제되지 않아요.',
-      '결제는 판매자(Merchant of Record)인 Paddle.com을 통해 진행돼요.',
+      '결제는 결제대행 서비스 PayApp을 통해 진행돼요.',
     ],
-    refundNote: { text: '결제일로부터 14일 이내에는 사유와 관계없이 전액 환불받을 수 있어요.', linkLabel: '환불 정책 보기', to: paths.refund },
+    refundNote: { text: '사용하지 않은 이용권은 결제일로부터 14일 이내에 사유와 관계없이 환불받을 수 있어요.', linkLabel: '환불 정책 보기', to: paths.refund },
     start: '달판 시작하기',
     switchTo: paths.pricingEn,
   },
@@ -80,9 +80,9 @@ export const PRICING_COPY: Record<PolicyLang, PricingCopy> = {
       'Each pack is a set of review passes. 1 pass = 1 AI conversation review.',
       'New members get 1 free review pass when they sign up.',
       'Packs are a one-time purchase and are never charged automatically.',
-      'Payments are processed by Paddle.com, our Merchant of Record.',
+      'Payments are processed through PayApp, a payment gateway service.',
     ],
-    refundNote: { text: 'Full refund for any reason within 14 days of payment.', linkLabel: 'See Refund Policy', to: paths.refundEn },
+    refundNote: { text: 'Unused review passes are refundable for any reason within 14 days of payment.', linkLabel: 'See Refund Policy', to: paths.refundEn },
     start: 'Get started',
     switchTo: paths.pricing,
   },

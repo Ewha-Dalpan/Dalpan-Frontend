@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { STATIC_PAGES } from './src/pages/policy/staticPages'
 
 // 빌드 후 서비스 안내 · 정책 페이지를 내용이 들어간 HTML로 만들어 둠 (dist/terms.html 등)
-// Paddle 심사 스캐너는 자바스크립트를 실행하지 않아서 빈 화면으로 보이기 때문
+// 결제 심사 스캐너는 자바스크립트를 실행하지 않아서 빈 화면으로 보이기 때문
 // Vercel은 cleanUrls로 /terms 요청에 terms.html을 줌 (vercel.json)
 function prerenderPolicyPages(): Plugin {
   let outDir = 'dist'
