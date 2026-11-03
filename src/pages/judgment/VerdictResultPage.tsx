@@ -1,7 +1,6 @@
 // AI 재판 - 판결문 전체 화면
 // 판결문 도착('펼쳐보기')에서 탭하면 이 화면
 
-import { useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import closeIcon from '../../assets/verdict/close-dark.svg'
 import copyIcon from '../../assets/verdict/copy.svg'
@@ -11,23 +10,15 @@ import ShareSheet from '../../components/modal/ShareSheet'
 import Toast from '../../components/Toast'
 import VerdictBoard from '../../components/VerdictBoard'
 import VerdictSummary from '../../components/VerdictSummary'
-import { useToast } from '../../hooks/useToast'
 import { toVerdictSummary, useCaseIdParam, useVerdict } from '../../hooks/useVerdict'
+import { useVerdictShare } from '../../hooks/useVerdictShare'
 import { paths } from '../../routes/paths'
-import { loadKakao } from '../../utils/kakao'
-import { captureImage, shareTo } from '../../utils/share'
-import type { ShareTarget } from '../../utils/share'
-import { createShareLink } from '../../apis/verdictApi'
 
 function VerdictResultPage() {
   const navigate = useNavigate()
   const caseId = useCaseIdParam() // 주소의 사건 ID
   const { data: verdict, isError } = useVerdict(caseId)
-  const { toast, showToast, hideToast } = useToast()
-  const [isShareOpen, setIsShareOpen] = useState(false) // 공유하기 모달
-  const captureRef = useRef<HTMLDivElement>(null) // 저장할 때 캡처하는 판결문 이미지
-  const shareImage = useRef<Promise<File | null> | null>(null) // 캡처 이미지 
-  const shareUrl = useRef<Promise<string | null> | null>(null) // 공유 링크 (받은 사람은 '판결문 공유 유입' 화면으로 들어옴)
+  const { captureRef, openShare, shareSheet, toast, showToast, hideToast } = useVerdictShare(caseId, verdict?.title)
 
   // 잘못된 주소거나 판결을 불러오지 못하면 홈으로
   if (caseId === undefined) return <Navigate to={paths.home} replace />
@@ -51,39 +42,6 @@ function VerdictResultPage() {
     } catch {
       showToast('메시지를 복사하지 못했습니다.')
     }
-  }
-
-  // 공유하기 모달을 여는 동안 공유 링크 · 캡처 이미지를 미리 만들어 둠
-  const openShare = () => {
-    void loadKakao() // 카카오톡 버튼을 누르기 전에 SDK를 미리 불러둠
-    shareImage.current ??= captureImage(captureRef.current, '달판-판결문.png').then((image) => {
-      if (!image) shareImage.current = null
-      return image
-    })
-    // 공유 링크 만들기 → 지금 사이트 주소 + /shared/{토큰} (로컬 · 배포 어디서든 그 사이트로 열리게)
-    shareUrl.current ??= createShareLink(caseId)
-      .then(({ token }) => `${window.location.origin}${paths.sharedVerdict(token)}`)
-      .catch(() => {
-        shareUrl.current = null // 실패하면 다음에 다시 만들 수 있게
-        return null
-      })
-    setIsShareOpen(true)
-  }
-
-  // 모달을 먼저 닫고 공유
-  const handleShare = async (target: ShareTarget) => {
-    setIsShareOpen(false)
-    const url = await shareUrl.current
-    if (!url) {
-      showToast('공유 링크를 만들지 못했어요. 잠시 후 다시 시도해 주세요.')
-      return
-    }
-    const message = await shareTo(target, {
-      url,
-      text: `달판 AI 판결문 | ${summary.title}`,
-      image: shareImage.current,
-    })
-    if (message) showToast(message)
   }
 
   return (
@@ -131,7 +89,7 @@ function VerdictResultPage() {
         <VerdictBoard variant="image" ref={captureRef} {...summary} title={summary.title ?? ''} />
       </div>
 
-      <ShareSheet open={isShareOpen} onClose={() => setIsShareOpen(false)} onSelect={handleShare} />
+      <ShareSheet {...shareSheet} />
       <Toast toast={toast} onHide={hideToast} />
     </div>
   )
