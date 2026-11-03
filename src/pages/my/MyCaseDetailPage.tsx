@@ -8,6 +8,10 @@ import { toVerdictSummary, useCaseIdParam } from '../../hooks/useVerdict'
 import { getApiErrorMessage, isApiStatus } from '../../utils/apiError'
 import Button from '../../components/Button'
 import CasePublicationActions from '../../components/CasePublicationActions'
+import ShareSheet from '../../components/modal/ShareSheet'
+import Toast from '../../components/Toast'
+import VerdictBoard from '../../components/VerdictBoard'
+import { useVerdictShare } from '../../hooks/useVerdictShare'
 
 function MyCaseDetailPage() {
   const navigate = useNavigate()
@@ -18,11 +22,15 @@ function MyCaseDetailPage() {
     enabled: caseId !== undefined,
     retry: (count, failure) => !isApiStatus(failure, 404) && count < 2,
   })
+  const { captureRef, openShare, shareSheet, toast, hideToast } = useVerdictShare(caseId, verdict?.title)
   if (caseId === undefined) return <Navigate to={paths.myCases} replace />
   if (isPending) return <p role="status" className="p-6 text-center text-white-100">판결문을 불러오는 중이에요.</p>
   if (isError || !verdict) return <div role="alert" className="p-6 text-center text-white-100"><p>{isApiStatus(error, 404) ? '사건을 찾을 수 없거나 아직 완료된 판결이 없어요.' : getApiErrorMessage(error)}</p><Button onClick={() => void refetch()} className="m-4">다시 시도</Button><Button onClick={() => navigate(paths.myCases, { replace: true })}>목록으로</Button></div>
 
+  const summary = toVerdictSummary(verdict)
+
   return (
+    <>
     <section aria-label={`${verdict.title} 판결문`} className="h-[calc(100dvh-51px)] overflow-y-auto overscroll-y-contain @container">
       <div className="relative flex min-h-full flex-col overflow-clip pt-4.75">
         <div key={caseId} className="relative z-10 mx-auto w-98.25 shrink-0 motion-safe:animate-[verdict-reveal_850ms_cubic-bezier(0.22,1,0.36,1)_both]" style={{ zoom: 'min(1, calc(100cqw / 393px))' }}>
@@ -30,7 +38,7 @@ function MyCaseDetailPage() {
           <div className="relative mx-auto w-fit min-h-126.5 pt-9 pb-[29.8px]">
             <VerdictSummary
               size="card"
-              {...toVerdictSummary(verdict)}
+              {...summary}
               oneLine={null}
               onWhyClick={() => navigate(paths.myCaseReason(caseId))}
             />
@@ -42,11 +50,19 @@ function MyCaseDetailPage() {
             <EnvelopeFront className="relative h-[497.93px]" />
           </div>
           <div className="relative z-20">
-            <CasePublicationActions caseId={caseId} isPublic={verdict.is_public} />
+            <CasePublicationActions caseId={caseId} isPublic={verdict.is_public} onShare={openShare} />
           </div>
         </div>
       </div>
     </section>
+
+    {/* 공유용 판결문 이미지 (화면 밖에 숨겨 두고 캡처) */}
+    <div aria-hidden="true" inert className="pointer-events-none fixed top-0 left-[-10000px]">
+      <VerdictBoard variant="image" ref={captureRef} {...summary} title={summary.title ?? ''} />
+    </div>
+    <ShareSheet {...shareSheet} />
+    <Toast toast={toast} onHide={hideToast} />
+    </>
   )
 }
 

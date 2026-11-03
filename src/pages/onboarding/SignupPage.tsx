@@ -60,7 +60,8 @@ function SignupPage() {
     mutationFn: kakaoSignup,
     onSuccess: (data) => {
       login({ access: data.access, refresh: data.refresh, nickname: data.user.nickname })
-      navigate(paths.home, { replace: true })
+      // 가입하면 백엔드가 1톨을 지급함 → 홈에서 토스트로 알려줌
+      navigate(paths.home, { replace: true, state: { toast: '회원가입 기념으로 1톨을 지급해드렸어요!' } })
     },
     onError: (error) => {
       // 가입 토큰이 만료되면 카카오 로그인부터 다시

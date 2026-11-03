@@ -68,8 +68,8 @@ function MainLayout() {
       <main className={isMyCaseDetail ? undefined : isDetail ? 'pb-[24px]' : activeTab === 'home' ? undefined : 'pb-[93px]'}>
         <Outlet context={{ startJudgment } satisfies MainLayoutContext} />
       </main>
-      {/* 하단 네비게이션 */}
-      {!isDetail && <div className="pointer-events-none fixed inset-x-0 bottom-[44.564453125px] mx-auto w-full max-w-[393px]">
+      {/* 하단 네비게이션 (스크롤한 내용 위에 보이게 z-40, 토스트(z-50)보다는 아래) */}
+      {!isDetail && <div className="pointer-events-none fixed inset-x-0 bottom-[44.564453125px] z-40 mx-auto w-full max-w-[393px]">
         <div className="pointer-events-auto relative left-[calc(50%+0.41064453125px)] w-fit -translate-x-1/2">
           <GNB activeTab={activeTab} onNavigate={(destination) => {
             if (destination === 'ai-trial') return startJudgment()

@@ -8,9 +8,9 @@ import { getApiErrorMessage } from '../utils/apiError'
 import Button from './Button'
 import Modal from './modal/Modal'
 
-type Props = { caseId: number; isPublic: boolean }
+type Props = { caseId: number; isPublic: boolean; onShare: () => void }
 
-export default function CasePublicationActions({ caseId, isPublic }: Props) {
+export default function CasePublicationActions({ caseId, isPublic, onShare }: Props) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
@@ -44,9 +44,15 @@ export default function CasePublicationActions({ caseId, isPublic }: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      <Button variant="white" fullWidth disabled={busy} onClick={() => navigate(paths.juryRequest(caseId))}>
-        {isPublic ? '공개 이미지 수정하기' : '배심원에게도 물어보기'}
-      </Button>
+      {/* 공유 + 배심원 버튼 (판결문 전체 화면과 같은 배치) */}
+      <div className="flex gap-1.75">
+        <Button variant="white" onClick={onShare} className="w-21.75 shrink-0">
+          공유
+        </Button>
+        <Button variant="white" disabled={busy} onClick={() => navigate(paths.juryRequest(caseId))} className="flex-1">
+          {isPublic ? '공개 이미지 수정하기' : '배심원에게도 물어보기'}
+        </Button>
+      </div>
       {isPublic && <Button variant="primary" fullWidth disabled={busy} onClick={() => { setError(''); setOpen(true) }}>올린 사건 내리기</Button>}
       <Modal open={open} title="올린 사건을 내릴까요?" description={<>{error || '배심원석에서 비공개로 바뀌며 사건과 판결문은 유지돼요. 기존 공유 링크는 계속 사용할 수 있어요.'}</>} cancelText="취소" confirmText={busy ? '내리는 중…' : '내리기'} onCancel={() => { if (!lock.current) setOpen(false) }} onConfirm={() => void handleUnpublish()} />
     </div>
