@@ -115,27 +115,27 @@ function SignupPage() {
           </span>
         </button>
 
-        <img src={divider} alt="" className="mx-auto mt-4 block max-w-none" />
+        <img src={divider} alt="" className="mx-auto mt-4 block h-px w-[calc(100%-22px)] max-w-[371px]" />
 
         <ul className="mt-2.75 flex flex-col gap-4 px-7.5">
           {AGREEMENTS.map(({ key, label, name, hasDetail }) => (
-            <li key={key} className="flex items-center justify-between">
+            <li key={key} className="flex items-center justify-between gap-3">
               <button
                 type="button"
                 role="checkbox"
                 aria-checked={agreements[key]}
                 onClick={() => toggle(key)}
-                className="flex cursor-pointer items-center gap-4.75"
+                className="flex min-w-0 cursor-pointer items-center gap-4.75 text-left"
               >
-                <img src={agreements[key] ? checkOn : checkOff} alt="" className="block max-w-none" />
-                <span className="text-b3-medium text-keycolor-5">{label}</span>
+                <img src={agreements[key] ? checkOn : checkOff} alt="" className="block max-w-none shrink-0" />
+                <span className="text-b3-medium min-w-0 break-keep text-keycolor-5 [overflow-wrap:anywhere]">{label}</span>
               </button>
               {hasDetail && (
                 <button
                   type="button"
                   aria-label={`${name} 보기`}
                   onClick={() => setSearchParams({ terms: key })}
-                  className="text-l2-medium relative cursor-pointer text-gray-30"
+                  className="text-l2-medium relative shrink-0 cursor-pointer text-gray-30"
                 >
                   보기
                   <img src={underline} alt="" className="absolute top-4 left-0 block max-w-none" />
@@ -145,9 +145,9 @@ function SignupPage() {
           ))}
         </ul>
 
-        <div className="mx-auto mt-10 flex w-fit items-center gap-2.5 rounded-lg bg-[#3b3d56] px-5 py-2.5">
-          <img src={info} alt="" className="block max-w-none" />
-          <p className="text-l2-regular w-70.25 text-gray-30">
+        <div className="mx-auto mt-10 flex w-[calc(100%-48px)] max-w-[344px] items-center gap-2.5 rounded-lg bg-[#3b3d56] px-5 py-2.5">
+          <img src={info} alt="" className="block max-w-none shrink-0" />
+          <p className="text-l2-regular min-w-0 flex-1 text-gray-30 [overflow-wrap:anywhere]">
             동의 항목은 계정 정보에 저장되며, 약관이 개정되면 다시 동의를 받아요.
           </p>
         </div>

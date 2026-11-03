@@ -68,6 +68,7 @@ function VerdictSummary({
   // 한 줄 결과가 없으면 과실 비율로 만들어 보여줌
   const resultText =
     oneLine ?? (myRatio === otherRatio ? '저울이 균형을 이뤘어요.' : `${myRatio > otherRatio ? '내' : '상대'} 쪽으로 저울이 기울었어요.`)
+  const formattedResultText = resultText.replace(/\.(?!\d)[ \t]*/g, '.\n').trim()
 
   return (
     <div style={{ width: BASE_WIDTH, zoom: scale }}>
@@ -116,7 +117,7 @@ function VerdictSummary({
 
       {/* 한 줄 결과가 길어도 버튼과 겹치지 않게 차례로 쌓음 */}
       <div className="mt-[13.19px] flex flex-col items-center">
-        <p className="w-[264.301px] text-center text-[13.96px] font-medium leading-normal tracking-[-0.03em] break-keep text-gray-70">{resultText}</p>
+        <p className="w-[264.301px] whitespace-pre-line text-center text-[13.96px] font-medium leading-normal tracking-[-0.03em] break-keep text-gray-70">{formattedResultText}</p>
         <Button
           onClick={onWhyClick}
           aria-disabled={onWhyClick ? undefined : true}

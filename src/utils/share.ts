@@ -7,7 +7,7 @@
 // - 휴대폰 공유 창(인스타그램, 카카오톡, 더보기): 이미지 + 링크를 함께 보낼 수 있음
 //   PC 등 지원 안 되는 곳에서는 이미지 저장 + 링크 복사로 대신함
 
-import { toBlob } from 'html-to-image'
+import { toBlob, toCanvas } from 'html-to-image'
 import { shareToKakao } from './kakao'
 
 export type ShareTarget = 'link' | 'instagram' | 'kakao' | 'facebook' | 'x' | 'save' | 'more'
@@ -73,11 +73,18 @@ const buildFontCss = async (node: HTMLElement) => {
 export const captureImage = async (node: HTMLElement | null, fileName: string) => {
   if (!node) return null
   try {
-    const blob = await toBlob(node, {
+    await document.fonts.ready
+    await Promise.all(Array.from(node.querySelectorAll('img'), (image) => image.decode()))
+    const options = {
       pixelRatio: 2,
       backgroundColor: '#ffffff',
       fontEmbedCSS: await buildFontCss(node),
-    })
+    }
+    const preview = await toCanvas(node, options)
+    preview.width = 0
+    preview.height = 0
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+    const blob = await toBlob(node, options)
     return blob ? new File([blob], fileName, { type: 'image/png' }) : null
   } catch {
     return null

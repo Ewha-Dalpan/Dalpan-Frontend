@@ -56,7 +56,10 @@ function VerdictResultPage() {
   // 공유하기 모달을 여는 동안 공유 링크 · 캡처 이미지를 미리 만들어 둠
   const openShare = () => {
     void loadKakao() // 카카오톡 버튼을 누르기 전에 SDK를 미리 불러둠
-    shareImage.current ??= captureImage(captureRef.current, '달판-판결문.png')
+    shareImage.current ??= captureImage(captureRef.current, '달판-판결문.png').then((image) => {
+      if (!image) shareImage.current = null
+      return image
+    })
     // 공유 링크 만들기 → 지금 사이트 주소 + /shared/{토큰} (로컬 · 배포 어디서든 그 사이트로 열리게)
     shareUrl.current ??= createShareLink(caseId)
       .then(({ token }) => `${window.location.origin}${paths.sharedVerdict(token)}`)
