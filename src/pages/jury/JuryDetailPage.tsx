@@ -17,12 +17,25 @@ import { useJuryCase } from './useJuryCase'
 import JuryCaseStatus from './JuryCaseStatus'
 import JuryCaseContent from './JuryCaseContent'
 import avatar1 from '../../assets/jury/detail/avatar1.png'
+import avatar2 from '../../assets/jury/detail/avatar2.png'
+import avatar3 from '../../assets/jury/detail/avatar3.png'
+import avatar4 from '../../assets/jury/detail/avatar4.png'
 import me from '../../assets/jury/detail/me.png'
 import JuryActionMenu from './JuryActionMenu'
 import people from '../../assets/jury/detail/people.svg'
 import colon from '../../assets/jury/detail/colon.svg'
 import commentIcon from '../../assets/jury/detail/comment.svg'
 import send from '../../assets/jury/detail/send.svg'
+
+// 댓글 프로필: 닉네임으로 토끼 4장 · 배경색 4개 중 하나씩 골라서 같은 사람은 항상 같은 모습으로 보임
+const AVATARS = [avatar1, avatar2, avatar3, avatar4]
+const AVATAR_COLORS = ['bg-[#ffd95c]', 'bg-[#b5d3f2]', 'bg-[#ffc99a]', 'bg-[#ffc4cf]'] // 노랑 · 하늘 · 주황 · 분홍
+const getAvatar = (nickname: string) => {
+  let hash = 0
+  for (const char of nickname) hash = (hash * 31 + char.codePointAt(0)!) >>> 0
+  // 토끼와 색을 다른 자리 값으로 골라서 토끼마다 색이 고정되지 않게
+  return { src: AVATARS[hash % AVATARS.length], color: AVATAR_COLORS[Math.floor(hash / AVATARS.length) % AVATAR_COLORS.length] }
+}
 
 function RatioRow({ left, right }: { left: number; right: number }) {
   return <>
@@ -86,7 +99,7 @@ function Detail({ item }: { item: JuryCaseDetail }) {
           {query.isError && <Button onClick={() => void query.refetch()}>댓글을 불러오지 못했어요. 다시 시도</Button>}
           {query.isSuccess && !comments.length && <p className="text-b2-regular text-gray-50">첫 댓글을 남겨보세요.</p>}
           {comments.map((comment) => <article key={comment.id}>
-            <div className="mb-[4px] flex items-center justify-between"><div className="flex items-center gap-[4px]"><img src={comment.is_mine ? me : avatar1} alt="" className="size-[24px] rounded-full object-cover"  /><span className="text-l1-regular">{comment.nickname}</span><span className="text-l2-regular text-gray-50">{new Date(comment.created_at).toLocaleDateString('ko-KR')}</span></div><JuryActionMenu label={`${comment.nickname} 댓글 메뉴`} actionLabel={comment.is_mine ? '댓글 삭제' : '신고'} onAction={() => comment.is_mine ? setDeleting(comment.id) : setReporting(comment.id)} /></div>
+            <div className="mb-[4px] flex items-center justify-between"><div className="flex items-center gap-[4px]"><img src={comment.is_mine ? me : getAvatar(comment.nickname).src} alt="" className={`size-[24px] rounded-full object-cover ${comment.is_mine ? 'bg-[#ffd95c]' : getAvatar(comment.nickname).color}`} /><span className="text-l1-regular">{comment.nickname}</span><span className="text-l2-regular text-gray-50">{new Date(comment.created_at).toLocaleDateString('ko-KR')}</span></div><JuryActionMenu label={`${comment.nickname} 댓글 메뉴`} actionLabel={comment.is_mine ? '댓글 삭제' : '신고'} onAction={() => comment.is_mine ? setDeleting(comment.id) : setReporting(comment.id)} /></div>
             <p className="text-b2-regular w-[334px] max-w-full whitespace-pre-line break-words">{comment.content}</p>
           </article>)}
         </div>
