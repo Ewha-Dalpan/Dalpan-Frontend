@@ -12,6 +12,7 @@ export function useJuryCase() {
   const query = useQuery({
     queryKey: ['juryCase', id, loggedIn],
     queryFn: () => getJuryCase(id),
+    staleTime: 10_000,
     enabled: valid,
     retry: (count, error) => !isApiStatus(error, 404) && !isApiStatus(error, 401) && count < 1,
   })

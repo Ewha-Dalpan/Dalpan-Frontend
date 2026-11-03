@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { getJuryCases } from '../../apis/juryApi'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { getJuryCase, getJuryCases } from '../../apis/juryApi'
+import { useAuthStore } from '../../store/useAuthStore'
 import type { JuryRelation } from '../../types/jury'
 import { getApiErrorMessage } from '../../utils/apiError'
 import Button from '../../components/Button'
@@ -11,11 +12,11 @@ import comment from '../../assets/jury/explore/comment.svg'
 import JuryFilterDropdown from './JuryFilterDropdown'
 
 const categories = ['전체', '연애', '친구', '가족', '직장·학교', '기타'] as const
-function CaseThumbnail({ src }: { src: string | null }) {
+function CaseThumbnail({ src, eager }: { src: string | null; eager: boolean }) {
   const [failed, setFailed] = useState(false)
   return (
     <div aria-hidden="true" className="size-[105px] shrink-0 overflow-hidden rounded-[8px] bg-gray-5">
-      {src && !failed && <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} className="size-full object-cover object-top" />}
+      {src && !failed && <img src={src} alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" onError={() => setFailed(true)} className="size-full object-cover object-top" />}
     </div>
   )
 }
@@ -25,6 +26,15 @@ const sortOptions = ['최신순', '인기순'] as const
 
 
 function JuryExplorePage() {
+  const client = useQueryClient()
+  const loggedIn = useAuthStore((state) => Boolean(state.accessToken))
+  const prefetchCase = (id: number) => {
+    void client.prefetchQuery({
+      queryKey: ['juryCase', id, loggedIn],
+      queryFn: () => getJuryCase(id),
+      staleTime: 10_000,
+    })
+  }
   const [category, setCategory] = useState('전체')
   const [sort, setSort] = useState('인기순')
   const [openFilter, setOpenFilter] = useState<'category' | 'sort' | null>(null)
@@ -49,9 +59,9 @@ function JuryExplorePage() {
       {query.isPending && <p role="status" className="px-6 py-4">사건 목록을 불러오는 중이에요.</p>}
       {query.isError && !query.data && <div role="alert" className="px-6 py-4"><p>{getApiErrorMessage(query.error)}</p><Button onClick={() => void query.refetch()} className="mt-2">다시 시도</Button></div>}
       <ul aria-label="사건 목록" className="mt-[12px]">
-        {cases.map((item) => (
+        {cases.map((item, index) => (
           <li key={item.case_id} className="not-first:pt-[3px]">
-            <Link to={paths.juryParticipate(item.case_id)} className="flex w-full text-left items-center gap-[5px] px-[24px] py-[16px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
+            <Link to={paths.juryParticipate(item.case_id)} onPointerEnter={() => prefetchCase(item.case_id)} onFocus={() => prefetchCase(item.case_id)} onPointerDown={() => prefetchCase(item.case_id)} className="flex w-full text-left items-center gap-[5px] px-[24px] py-[16px] focus-visible:outline-2 focus-visible:outline-keycolor-40">
               <div className="flex min-w-0 flex-1 flex-col items-start gap-[4px]">
                 <span className="text-l1-medium rounded-[50px] bg-sub px-[8px] py-[4px]">{item.relation}</span>
                 <div className="flex w-full flex-col gap-[7px] px-[2px]">
@@ -70,7 +80,7 @@ function JuryExplorePage() {
                   </div>
                 </div>
               </div>
-              <CaseThumbnail key={item.thumbnail} src={item.thumbnail} />
+              <CaseThumbnail key={item.thumbnail} src={item.thumbnail} eager={index < 3} />
             </Link>
             <div className="mx-[10px] mt-[3px] h-px bg-sub" />
           </li>
