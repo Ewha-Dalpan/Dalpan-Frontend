@@ -51,15 +51,15 @@ function PricingPage({ lang = 'ko' }: { lang?: PolicyLang }) {
             <ul className="flex flex-col gap-4.5">
               {PRICING_PRODUCTS.map(({ amount, bonus, price }) => (
                 <li key={amount}>
-                  <div className="flex h-6.75 items-center justify-between pl-0.75">
-                    <span className="flex items-center gap-1.25">
+                  <div className="flex min-h-6.75 items-center justify-between gap-2 pl-0.75">
+                    <span className="flex min-w-0 flex-wrap items-center gap-1.25">
                       <TollIcon />
                       <span className="text-b2-semibold text-gray-90">{copy.amount(amount)}</span>
                       {bonus > 0 && <span className="text-l2-medium text-[#ff5634]">{copy.bonus(bonus)}</span>}
                     </span>
-                    <span className="text-b2-semibold text-gray-90">{copy.price(price)}</span>
+                    <span className="text-b2-semibold shrink-0 text-gray-90">{copy.price(price)}</span>
                   </div>
-                  <img src={divider} alt="" className="mt-3.25 -mb-px block max-w-none" />
+                  <img src={divider} alt="" className="mt-3.25 -mb-px block h-px w-full" />
                 </li>
               ))}
             </ul>

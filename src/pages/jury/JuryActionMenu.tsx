@@ -9,11 +9,17 @@ export default function JuryActionMenu({ label, actionLabel, onAction }: { label
   useEffect(() => {
     if (!open) return
     root.current?.querySelector<HTMLButtonElement>('[role=menuitem]')?.focus()
-    const close = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) setOpen(false) }
+    // Safari can blur a button before its click without focusing the next button.
+    // Close on actual outside interaction, not on that intermediate blur.
+    const close = (event: Event) => { if (!root.current?.contains(event.target as Node)) setOpen(false) }
     document.addEventListener('pointerdown', close)
-    return () => document.removeEventListener('pointerdown', close)
+    document.addEventListener('focusin', close)
+    return () => {
+      document.removeEventListener('pointerdown', close)
+      document.removeEventListener('focusin', close)
+    }
   }, [open])
-  return <div ref={root} className="relative shrink-0" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }} onKeyDown={(event) => {
+  return <div ref={root} className="relative shrink-0" onKeyDown={(event) => {
     if (event.key === 'Escape') { event.stopPropagation(); setOpen(false); trigger.current?.focus() }
   }}>
     <button ref={trigger} type="button" aria-label={label} aria-expanded={open} aria-haspopup="menu" className="block size-[20px] cursor-pointer" onClick={() => setOpen(!open)}><img src={more} alt="" className="block max-w-none" /></button>
