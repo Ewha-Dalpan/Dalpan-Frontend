@@ -2,7 +2,7 @@
 // image: 저장, 공유용 이미지 / page: 공유 받은 사람이 보는 화면 
 // 두 화면은 같은 구성이고 세로 위치만 달라서 variant로 나눔~
 
-import type { ReactNode, Ref } from 'react'
+import { useLayoutEffect, useRef, type ReactNode, type Ref } from 'react'
 import dot from '../assets/verdict/dot.svg'
 import logoRabbit from '../assets/verdict/logo-rabbit.png'
 import logoText from '../assets/verdict/logo-text.svg'
@@ -42,9 +42,38 @@ type VerdictBoardProps = VerdictBoardData & {
 
 // 말풍선 칩: 길면 칩 안에서 단어 단위로 줄바꿈, 꼬리는 칩 아래쪽에 맞춤
 function ReasonChip({ label, side }: { label: string; side: 'left' | 'right' }) {
+  const bubbleRef = useRef<HTMLSpanElement>(null)
+  const textRef = useRef<HTMLSpanElement>(null)
+
+  useLayoutEffect(() => {
+    let active = true
+    const fitWidth = () => {
+      const bubble = bubbleRef.current
+      const text = textRef.current
+      if (!active || !bubble || !text) return
+      bubble.style.width = ''
+      const range = document.createRange()
+      range.selectNodeContents(text)
+      const lines = Array.from(range.getClientRects())
+      if (!lines.length) return
+      const style = getComputedStyle(bubble)
+      const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
+      const scale = bubble.getBoundingClientRect().width / parseFloat(style.width)
+      if (!Number.isFinite(scale) || scale <= 0) return
+      bubble.style.width = `${Math.ceil(Math.max(...lines.map((line) => line.width)) / scale + padding + 1)}px`
+    }
+    fitWidth()
+    void document.fonts.ready.then(fitWidth)
+    window.addEventListener('resize', fitWidth)
+    return () => {
+      active = false
+      window.removeEventListener('resize', fitWidth)
+    }
+  }, [label])
+
   const chip = (
-    <span className="text-b3-semibold relative flex min-h-8.25 min-w-0 items-center rounded-[20px] bg-keycolor-5 px-3 py-1 break-keep text-keycolor-70">
-      {label}
+    <span ref={bubbleRef} className="text-b3-semibold relative flex min-h-8.25 min-w-0 items-center rounded-[20px] bg-keycolor-5 px-3 py-1 break-keep text-keycolor-70">
+      <span ref={textRef} className="min-w-0">{label}</span>
     </span>
   )
   return side === 'left' ? (
