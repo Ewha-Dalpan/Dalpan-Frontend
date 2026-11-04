@@ -14,6 +14,7 @@ function CaseImage({ src, index, onOpen }: { src: string; index: number; onOpen:
 
 export default function JuryCaseContent({ item }: { item: JuryCaseDetail }) {
   const [selected, setSelected] = useState<number | null>(null)
+  const [pointerInput, setPointerInput] = useState(false)
   const scrollHandlers = useHorizontalScroll(204.515)
   const date = new Date(item.public_at)
   return <div className="flex-none flex flex-col gap-[23px]">
@@ -25,10 +26,13 @@ export default function JuryCaseContent({ item }: { item: JuryCaseDetail }) {
       </div>
     </div>
     <ul tabIndex={0} aria-label="대화 캡처 (좌우로 넘겨보기)" {...scrollHandlers}
-      className="scrollbar-none flex min-h-[201px] gap-[3.515px] overflow-x-auto overscroll-x-contain touch-pan-x cursor-grab active:cursor-grabbing px-[24px] select-none focus-visible:outline-2 focus-visible:outline-keycolor-40">
+      onPointerDownCapture={() => setPointerInput(true)}
+      onKeyDownCapture={() => setPointerInput(false)}
+      onKeyUpCapture={() => setPointerInput(false)}
+      className={`scrollbar-none flex min-h-[201px] gap-[3.515px] overflow-x-auto overscroll-x-contain touch-pan-x cursor-grab active:cursor-grabbing px-[24px] select-none [-webkit-tap-highlight-color:transparent] ${pointerInput ? 'outline-none [&_button]:outline-none' : 'focus-visible:outline-2 focus-visible:outline-keycolor-40'}`}>
       {item.images.map((src, index) => <CaseImage key={`${src}-${index}`} src={src} index={index} onOpen={() => setSelected(index)} />)}
       {!item.images.length && <li className="text-b2-regular text-gray-50">공개된 대화 이미지가 없습니다.</li>}
     </ul>
-    {selected !== null && item.images[selected] && <ImageViewer key={item.images[selected]} src={item.images[selected]} alt={`대화 캡처 ${selected + 1} 전체 이미지`} onClose={() => setSelected(null)} />}
+    {selected !== null && item.images[selected] && <ImageViewer images={item.images} initialIndex={selected} onClose={() => setSelected(null)} />}
   </div>
 }
