@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { getJuryCase, getJuryCases } from '../../apis/juryApi'
 import { useAuthStore } from '../../store/useAuthStore'
+import { useJurySortStore } from '../../store/useJurySortStore'
 import type { JuryRelation } from '../../types/jury'
 import { getApiErrorMessage } from '../../utils/apiError'
 import Button from '../../components/Button'
@@ -36,7 +37,8 @@ function JuryExplorePage() {
     })
   }
   const [category, setCategory] = useState('전체')
-  const [sort, setSort] = useState('인기순')
+  const sort = useJurySortStore((state) => state.sort)
+  const setSort = useJurySortStore((state) => state.setSort)
   const [openFilter, setOpenFilter] = useState<'category' | 'sort' | null>(null)
   const relation = category === '전체' ? undefined : category as JuryRelation
   const apiSort = sort === '인기순' ? 'popular' : 'latest'
@@ -54,7 +56,7 @@ function JuryExplorePage() {
         <JuryFilterDropdown label="카테고리" value={category} options={categories}
           open={openFilter === 'category'} onOpenChange={(open) => setOpenFilter(open ? 'category' : null)} onChange={setCategory} />
         <JuryFilterDropdown label="정렬" value={sort} options={sortOptions}
-          open={openFilter === 'sort'} onOpenChange={(open) => setOpenFilter(open ? 'sort' : null)} onChange={setSort} />
+          open={openFilter === 'sort'} onOpenChange={(open) => setOpenFilter(open ? 'sort' : null)} onChange={(value) => { if (value === '최신순' || value === '인기순') setSort(value) }} />
       </div>
       {query.isPending && <p role="status" className="px-6 py-4">사건 목록을 불러오는 중이에요.</p>}
       {query.isError && !query.data && <div role="alert" className="px-6 py-4"><p>{getApiErrorMessage(query.error)}</p><Button onClick={() => void query.refetch()} className="mt-2">다시 시도</Button></div>}
