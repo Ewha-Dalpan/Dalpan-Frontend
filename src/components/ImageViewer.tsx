@@ -13,6 +13,7 @@ export default function ImageViewer({ images, initialIndex, onClose }: { images:
   const dialog = useRef<HTMLDialogElement>(null)
   const gallery = useRef<HTMLDivElement>(null)
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
+  const [keyboardInput, setKeyboardInput] = useState(false)
   useEffect(() => {
     const element = dialog.current
     const previousOverflow = document.body.style.overflow
@@ -23,11 +24,13 @@ export default function ImageViewer({ images, initialIndex, onClose }: { images:
     return () => { element?.close(); document.body.style.overflow = previousOverflow }
   }, [initialIndex])
   return createPortal(<dialog ref={dialog} aria-label="대화 캡처 전체 보기" onCancel={(event) => { event.preventDefault(); onClose() }}
+    onPointerDownCapture={() => setKeyboardInput(false)}
+    onKeyDownCapture={() => setKeyboardInput(true)}
     className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none bg-black text-white-100 backdrop:bg-black">
     <div className="flex h-full flex-col">
       <div className="flex shrink-0 items-center justify-between px-4 pb-2 pt-[max(12px,env(safe-area-inset-top))]">
         <span aria-live="polite" className="text-sm">{currentIndex + 1} / {images.length}</span>
-        <Button autoFocus aria-label="전체 이미지 닫기" onClick={onClose} className="flex size-11 items-center justify-center rounded-[8px] focus-visible:outline-2 focus-visible:outline-white">
+        <Button autoFocus aria-label="전체 이미지 닫기" onClick={onClose} className={`flex size-11 items-center justify-center rounded-[8px] [-webkit-tap-highlight-color:transparent] ${keyboardInput ? 'focus-visible:outline-2 focus-visible:outline-white' : 'outline-none'}`}>
           <img src={closeIcon} alt="" className="block" />
         </Button>
       </div>
